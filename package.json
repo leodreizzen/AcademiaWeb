@@ -6,13 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "secrets": "tsx secrets.tsx",
+    "postinstall": "npm run secrets"
   },
   "dependencies": {
+    "@1password/sdk": "^0.1.1",
     "@prisma/client": "^5.19.1",
+    "dotenv": "^16.4.5",
     "next": "14.2.9",
+    "postinstall": "^0.11.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tsx": "^4.19.1"
   },
   "devDependencies": {
     "@types/node": "^20",

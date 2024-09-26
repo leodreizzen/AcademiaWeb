@@ -18,35 +18,28 @@ generator client {
 model User {
   /// @allow('read', true)
   /// @deny('update', true)
-  dni       Int           @id()
+  dni       Int       @id()
   lastName  String
   firstName String
-  Profiles  UserProfile[]
+  profiles  Profile[]
   /// @omit
   /// @password
   /// @allow('update', true)
   password  String
 }
 
-/// @@auth
-/// @@delegate(role)
-model UserProfile {
-  id                   Int      @id()
-  user                 User     @relation(fields: [dni], references: [dni])
-  dni                  Int
-  delegate_aux_student Student?
-  delegate_aux_parent  Parent?
-  delegate_aux_teacher Teacher?
-  delegate_aux_profile Profile  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-}
-
 /// @@delegate(role)
 /// @@auth
 model Profile {
-  id                       Int          @id() @default(autoincrement())
-  role                     String
-  delegate_aux_userProfile UserProfile?
-  delegate_aux_superuser   Superuser?
+  dni                        Int
+  user                       User           @relation(fields: [dni], references: [dni])
+  id                         Int            @id() @default(autoincrement())
+  role                       String
+  delegate_aux_superuser     Superuser?
+  delegate_aux_student       Student?
+  delegate_aux_parent        Parent?
+  delegate_aux_teacher       Teacher?
+  delegate_aux_administrator Administrator?
 }
 
 /// @@auth
@@ -62,14 +55,14 @@ model Superuser {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Student {
-  id                       Int         @id()
-  phoneNumber              Int
-  address                  String
-  email                    String
-  parents                  Parent[]
-  grade                    Grade       @relation(fields: [gradeName], references: [name])
-  gradeName                String
-  delegate_aux_userProfile UserProfile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int      @id()
+  phoneNumber          String
+  address              String
+  email                String
+  parents              Parent[]
+  grade                Grade    @relation(fields: [gradeName], references: [name])
+  gradeName            String
+  delegate_aux_profile Profile  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@auth
@@ -77,12 +70,12 @@ model Student {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Parent {
-  id                       Int         @id()
-  phoneNumber              Int
-  address                  String
-  email                    String
-  children                 Student[]
-  delegate_aux_userProfile UserProfile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int       @id()
+  phoneNumber          String
+  address              String
+  email                String
+  children             Student[]
+  delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@auth
@@ -90,19 +83,22 @@ model Parent {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Teacher {
-  id                       Int         @id()
-  phoneNumber              Int
-  address                  String
-  email                    String
-  delegate_aux_userProfile UserProfile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int     @id()
+  phoneNumber          String
+  address              String
+  email                String
+  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
+/// @@auth
 /// @@allow('update, read', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Administrator {
-  dni       Int    @id()
-  firstName String
-  lastName  String
+  id                   Int     @id()
+  phoneNumber          String
+  address              String
+  email                String
+  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)

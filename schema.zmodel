@@ -11,7 +11,7 @@ model User {
     dni       Int           @id @allow('read',  true) @deny('update', true)
     lastName  String
     firstName String
-    Profiles  UserProfile[]
+    profiles  Profile[]
     password  String        @omit @password @allow('update', true)
 
     @@allow('read', true)
@@ -19,14 +19,11 @@ model User {
     @@allow('all', auth().role == "Superuser")
 }
 
-model UserProfile extends Profile {
-    user User @relation(fields: [dni], references: [dni])
-    dni Int
-
-    @@delegate(role)
-}
 
 model Profile {
+    dni Int
+    user User @relation(fields: [dni], references: [dni])
+
     id Int @id @default(autoincrement())
     role String
     @@delegate(role)
@@ -38,8 +35,9 @@ model Superuser extends Profile {
     @@allow('all', auth().role == "Superuser")
 }
 
-model Student extends UserProfile {
-    phoneNumber Int
+
+model Student extends Profile {
+    phoneNumber String
     address     String
     email       String
     parents     Parent[]
@@ -51,8 +49,8 @@ model Student extends UserProfile {
     @@allow('all', auth().role == "Superuser")
 }
 
-model Parent extends UserProfile {
-    phoneNumber Int
+model Parent extends Profile {
+    phoneNumber String
     address     String
     email       String
     children    Student[]
@@ -62,8 +60,8 @@ model Parent extends UserProfile {
     @@allow('all', auth().role == "Superuser")
 }
 
-model Teacher extends UserProfile {
-    phoneNumber Int
+model Teacher extends Profile {
+    phoneNumber String
     address     String
     email       String
     @@allow('read', true)
@@ -71,10 +69,10 @@ model Teacher extends UserProfile {
     @@allow('all', auth().role == "Superuser")
 }
 
-model Administrator {
-    dni       Int    @id
-    firstName String
-    lastName  String
+model Administrator extends Profile {
+    phoneNumber String
+    address     String
+    email       String
     @@allow('update, read', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
 }

@@ -13,6 +13,7 @@
   "dependencies": {
     "@1password/sdk": "^0.1.1",
     "@prisma/client": "^5.19.1",
+    "@zenstackhq/runtime": "2.6.1",
     "dotenv": "^16.4.5",
     "next": "14.2.9",
     "postinstall": "^0.11.0",
@@ -30,6 +31,7 @@
     "postcss": "^8",
     "prisma": "^5.19.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zenstack": "2.6.1"
   }
 }

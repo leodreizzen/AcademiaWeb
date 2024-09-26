@@ -1,4 +1,6 @@
 import {PrismaClient} from '@prisma/client';
+import {auth, PrismaClient as zPrismaClient} from "@zenstackhq/runtime";
+import {enhance} from "@zenstackhq/runtime";
 
 let prisma: PrismaClient;
 
@@ -14,4 +16,7 @@ if (process.env.NODE_ENV === 'production') {
     prisma = globalWithPrisma.prisma;
 }
 
-export default prisma;
+
+export default function getPrismaClient(userProfile: auth.Profile): zPrismaClient{
+    return enhance(prisma, {user: userProfile});
+}

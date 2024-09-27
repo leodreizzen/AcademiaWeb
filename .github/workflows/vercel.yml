@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: tomsseisums/deploy-to-vercel-action@v1.10.0-alpha.3
+      - uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
           CREATE_COMMENT: true
           ATTACH_COMMIT_METADATA: true

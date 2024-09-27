@@ -1,0 +1,110 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    dni       Int           @id @allow('read',  true) @deny('update', true)
+    lastName  String
+    firstName String
+    profiles  Profile[]
+    password  String        @omit @password @allow('update', true)
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+
+model Profile {
+    dni Int
+    user User @relation(fields: [dni], references: [dni])
+
+    id Int @id @default(autoincrement())
+    role String
+    @@delegate(role)
+    @@auth
+}
+
+model Superuser extends Profile {
+    @@allow('read', true)
+    @@allow('all', auth().role == "Superuser")
+}
+
+
+model Student extends Profile {
+    phoneNumber String
+    address     String
+    email       String
+    parents     Parent[]
+    grade       Grade    @relation(fields: [gradeName], references: [name])
+    gradeName   String
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Parent extends Profile {
+    phoneNumber String
+    address     String
+    email       String
+    children    Student[]
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Teacher extends Profile {
+    phoneNumber String
+    address     String
+    email       String
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Administrator extends Profile {
+    phoneNumber String
+    address     String
+    email       String
+    @@allow('update, read', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Assignment {
+    id          Int      @id @default(autoincrement())
+    title       String
+    description String?
+    fileUrl     String
+    uploadDate  DateTime @default(now())
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Teacher")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Grade {
+    name     String    @id
+    subjects Subject[]
+    students Student[]
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Subject {
+    name      String
+    grade     Grade  @relation(fields: [gradeName], references: [name])
+    gradeName String
+
+    @@id([gradeName, name])
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}

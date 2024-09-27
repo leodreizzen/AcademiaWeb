@@ -6,7 +6,7 @@ on:
 
 jobs:
   vercel_deploy:
-    name: Deploy
+    name: Vercel Deploy
     runs-on: ubuntu-latest
     permissions:
       contents: read

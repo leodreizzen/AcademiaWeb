@@ -64,6 +64,7 @@ model Teacher extends Profile {
     phoneNumber String
     address     String
     email       String
+    subjects    Subject[]
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
@@ -99,11 +100,13 @@ model Grade {
 }
 
 model Subject {
+    id       Int     @id @default(autoincrement())
     name      String
     grade     Grade  @relation(fields: [gradeName], references: [name])
     gradeName String
+    teachers  Teacher[]
 
-    @@id([gradeName, name])
+    @@unique([gradeName, name])
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")

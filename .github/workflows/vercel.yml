@@ -18,14 +18,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: test secrets
         run: |
-         - vercel_token="${{ secrets.VERCEL_TOKEN }}"
-         - echo "vercel_token length: ${#auth_token}"
+         vercel_token="${{ secrets.VERCEL_TOKEN }}"
+         echo "vercel_token length: ${#auth_token}"
 
-         - github_token="${{ secrets.GITHUB_TOKEN }}"
-         - echo "github_token length: ${#GITHUB_TOKEN}"
+         github_token="${{ secrets.GITHUB_TOKEN }}"
+         echo "github_token length: ${#GITHUB_TOKEN}"
 
-         - vercel_pid="${{ secrets.VERCEL_PROJECT_ID }}"
-         - echo "vercel_pid length: ${#GITHUB_TOKEN}"
+         vercel_pid="${{ secrets.VERCEL_PROJECT_ID }}"
+         echo "vercel_pid length: ${#GITHUB_TOKEN}"
 
 
       - uses: BetaHuhn/deploy-to-vercel-action@v1

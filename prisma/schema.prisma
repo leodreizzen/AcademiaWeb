@@ -83,11 +83,12 @@ model Parent {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Teacher {
-  id                   Int     @id()
+  id                   Int       @id()
   phoneNumber          String
   address              String
   email                String
-  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subjects             Subject[]
+  delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@auth
@@ -125,9 +126,11 @@ model Grade {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Subject {
+  id        Int       @id() @default(autoincrement())
   name      String
-  grade     Grade  @relation(fields: [gradeName], references: [name])
+  grade     Grade     @relation(fields: [gradeName], references: [name])
   gradeName String
+  teachers  Teacher[]
 
-  @@id([gradeName, name])
+  @@unique([gradeName, name])
 }

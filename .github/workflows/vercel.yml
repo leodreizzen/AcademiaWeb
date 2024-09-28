@@ -8,9 +8,6 @@ jobs:
   vercel_deploy:
     name: Vercel Deploy
     runs-on: ubuntu-latest
-    env:
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      VAULT_ID: ${{ secrets.VAULT_ID }}
     permissions:
       contents: read
       deployments: write

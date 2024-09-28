@@ -4,6 +4,7 @@ if(!process.env.CI)
     dotenv.config({path: ".env.local"});
 
 import * as fs from "node:fs";
+import path from "node:path";
 async function loadSecrets() {
     const secrets = new Map<string, string>();
     if(!process.env.OP_SERVICE_ACCOUNT_TOKEN) {
@@ -30,7 +31,10 @@ async function loadSecrets() {
         }
     }
     const env = Array.from(secrets).map(([key, value]) => `${key}=${value}`).join("\n");
-    fs.writeFileSync(".env", env);
+    const currentDirectory = process.cwd();
+    const filePath = path.join(currentDirectory, ".env");
+    console.log("Writing secrets to", filePath);
+    fs.writeFileSync(filePath, env);
 }
 
-loadSecrets().catch(err => "Error downloading secrets: " + err.message);
+loadSecrets().catch(err => console.error("Error downloading secrets: " + err.message));

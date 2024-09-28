@@ -1,27 +1,33 @@
+import "server-only"
 import {PrismaClient} from '@prisma/client';
-import {auth, PrismaClient as zPrismaClient} from "@zenstackhq/runtime";
+import {auth} from "@zenstackhq/runtime";
 import {enhance} from "@zenstackhq/runtime";
+import {withAccelerate} from "@prisma/extension-accelerate";
 
-let prisma: PrismaClient;
+let prisma: ReturnType<typeof createPrismaClient>;
+
+function createPrismaClient(){
+    return new PrismaClient().$extends(withAccelerate())
+}
 
 if (process.env.NODE_ENV === 'production') {
-    prisma = new PrismaClient();
+    prisma = createPrismaClient();
 } else {
     const globalWithPrisma = globalThis as typeof globalThis & {
-        prisma: PrismaClient;
+        prisma: ReturnType<typeof createPrismaClient>;
     };
     if (!globalWithPrisma.prisma) {
-        globalWithPrisma.prisma = new PrismaClient();
+        globalWithPrisma.prisma = createPrismaClient();
     }
     prisma = globalWithPrisma.prisma;
 }
 
 
-export default function getPrismaClient(userProfile: auth.Profile): zPrismaClient{
+export default function getPrismaClient(userProfile: auth.Profile){
     return enhance(prisma, {user: userProfile});
 }
 
-export function getRawPrismaClient(): PrismaClient{
+export function getRawPrismaClient(): ReturnType<typeof createPrismaClient>{
     // USE ONLY FOR LOGIN
     return prisma;
 }

@@ -1,9 +1,9 @@
 import {NextAuthConfig} from "next-auth";
-import {fetchUserProfiles} from "@/lib/data/users";
-import {ProfileRole} from "@/lib/definitions";
-import {z} from "zod";
 import {getPermission} from "@/url_operations";
 import {hasPermission} from "@/lib/permissions";
+
+if(!process.env.ROLE_CHANGE_KEY)
+    throw new Error("ROLE_CHANGE_KEY not set")
 
 export const authConfig = {
     pages: {
@@ -47,18 +47,11 @@ export const authConfig = {
         },
         async jwt({token, user, account, profile, trigger, session}) {
             if(trigger === 'update' && session?.user?.role) {
-                const newRole = z.string().safeParse(session.user.role)
-                if(newRole.success) {
-                    const userProfiles = await fetchUserProfiles(token.dni)
-                    const userProfile = userProfiles.find(profile => profile.role === newRole.data)
-                    if (userProfile) {
-                        token.role = userProfile.role as ProfileRole
-                    }
-                    else
-                        console.error("Invalid role", session.user.role)
+                if(!session.roleChangeKey || session.roleChangeKey !== process.env.ROLE_CHANGE_KEY) {
+                    console.error("Invalid role change key")
+                    return token
                 }
-                else
-                    console.error("Invalid role", session.user.role)
+                token.role = session.user.role
             }
             if (user) {
                 token.dni = user.dni

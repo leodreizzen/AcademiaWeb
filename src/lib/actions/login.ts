@@ -5,6 +5,7 @@ import {ProfileRole} from "@/lib/definitions";
 import {z} from "zod";
 import {redirect} from "next/navigation";
 import {headers} from "next/headers";
+import {fetchUserProfiles} from "@/lib/data/users";
 
 type CallbackError = {
     type: "CallbackRouteError",
@@ -27,18 +28,34 @@ export async function login(_data: LoginData) {
     }
 }
 
-export async function selectRole(_role: ProfileRole, callbackUrl?: string) {
+export async function selectRole(_role: ProfileRole, callbackUrl?: string): Promise<never> {
+    const dni = (await auth())?.user.dni;
+    if(!dni) {
+        console.error("DNI not set")
+        redirect("/login")
+    }
     if(!(await auth())?.user.role) {
         const role = z.string().safeParse(_role)
-        if (role.success) {
-            await unstable_update({user: {role: role.data as ProfileRole}})
-        }
+        if(role.success) {
+            const userProfiles = await fetchUserProfiles(dni)
+            const userProfile = userProfiles.find(profile => profile.role === role.data)
+            if (userProfile) {
+                await unstable_update({user: {role: role.data as ProfileRole}, roleChangeKey: process.env.ROLE_CHANGE_KEY})
+            }
+            else {
+                console.error("Invalid role", role)
+                redirect("/login")
+            }
 
-        if(callbackUrl && new URL(callbackUrl).host === headers().get("host"))
-            redirect(callbackUrl);
-        else
-            redirect("/")
-    }}
+            if(callbackUrl && new URL(callbackUrl).host === headers().get("host"))
+                redirect(callbackUrl);
+            else
+                redirect("/")
+        }
+    }
+    redirect("/login")
+}
+
 
 export async function logout() {
     await signOut({redirect: false});

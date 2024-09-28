@@ -20,3 +20,8 @@ if (process.env.NODE_ENV === 'production') {
 export default function getPrismaClient(userProfile: auth.Profile): zPrismaClient{
     return enhance(prisma, {user: userProfile});
 }
+
+export function getRawPrismaClient(): PrismaClient{
+    // USE ONLY FOR LOGIN
+    return prisma;
+}

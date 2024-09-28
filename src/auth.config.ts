@@ -2,6 +2,7 @@ import {NextAuthConfig} from "next-auth";
 import {getPermission} from "@/url_operations";
 import {hasPermission} from "@/lib/permissions";
 
+
 if(!process.env.ROLE_CHANGE_KEY)
     throw new Error("ROLE_CHANGE_KEY not set")
 

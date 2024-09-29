@@ -1,7 +1,9 @@
-import {getRawPrismaClient} from "@/lib/prisma";
+import getPrismaClient, {getRawPrismaClient} from "@/lib/prisma";
 import {compare} from "bcryptjs";
-import {Profile} from "@prisma/client";
+import {Profile, Superuser} from "@prisma/client";
 import {ProfileRole, ProfileWithRole} from "@/lib/definitions";
+import {User} from "next-auth";
+import {auth} from "@/auth";
 
 export enum LoginError {
     USER_NOT_FOUND,
@@ -48,4 +50,22 @@ export async function fetchUserProfiles(dni: number): Promise<ProfileWithRole[]>
         }
     });
     return profiles as (Profile & {role: ProfileRole})[]
+}
+
+export async function fetchCurrentUser(): Promise<ProfileWithRole | null> {
+    const session = await auth();
+    if(!session || !session.user?.role || !session.user?.dni)
+        return null;
+
+    const prisma = getPrismaClient({id: session.user.dni, role: session.user.role});
+    const user =  prisma.profile.findUnique({
+        where: {
+            id: session.user.dni,
+            role: session.user.role
+        },
+        include: {
+            user: true
+        }
+    });
+    return ;
 }

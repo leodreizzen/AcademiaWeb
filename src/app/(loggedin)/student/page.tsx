@@ -1,15 +1,27 @@
-/*
-* Imports necesarios
-* */
+import {ListStudents} from "@/components/list/ListStudents"
+import {countStudents} from "@/app/(loggedin)/student/fetchStudents";
+import {getStudents} from "@/app/(loggedin)/student/getStudents";
 
-export default function StudentListPage() {
+export default async function StudentListPage({
+                                                  searchParams,
+                                              }: {
+    searchParams: { [key: string]: string | undefined }
+}) {
+
+    const dni = searchParams?.dni || '';
+    const lastName = searchParams?.lastName || '';
+    const page = Number(searchParams?.page) || 1;
+    const COUNT_PER_PAGE = 10;
+
+
+    const results = await getStudents(page, dni, lastName);
+    console.log(results)
+    const count = await countStudents();
+
+
+    const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
+
     return (
-        <div className=" w-full flex flex-col items-center justify-center min-h-screen relative">
-            <div className=" absolute">
-                <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
-                </div>
-                A LIST OF THE STUDENTS OWO
-            </div>
-        </div>
+        <ListStudents data={results} count={numberOfPages} />
     );
 }

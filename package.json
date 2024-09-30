@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "secrets": "tsx secrets.tsx",
-    "postinstall": "npm run secrets && zenstack generate"
+    "postinstall": "npm run secrets && zenstack generate && npx prisma generate"
   },
   "dependencies": {
     "@1password/sdk": "^0.1.1",

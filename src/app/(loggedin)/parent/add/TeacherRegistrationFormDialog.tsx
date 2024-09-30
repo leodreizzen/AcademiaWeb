@@ -4,24 +4,23 @@ import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {X} from "lucide-react";
 import {useState} from "react";
+import {GradeWithSubjects} from "@/app/(loggedin)/parent/add/page";
 
-const grades = [1, 2, 3, 4, 5, 6]
-const subjects = [
-    "Matemáticas", "Lengua", "Ciencias Naturales", "Ciencias Sociales",
-    "Educación Física", "Música", "Arte", "Tecnología", "Inglés",
-    "Historia", "Geografía", "Educación Cívica"
-]
+
 
 interface TeacherRegistrationFormDialogProps {
     assignedGrades: {[key: number]: string[]},
-    onAssignSubject: (grade: number, subject: string) => void,
-    onRemoveSubject: (grade: number, subject: string) => void
+    onAssignSubject: (grade: string, subject: string) => void,
+    onRemoveSubject: (grade: string, subject: string) => void,
+    grades: GradeWithSubjects
 }
 
-export default function TeacherRegistrationFormDialog({assignedGrades, onAssignSubject, onRemoveSubject}: TeacherRegistrationFormDialogProps) {
+export default function TeacherRegistrationFormDialog({assignedGrades, onAssignSubject, onRemoveSubject, grades}: TeacherRegistrationFormDialogProps) {
     const [modalOpen, setModalOpen] = useState(false)
-    const [selectedGrade, setSelectedGrade] = useState<number | null>(null)
+    const [selectedGrade, setSelectedGrade] = useState<string | null>(null)
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null)
+
+    const gradesWithSubjects = grades
 
     const handleAssignSubject = () => {
         if (selectedGrade !== null && selectedSubject) {
@@ -47,14 +46,14 @@ export default function TeacherRegistrationFormDialog({assignedGrades, onAssignS
                         <Label htmlFor="curso" className="text-right text-gray-300">
                             Curso
                         </Label>
-                        <Select onValueChange={(value) => setSelectedGrade(Number(value))}>
+                        <Select onValueChange={(value) => setSelectedGrade(value)}>
                             <SelectTrigger className="col-span-3 bg-gray-700 text-gray-100 border-gray-600">
                                 <SelectValue placeholder="Seleccionar curso" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-700 text-gray-100 border-gray-600">
-                                {grades.map((curso) => (
-                                    <SelectItem key={curso} value={curso.toString()} className="focus:bg-gray-600">
-                                        {curso}º Año
+                                {gradesWithSubjects.map((curso) => (
+                                    <SelectItem key={curso.name} value={curso.name} className="focus:bg-gray-600">
+                                        {curso.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -69,9 +68,9 @@ export default function TeacherRegistrationFormDialog({assignedGrades, onAssignS
                                 <SelectValue placeholder="Seleccionar materia" />
                             </SelectTrigger>
                             <SelectContent className="bg-gray-700 text-gray-100 border-gray-600">
-                                {subjects.map((materia) => (
-                                    <SelectItem key={materia} value={materia} className="focus:bg-gray-600">
-                                        {materia}
+                                {gradesWithSubjects[0].subjects.map((materia) => (
+                                    <SelectItem key={materia.name} value={materia.name} className="focus:bg-gray-600">
+                                        {materia.name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -89,13 +88,13 @@ export default function TeacherRegistrationFormDialog({assignedGrades, onAssignS
                     <h4 className="font-semibold text-gray-300">Materias Asignadas:</h4>
                     {Object.entries(assignedGrades).length != 0 && Object.entries(assignedGrades).map(([curso, materias]) => (
                         <div key={curso} className="bg-gray-700 p-3 rounded-md">
-                            <h5 className="font-medium text-gray-200">{curso}º Año:</h5>
+                            <h5 className="font-medium text-gray-200">{curso}:</h5>
                             <ul className="list-none mt-1 space-y-1">
                                 {materias.map((materia) => (
                                     <li key={materia} className="flex justify-between items-center text-gray-300">
                                         <span>{materia}</span>
                                         <Button
-                                            onClick={() => onRemoveSubject(Number(curso), materia)}
+                                            onClick={() => onRemoveSubject(curso, materia)}
                                             variant="ghost"
                                             size="sm"
                                             className="h-6 w-6 p-0 text-gray-400 hover:text-gray-100 hover:bg-red-600"

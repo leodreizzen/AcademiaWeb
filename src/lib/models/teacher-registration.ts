@@ -14,7 +14,7 @@ export const TeacherRegistrationModel = z.object(
         name: z.string().min(2, invalidName),
         lastName: z.string().min(2, invalidLastName),
         email: z.string().email(invalidEmail),
-        phone: z.coerce.number({invalid_type_error: invalidPhone}).int(invalidPhone).min(minDigits(9), invalidPhone).max(maxDigits(9), invalidPhone),
+        phoneNumber: z.string().min(5, invalidPhone),
         address: z.string().min(5, invalidAddress),
     }
 );

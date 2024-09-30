@@ -4,20 +4,24 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {useForm, useFormState} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import { TeacherRegistrationData, TeacherRegistrationModel } from "@/app/lib/models/teacher-registration";
+import { TeacherRegistrationData, TeacherRegistrationModel } from "@/lib/models/teacher-registration";
 import TeacherRegistrationFormDialog from "@/app/(loggedin)/parent/add/TeacherRegistrationFormDialog";
 import {TeacherRegistrationFormField} from "@/app/(loggedin)/parent/add/TeacherRegistrationFormField";
+import {createTeacherRegistration} from "@/lib/actions/teacher-registration";
+import {GradeWithSubjects} from "@/app/(loggedin)/parent/add/page";
+
+interface TeacherRegistrationFormProps {
+    grades: GradeWithSubjects
+}
 
 
-
-export default function TeacherRegistrationForm() {
+export default function TeacherRegistrationForm({grades}: TeacherRegistrationFormProps) {
     const {register, handleSubmit, formState} = useForm<TeacherRegistrationData>({resolver: zodResolver(TeacherRegistrationModel)})
-    const [errors, setErrors] = useState<string | null>(null)
-    const [assignedGrades, setAssignedGrades] = useState<{[key: number]: string[]}>({})
+    const [assignedGrades, setAssignedGrades] = useState<{[key: string]: string[]}>({})
 
-    const onAssignSubject = (grade: number, subject: string) => {
+    const onAssignSubject = (grade: string, subject: string) => {
         setAssignedGrades(prev => {
             const newGrades = prev[grade] ? [...prev[grade]] : []
             if (!newGrades.includes(subject)) {
@@ -27,7 +31,7 @@ export default function TeacherRegistrationForm() {
         })
     }
 
-    const onRemoveSubject = (grade: number, subject: string) => {
+    const onRemoveSubject = (grade: string, subject: string) => {
         setAssignedGrades(prev => {
             const newGrades = prev[grade].filter((s) => s !== subject)
             if (newGrades.length === 0) {
@@ -40,7 +44,12 @@ export default function TeacherRegistrationForm() {
 
 
     async function submitData(data: TeacherRegistrationData) {
-        console.log("Formulario enviado", { ...data, assignedGrades })
+        const res = await createTeacherRegistration({...data, assignedGrades})
+        if (res.success) {
+            alert("Docente creado exitosamente")
+        } else {
+            alert(res.error)
+        }
     }
 
     return (
@@ -55,19 +64,18 @@ export default function TeacherRegistrationForm() {
                             <TeacherRegistrationFormField label={"Nombre"} type={"text"} registerRes={register("name")} errors={formState.errors}/>
                             <TeacherRegistrationFormField label={"Apellido"} type={"text"} registerRes={register("lastName")} errors={formState.errors}/>
                         </div>
-                        <TeacherRegistrationFormField label={"Teléfono"} type={"number"} registerRes={register("phone")} errors={formState.errors}/>
+                        <TeacherRegistrationFormField label={"Teléfono"} type={"text"} registerRes={register("phoneNumber")} errors={formState.errors}/>
                         <TeacherRegistrationFormField label={"Dirección"} type={"text"} registerRes={register("address")} errors={formState.errors}/>
                         <TeacherRegistrationFormField label={"Correo Electrónico"} type={"email"} registerRes={register("email")} errors={formState.errors}/>
                         <div className={"space-y-2"}>
                             <Label className="text-gray-300">Cursos y Materias Asignados</Label>
-                            <TeacherRegistrationFormDialog assignedGrades={assignedGrades} onAssignSubject={onAssignSubject} onRemoveSubject={onRemoveSubject} />
+                            <TeacherRegistrationFormDialog assignedGrades={assignedGrades} onAssignSubject={onAssignSubject} onRemoveSubject={onRemoveSubject} grades={grades} />
                         </div>
                         <hr/>
                         <Button type="submit" onClick={handleSubmit(submitData)} className="w-full bg-blue-600 text-white hover:bg-blue-700">
                             Guardar Docente
                         </Button>
                     </form>
-                    {errors && <Label className="text-red-400 mt-2">{errors}</Label>}
                 </CardContent>
             </Card>
     )

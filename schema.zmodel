@@ -29,7 +29,7 @@ model Profile {
     role String
 
     @@unique([dni, role])
-
+    @@allow('read', true)
     @@delegate(role)
     @@auth
 }

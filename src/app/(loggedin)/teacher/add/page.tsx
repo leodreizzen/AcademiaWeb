@@ -1,15 +1,14 @@
-/*
-* Imports necesarios
-* */
+import TeacherRegistrationForm from "@/app/(loggedin)/teacher/add/teacher-registration-form";
+import {obtainGradesWithSubjects} from "@/lib/actions/teacher-registration";
 
-export default function AddTeacherPage() {
+export type GradeWithSubjects = {name: string, subjects: {name: string}[]}[]
+
+export default async function TeacherRegistrationPage() {
+
+    const grades: GradeWithSubjects = await obtainGradesWithSubjects()
     return (
-        <div className=" w-full flex flex-col items-center justify-center min-h-screen relative">
-            <div className=" absolute">
-                <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
-                </div>
-                add teacher .
-            </div>
+        <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
+            <TeacherRegistrationForm grades={grades}/>
         </div>
-    );
+    )
 }

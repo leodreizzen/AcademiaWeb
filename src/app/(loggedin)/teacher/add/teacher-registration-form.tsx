@@ -7,10 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import { TeacherRegistrationData, TeacherRegistrationModel } from "@/lib/models/teacher-registration";
-import TeacherRegistrationFormDialog from "@/app/(loggedin)/parent/add/TeacherRegistrationFormDialog";
-import {TeacherRegistrationFormField} from "@/app/(loggedin)/parent/add/TeacherRegistrationFormField";
+import TeacherRegistrationFormDialog from "@/app/(loggedin)/teacher/add/TeacherRegistrationFormDialog";
+import {TeacherRegistrationFormField} from "@/app/(loggedin)/teacher/add/TeacherRegistrationFormField";
 import {createTeacherRegistration} from "@/lib/actions/teacher-registration";
-import {GradeWithSubjects} from "@/app/(loggedin)/parent/add/page";
+import {GradeWithSubjects} from "@/app/(loggedin)/teacher/add/page";
 
 interface TeacherRegistrationFormProps {
     grades: GradeWithSubjects

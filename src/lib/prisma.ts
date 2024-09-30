@@ -2,12 +2,11 @@ import "server-only"
 import {PrismaClient} from '@prisma/client';
 import {auth} from "@zenstackhq/runtime";
 import {enhance} from "@zenstackhq/runtime";
-import {withAccelerate} from "@prisma/extension-accelerate";
 
 let prisma: ReturnType<typeof createPrismaClient>;
 
 function createPrismaClient(){
-    return new PrismaClient().$extends(withAccelerate())
+    return new PrismaClient()
 }
 
 if (process.env.NODE_ENV === 'production') {

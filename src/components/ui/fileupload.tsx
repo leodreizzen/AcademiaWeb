@@ -60,11 +60,6 @@ const FileUpload = React.forwardRef<HTMLInputElement, FileUploadProps>(
           />
           {selectedFile ? selectedFile.name : "Seleccionar"}
         </label>
-        {selectedFile && (
-          <p className="mt-2 text-sm text-gray-500">
-            Archivo seleccionado: {selectedFile.name}
-          </p>
-        )}
       </div>
     )
   }

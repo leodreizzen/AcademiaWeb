@@ -29,6 +29,7 @@ model User {
   password  String
 }
 
+/// @@allow('read', true)
 /// @@delegate(role)
 /// @@auth
 model Profile {
@@ -45,6 +46,7 @@ model Profile {
   @@unique([dni, role])
 }
 
+/// @@allow('read', true)
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
@@ -53,6 +55,7 @@ model Superuser {
   delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
+/// @@allow('read', true)
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -68,6 +71,7 @@ model Student {
   delegate_aux_profile Profile  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
+/// @@allow('read', true)
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -81,6 +85,7 @@ model Parent {
   delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
+/// @@allow('read', true)
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -94,6 +99,7 @@ model Teacher {
   delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
+/// @@allow('read', true)
 /// @@auth
 /// @@allow('update, read', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')

@@ -16,7 +16,7 @@ export const authConfig = {
             if (!isLoggedIn) {
                 return nextUrl.pathname === '/login'
             } else{
-                if(nextUrl.pathname === '/selectrole' || nextUrl.pathname === '/403')
+                if(nextUrl.pathname === '/selectrole' || nextUrl.pathname === '/403' ||nextUrl.pathname === "/login")
                     return true
                 if (!auth.user.role){
                     const newUrl = new URL('/selectrole', nextUrl);
@@ -32,11 +32,14 @@ export const authConfig = {
 
                 const permission = getPermission(nextUrl.pathname)
 
-                if(!permission)
+                if(!permission) {
+                    console.error("Permission not found for", nextUrl.pathname)
                     return Response.redirect(new URL('/403', nextUrl));
-
-                if(!hasPermission(auth.user.role, permission))
+                }
+                if(!hasPermission(auth.user.role, permission)) {
+                    console.log(`User with role ${auth.user.role} tried to access ${permission}`);
                     return Response.redirect(new URL('/403', nextUrl));
+                }
             }
             return true
 

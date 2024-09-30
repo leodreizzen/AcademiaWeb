@@ -1,11 +1,13 @@
-import NavBar from "@/components/ui/NavBar";
+import NavBar from "@/components/ui/Navbar/NavBar";
 import {fetchCurrentUser} from "@/lib/data/users";
-export default function Layout({ children }: { children: React.ReactNode }) {
-    const user = fetchCurrentUser();
+export default async function Layout({ children }: { children: React.ReactNode }) {
+    const user = await fetchCurrentUser();
+    if(!user)
+        throw new Error("Couldn`t fetch user")
     return (
-        <div className="min-h-screen flex flex-col bg-gray-900 text-gray-100">
-            <NavBar } />
-            <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="min-h-screen flex flex-col h-screen overflow-clip">
+            <NavBar role={user.role} firstName={user.user.firstName} lastName={user.user.lastName}/>
+            <main className="flex-grow w-full mx-auto overflow-auto">
                 {children}
             </main>
         </div>

@@ -9,15 +9,9 @@ import {fetchUserProfiles} from "@/lib/data/users";
 import {redirect} from "next/navigation";
 import {headers} from "next/headers";
 import { AlertTriangle } from "lucide-react"
+import {roleColors} from "@/components/ui/roleColors";
 
 export default async function RoleSelectPage({searchParams: {callbackUrl}}: {searchParams: {callbackUrl?: string}} ) {
-    const roleColors: Record<ProfileRole, string> = {
-        "Parent": "text-blue-400",
-        "Teacher": "text-green-400",
-        "Student": "text-yellow-400",
-        "Administrator": "text-red-400",
-    }
-
     const dni = (await auth())?.user.dni;
     if (!dni) {
         console.error("Could not get user dni")

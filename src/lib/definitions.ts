@@ -1,5 +1,4 @@
-import {Profile, Prisma} from "@prisma/client";
-
+import {Profile, Prisma, User} from "@prisma/client";
 type DelegateKeys<T> = {
     [K in keyof T]: K extends `delegate${string}` ? K : never;
 }[keyof T];
@@ -11,4 +10,8 @@ export type ProfileRole = Exclude<DelegateNames<Prisma.$ProfilePayload["objects"
 
 export interface ProfileWithRole extends Profile {
     role: ProfileRole
+}
+
+export interface ProfileWithRoleAndUser extends ProfileWithRole{
+    user : User
 }

@@ -9,7 +9,6 @@ export default async function Error403Page() {
         redirect("/selectrole");
     }
     const roleText = roleDisplayNames[role]
-
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col justify-between p-4 sm:p-6 lg:p-8">
             <div className="flex-grow flex flex-col justify-center items-center">

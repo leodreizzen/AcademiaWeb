@@ -10,6 +10,7 @@ export async function assertPermission(permission: Permission) {
         redirect("/selectrole");
     }
     if (!hasPermission(role, permission)) {
+        console.log(`User with role ${role} tried to access ${permission}`);
         redirect("/403");
     }
 }

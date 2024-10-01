@@ -35,7 +35,7 @@ export async function uploadFile(formData: FormData) {
 
   try {
     const uploadedFile = await cloudinary.uploader.upload(file, {
-      resource_type: "auto", // Maneja diferentes tipos de archivos
+      resource_type: "auto",
     });
 
     await prisma.assignment.create({

@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { downloadFile } from "@/app/server-actions/downloadFile";
 
@@ -7,34 +8,47 @@ interface DownloadAssignmentProps {
   fileId: string;
 }
 
-export default function DownloadAssignment({ fileId }: DownloadAssignmentProps) {
-  const handleDownload = async () => {
-    try {
-      const fileBlob = await downloadFile(fileId);
-      
-      if (fileBlob) {
-        const file = await fileBlob.json();
-        const url = window.URL.createObjectURL(file.file);
+export default function DownloadAssignment({
+  fileId,
+}: DownloadAssignmentProps) {
+  const [error, setError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
-        // Crear un enlace para descargar el archivo
-        const a = document.createElement('a');
+  const handleDownload = async () => {
+    setDownloading(true);
+    setError(null);
+    try {
+      const response = await downloadFile(fileId);
+
+      if ("error" in response) {
+        setError(response.error as string);
+      } else if ("fileUrl" in response) {
+        const res = await fetch(response.fileUrl);
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
         a.href = url;
-        a.download = ''; // Coloca aquí el nombre del archivo si lo tienes
-        a.target = '_blank';
+        a.download = response.fileName || "archivo";
         a.click();
 
         window.URL.revokeObjectURL(url);
-      } else {
-        console.error('Error: No se pudo obtener el archivo');
+        setError(null);
       }
     } catch (error) {
       console.error("Error al descargar el archivo:", error);
+      setError("Ocurrió un error inesperado al intentar descargar el archivo");
+    } finally {
+      setDownloading(false);
     }
   };
 
   return (
-    <Button onClick={handleDownload}>
-      Descargar archivo
-    </Button>
+    <div className="flex flex-col items-start gap-2">
+      <Button onClick={handleDownload} disabled={downloading}>
+        {downloading ? "Descargando..." : "Descargar archivo"}
+      </Button>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
+    </div>
   );
 }

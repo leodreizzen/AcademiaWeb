@@ -1,8 +1,7 @@
 "use server";
 
-import { getCloudinaryFile } from "@/lib/cloudinary";
-import { NextResponse } from "next/server";
 import getPrismaClient from "@/lib/prisma";
+
 const session: {
   user: {
     dni: number;
@@ -14,6 +13,7 @@ const session: {
     role: "Teacher",
   },
 };
+
 const prisma = getPrismaClient({
   id: session.user.dni,
   role: session.user.role,
@@ -21,23 +21,24 @@ const prisma = getPrismaClient({
 
 export async function downloadFile(fileId: string) {
   if (!fileId) {
-    throw new Error("Falta el parámetro 'fileId'");
+    return { error: "Falta el parámetro 'fileId'" };
   }
 
-  // Obtener la URL del archivo desde la base de datos
-  const file = await prisma.assignment.findUnique({
-    where: { id: parseInt(fileId) },
-  });
+  try {
+    const assignment = await prisma.assignment.findUnique({
+      where: { id: parseInt(fileId) },
+    });
 
-  if (!file || !file.fileUrl) {
-    throw new Error("Archivo no encontrado");
+    if (!assignment || !assignment.fileUrl) {
+      return { error: "Archivo no encontrado" };
+    }
+
+    return {
+      fileUrl: assignment.fileUrl,
+      fileName: assignment.title,
+    };
+  } catch (error) {
+    console.error("Error al descargar el archivo:", error);
+    return { error: "Error interno del servidor" };
   }
-
-   const cloudinaryFile = await getCloudinaryFile(file.fileUrl);
-
-   if (!cloudinaryFile) {
-     throw new Error("No se pudo obtener el archivo desde el servidor");
-   }
- 
-   return NextResponse.json({ file: cloudinaryFile });
 }

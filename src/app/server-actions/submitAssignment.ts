@@ -1,48 +1,60 @@
-"use server";
+'use server'
 
-import { assignmentSchema } from "@/lib/models/addAssignment";
-import { z } from "zod";
-import  getPrismaClient  from "@/lib/prisma";
-const session: { user: { dni: number; role: "Teacher" | "Superuser" | "Student" | "Parent" | "Administrator" } } = {
+import { z } from "zod"
+import getPrismaClient from "@/lib/prisma"
+
+const assignmentSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  fileUrl: z.string().url(),
+});
+
+const session: {
+  user: {
+    dni: number;
+    role: "Teacher" | "Superuser" | "Student" | "Parent" | "Administrator";
+  };
+} = {
   user: {
     dni: 22222222,
     role: "Teacher",
   },
-}
-const prisma = getPrismaClient({id: session.user.dni, role: session.user.role});
+};
+
+const prisma = getPrismaClient({
+  id: session.user.dni,
+  role: session.user.role,
+});
 
 export async function submitAssignment(formData: FormData) {
   try {
-    const title = formData.get("title");
-    const description = formData.get("description") || "";
-    const file = formData.get("file") as File;
+    const title = formData.get("title")
+    const description = formData.get("description") || ""
+    const fileUrl = formData.get("fileUrl")
 
     const validatedData = assignmentSchema.parse({
       title,
       description,
-      file,
-    });
-
-    // TODO: save file to server
-    const fileUrl = `/uploads/${file.name}`;
+      fileUrl,
+    })
 
     await prisma.assignment.create({
       data: {
         title: validatedData.title,
         description: validatedData.description,
-        fileUrl,
+        fileUrl: validatedData.fileUrl,
       },
-    });
+    })
 
-    return { success: true };
+    return { success: true }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, errors: error.flatten() };
+      return { success: false, errors: error.flatten() }
     }
 
     return {
       success: false,
       error: "Ocurrió un error al procesar el formulario.",
-    };
+    }
   }
 }

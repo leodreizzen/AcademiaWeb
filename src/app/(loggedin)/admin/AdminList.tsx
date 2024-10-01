@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AdministatorUser, AdminQuery } from "./types";
-import { getAdmins, getTotalAdmins } from "./getAdmins";
+import { getAdmins, getTotalAdmins, removeAdmin } from "./adminActions";
 import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
@@ -62,8 +62,11 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     const handleEdit = (id: number) => {
         // TODO: navigate to edit administrator page
     };
-    const handleRemove = (id: number) => {
-        // TODO: remove administrator
+    const handleRemove = async (id: number) => {
+        const isRemove = await removeAdmin(id);
+        if (isRemove) {
+            setAdministrators(administrators.filter(admin => admin.id !== id));
+        }
     };
     return (
         <div className="w-full flex flex-col items-center justify-center min-h-screen text-white">

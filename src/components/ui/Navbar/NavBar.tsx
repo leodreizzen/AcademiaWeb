@@ -131,7 +131,7 @@ export default function NavBar({firstName, lastName, role}: {
                                         </div>
                                         <div className="ml-3">
                                             <div
-                                                className="text-base font-medium leading-none text-white">{"displayName"}</div>
+                                                className="text-base font-medium leading-none text-white">{firstName} {lastName}</div>
                                             <div
                                                 className="text-sm font-medium leading-none text-gray-400 mt-1">{displayRole}</div>
                                         </div>

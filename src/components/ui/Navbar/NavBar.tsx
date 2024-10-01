@@ -123,10 +123,8 @@ export default function NavBar({firstName, lastName, role}: {
                                 <div className="pt-4 pb-3 border-t border-gray-700">
                                     <div className="flex items-center px-5 mb-3">
                                         <div className="flex-shrink-0">
-                                            <Avatar className="h-10 w-10 bg-gray-700">
-                                                <AvatarFallback>
-                                                    <User2 className={`h-6 w-6 ${roleColors[role]}`}/>
-                                                </AvatarFallback>
+                                            <Avatar className="bg-gray-700" asChild>
+                                                    <User2 className={`h-10 w-10 p-1 ${roleColors[role]}`}/>
                                             </Avatar>
                                         </div>
                                         <div className="ml-3">

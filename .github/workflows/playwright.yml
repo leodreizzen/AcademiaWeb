@@ -8,6 +8,9 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      VAULT_ID: ${{ secrets.VAULT_ID }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4

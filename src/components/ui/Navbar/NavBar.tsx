@@ -98,14 +98,14 @@ export default function NavBar({firstName, lastName, role}: {
                         </div>
                     </div>
                     <div className="sm:hidden">
-                        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <Sheet open={sheetOpen} onOpenChange={setSheetOpen} >
                             <SheetTrigger asChild>
-                                <Button variant="ghost" className="p-1 hover:bg-gray-700 text-gray-300">
+                                <Button variant="ghost" className="p-1 hover:bg-gray-700 text-gray-300" data-testid="abrir-menu">
                                     <Menu className="h-6 w-6"/>
                                     <span className="sr-only">Abrir menú</span>
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="top" className="w-full bg-gray-800 text-gray-100 p-0 border-gray-700"
+                            <SheetContent side="top" className="w-full bg-gray-800 text-gray-100 p-0 border-gray-700" data-testid = "menu"
                                           hideCloseButton>
                                 <div className="flex justify-between items-center px-4 py-2 border-b border-gray-700">
                                     <Link href="/" className="text-white text-xl font-bold">
@@ -123,15 +123,13 @@ export default function NavBar({firstName, lastName, role}: {
                                 <div className="pt-4 pb-3 border-t border-gray-700">
                                     <div className="flex items-center px-5 mb-3">
                                         <div className="flex-shrink-0">
-                                            <Avatar className="h-10 w-10 bg-gray-700">
-                                                <AvatarFallback>
-                                                    <User2 className={`h-6 w-6 ${roleColors[role]}`}/>
-                                                </AvatarFallback>
+                                            <Avatar className="bg-gray-700" asChild>
+                                                    <User2 className={`h-10 w-10 p-1 ${roleColors[role]}`}/>
                                             </Avatar>
                                         </div>
                                         <div className="ml-3">
                                             <div
-                                                className="text-base font-medium leading-none text-white">{"displayName"}</div>
+                                                className="text-base font-medium leading-none text-white">{firstName} {lastName}</div>
                                             <div
                                                 className="text-sm font-medium leading-none text-gray-400 mt-1">{displayRole}</div>
                                         </div>

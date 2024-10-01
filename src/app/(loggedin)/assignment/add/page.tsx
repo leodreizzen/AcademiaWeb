@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/ui/fileupload";
-import { submitAssignment } from "@/app/server-actions/submit-assignment";
+import { submitAssignment } from "@/app/server-actions/submitAssignment";
 
 export default function AddAssignmentPage() {
   const [errors, setErrors] = useState<

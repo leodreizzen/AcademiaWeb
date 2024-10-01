@@ -4,18 +4,27 @@ import { useEffect, useState } from "react";
 * Imports necesarios
 * */
 
-import { getAdmins } from "./getAdmins";
+import { getAdmins, getTotalAdmins } from "./getAdmins";
 import AdminItem from "./adminItem";
 import { AdministatorUser } from "./types";
+import { ADMINS_PER_PAGE } from "./adminConstants";
 
 interface AdminListPageParams {
     page: string;
 }
 
 export default function AdminListPage({ searchParams }: { searchParams: AdminListPageParams }) {
-    const page = Number(searchParams?.page) || 1;
+    const [page, setPage] = useState(Number(searchParams?.page) || 1);
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
+    const [totalPages, setTotalPages] = useState(0);
 
+    useEffect(() => {
+        const fetchTotalAdministrators = async () => {
+            const countAdministrators = await getTotalAdmins();
+            setTotalPages(Math.ceil(countAdministrators / ADMINS_PER_PAGE));
+        };
+        fetchTotalAdministrators();
+    }, [])
     useEffect(() => {
         const fetchAdministrators = async () => {
             const administratorsFromDB = await getAdmins(page);
@@ -52,6 +61,19 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
                                 onEdit={handleEdit} onRemove={handleRemove} />
                         ))
                     }
+                </div>
+                <div className="flex justify-center items-center gap-4 mt-8">
+                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
+                        disabled={page == 1} onClick={() => setPage(page - 1)}>
+                        Anterior
+                    </button>
+                    <button className="border border-white py-2 px-4 rounded-lg" disabled>
+                        {page}
+                    </button>
+                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
+                        disabled={page == totalPages} onClick={() => setPage(page + 1)}>
+                        Siguiente
+                    </button>
                 </div>
             </div>
         </div>

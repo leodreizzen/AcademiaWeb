@@ -1,0 +1,1 @@
+export const ADMINS_PER_PAGE = 5;

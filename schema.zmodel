@@ -5,6 +5,7 @@ generator client {
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
+    directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model User {
@@ -26,6 +27,9 @@ model Profile {
 
     id Int @id @default(autoincrement())
     role String
+
+    @@unique([dni, role])
+    @@allow('read', true)
     @@delegate(role)
     @@auth
 }

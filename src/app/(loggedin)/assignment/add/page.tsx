@@ -7,7 +7,12 @@ import { TextArea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/ui/fileupload";
 import { submitAssignment } from "@/app/server-actions/submitAssignment";
 
-export default function AddAssignmentPage() {
+import {assertPermission} from "@/lib/access_control";
+import {Resource} from "@/lib/operation_list";
+
+export default async function AddAssignmentPage() {
+    await assertPermission({resource: Resource.ASSIGNMENT, operation: "CREATE"});
+
   const [errors, setErrors] = useState<
     Partial<Record<"file" | "title" | "description", string[]>> | null
   >(null);

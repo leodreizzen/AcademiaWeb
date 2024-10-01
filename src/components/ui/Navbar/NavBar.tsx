@@ -98,14 +98,14 @@ export default function NavBar({firstName, lastName, role}: {
                         </div>
                     </div>
                     <div className="sm:hidden">
-                        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                        <Sheet open={sheetOpen} onOpenChange={setSheetOpen} >
                             <SheetTrigger asChild>
-                                <Button variant="ghost" className="p-1 hover:bg-gray-700 text-gray-300">
+                                <Button variant="ghost" className="p-1 hover:bg-gray-700 text-gray-300" data-testid="abrir-menu">
                                     <Menu className="h-6 w-6"/>
                                     <span className="sr-only">Abrir menú</span>
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent side="top" className="w-full bg-gray-800 text-gray-100 p-0 border-gray-700"
+                            <SheetContent side="top" className="w-full bg-gray-800 text-gray-100 p-0 border-gray-700" data-testid = "menu"
                                           hideCloseButton>
                                 <div className="flex justify-between items-center px-4 py-2 border-b border-gray-700">
                                     <Link href="/" className="text-white text-xl font-bold">

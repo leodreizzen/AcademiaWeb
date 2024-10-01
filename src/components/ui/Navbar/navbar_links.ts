@@ -21,8 +21,11 @@ export const navbarItems: Record<ProfileRole, NavbarItem[]> = {
         name: "Alumnos",
         href: "/student"
     }, {
-        name: "Docentes",
+        name: "Profesores",
         href: "/teacher"
+    }, {
+        name: "Padres",
+        href: "/parent"
     }, {
         name: "Administradores",
         href: "/admin"

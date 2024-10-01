@@ -1,17 +1,27 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
+import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentBack";
+import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
+import PaginationControls from "@/app/(loggedin)/student/add/paginationControls";
 
 
+type PrincipalProps = {
+  data: ParentWithUser[];
+  count: number;
+};
 
-export function StudentRegistrationFormComponent() {
+export function StudentRegistrationFormComponent({ data, count }: PrincipalProps) {
   const [step, setStep] = useState(1)
+  const [yearSelected, setYearSelected] = useState("")
   const [formData, setFormData] = useState({
     dni: '',
     nombre: '',
@@ -19,8 +29,9 @@ export function StudentRegistrationFormComponent() {
     telefono: '',
     direccion: '',
     correo: '',
+    anio: ''
   })
-  const [selectedParent, setSelectedParent] = useState(false)
+
   const [searchDNI, setSearchDNI] = useState('')
   const [searchApellido, setSearchApellido] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -33,31 +44,29 @@ export function StudentRegistrationFormComponent() {
     correo: '',
   })
 
-  const [parent, setParent] = useState( {
-    id: -1,
-    dni: '',
-    nombre: '',
-    apellido: '',
-    telefono: '',
-  })
+  const [parents, setParents] = useState<ParentWithUser[]>([])
 
-  const mockParent = {
-    id: 1,
-    dni: '12345678',
-    nombre: 'Juan',
-    apellido: 'Pérez',
-    telefono: '123456789',
-  }
 
-  const handleSelectedParent = (e: React.MouseEvent, parent: React.SetStateAction<{ id: number; dni: string; nombre: string; apellido: string; telefono: string }>) => {
+  const [grades, setGrades] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchGradesData = async () => {
+        const response = await fetchGrades();
+        setGrades(response.map((grade) => grade.name));
+    };
+
+    fetchGradesData();
+  }, []);
+
+
+
+
+  const handleSelectedParent = (e: React.MouseEvent, parent: ParentWithUser) => {
    e.preventDefault()
-    if(selectedParent){
-        setParent({ id: -1, dni: '', nombre: '', apellido: '', telefono: '' })
-        setSelectedParent(false)
-    }
-    else{
-      setParent(parent)
-      setSelectedParent(true)
+    if (parents.some(p => p.id === parent.id)) {
+      setParents(parents.filter(p => p.id !== parent.id))
+    } else if (parents.length < 2) {
+      setParents([...parents, parent])
     }
 
   }
@@ -65,10 +74,10 @@ export function StudentRegistrationFormComponent() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     if (name === 'telefono' || name === 'dni') {
-      const numericValue = value.replace(/\D/g, '')
-      setFormData(prev => ({ ...prev, [name]: numericValue }))
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }))
+      const numericValue = value.replace(/\D/g, '');
+      setFormData(prev => ({...prev, [name]: numericValue}));
+    }else {
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   }
 
@@ -80,6 +89,10 @@ export function StudentRegistrationFormComponent() {
     } else {
       setNewParentData(prev => ({ ...prev, [name]: value }))
     }
+  }
+    const handleYearSelected = (value: string) => {
+        setYearSelected(value)
+        setFormData(prev => ({ ...prev, anio: value }))
   }
 
 
@@ -98,32 +111,48 @@ export function StudentRegistrationFormComponent() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (step === 2 && selectedParent) {
-      // Reset form after submission
-      setFormData({
-        dni: '', nombre: '', apellido: '', telefono: '', direccion: '', correo: '',
-      })
-      setParent({ id: -1, dni: '', nombre: '', apellido: '', telefono: '' })
+  const handleSubmit = async (e: React.FormEvent) => {
 
-      setSelectedParent(false)
-      setStep(1)
-    }
+      e.preventDefault();
+      if (step === 2 && parents.length > 0) {
+          const resul = await addStudentToDataBase(formData, parents, yearSelected)
+          if (resul && resul.errors) {
+              alert(resul.message)
+          } else {
+              // Reset form after submission
+              setFormData({
+                  dni: '', nombre: '', apellido: '', telefono: '', direccion: '', correo: '', anio: '',
+              })
+              setParents([])
+              setYearSelected("")
+              setStep(1)
+              // }
+
+
+          }
+      }
   }
 
-  const handleCreateNewParent = (e: React.MouseEvent) => {
+  const handleCreateNewParent = async (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsDialogOpen(false)
-    // Reset new parent form
-    setNewParentData({
-      dni: '',
-      nombre: '',
-      apellido: '',
-      telefono: '',
-      direccion: '',
-      correo: '',
-    })
+    const result = await addParentToDataBase(newParentData);
+    if(result && result.errors){
+        alert(result.message)
+    }
+    else{
+
+        setIsDialogOpen(false)
+         // Reset new parent form
+        setNewParentData({
+            dni: '',
+            nombre: '',
+            apellido: '',
+            telefono: '',
+            direccion: '',
+            correo: '',
+          })
+    }
+
   }
 
   const handleSearch = () => {
@@ -180,6 +209,32 @@ export function StudentRegistrationFormComponent() {
                               className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
                           />
                         </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
+                          <Select
+                              name="anio"
+                              value={yearSelected}
+                              onValueChange={handleYearSelected}
+                          >
+                            <SelectTrigger className="bg-grey-700 text-gray-100 border-gray-600 focus:border-gray-500">
+                              <SelectValue placeholder="Elija un año"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {grades.map((grade) => (
+                                  <SelectItem
+                                      key={grade}
+                                      className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
+                                      value={grade}
+                                  >
+                                    {grade}
+                                  </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+
                       </div>
                       <div className="space-y-4">
                         <div className="space-y-2">
@@ -219,11 +274,15 @@ export function StudentRegistrationFormComponent() {
                               className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
                           />
                         </div>
+
+
+
+
                       </div>
                     </div>
 
 
-                    <CardFooter className="flex justify-between">
+
                       <Button
                           type="submit"
                           disabled={!isStep1Valid()}
@@ -232,7 +291,7 @@ export function StudentRegistrationFormComponent() {
                         Siguiente
                       </Button>
 
-                    </CardFooter>
+
                   </form>
 
 
@@ -243,7 +302,7 @@ export function StudentRegistrationFormComponent() {
 
                 <>
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-4">
+                  <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="searchDNI" className="text-gray-300">Buscar por DNI</Label>
@@ -270,38 +329,30 @@ export function StudentRegistrationFormComponent() {
                       >
                         Buscar
                       </Button>
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-gray-300">DNI</TableHead>
-                            <TableHead className="text-gray-300">Nombre</TableHead>
-                            <TableHead className="text-gray-300">Apellido</TableHead>
-                            <TableHead className="text-gray-300">Teléfono</TableHead>
-                            <TableHead className="text-gray-300">Acción</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow key={mockParent.id}>
-                            <TableCell className="text-gray-300">{mockParent.dni}</TableCell>
-                            <TableCell className="text-gray-300">{mockParent.nombre}</TableCell>
-                            <TableCell className="text-gray-300">{mockParent.apellido}</TableCell>
-                            <TableCell className="text-gray-300">{mockParent.telefono}</TableCell>
-                            <TableCell>
-                              <Button
-                                  onClick={(e) => handleSelectedParent(e,mockParent)}
-                                  className={`${
-                                      parent?.id != -1
-                                          ? 'bg-blue-600 text-white'
-                                          : 'bg-gray-600 text-gray-100'
-                                  } hover:bg-blue-500`}
-                              >
-                                {parent.id != -1 ? 'Seleccionado' : 'Seleccionar'}
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-
+                          {data.map((parent) => (
+                              <Card key={parent.id} className="bg-gray-700">
+                                  <CardContent className="flex items-center justify-between p-3">
+                                      <div>
+                                          <p className="font-semibold text-white text-xl">{parent.user.firstName} {parent.user.lastName}</p>
+                                          <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
+                                      </div>
+                                      <div className="space-x-3">
+                                          <Button
+                                              onClick={(e) => handleSelectedParent(e,parent)}
+                                              className={`${
+                                                  parents.some(p => p.id === parent.id)
+                                                      ? 'bg-blue-600 text-white'
+                                                      : 'bg-gray-600 text-gray-100'
+                                              } hover:bg-blue-500`}
+                                              disabled={parents.length === 2 && !parents.some(p => p.id === parent.id)}
+                                          >
+                                              {parents.some(p => p.id === parent.id) ? 'Seleccionado' : 'Seleccionar'}
+                                          </Button>
+                                      </div>
+                                  </CardContent>
+                              </Card>
+                          ))}
+                    <PaginationControls cantPages={count} />
                       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
                           <Button className="bg-green-600 text-white hover:bg-green-500 w-full mt-4">
@@ -413,7 +464,7 @@ export function StudentRegistrationFormComponent() {
                       </Button>
                       <Button
                           type="submit"
-                          disabled={!selectedParent}
+                          disabled={parents.length === 0}
                           className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
                       >
                         Registrar

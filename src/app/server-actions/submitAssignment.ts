@@ -1,10 +1,15 @@
 "use server";
 
-import { assignmentSchema } from "@/lib/validations/assignment-validation";
+import { assignmentSchema } from "@/lib/models/addAssignment";
 import { z } from "zod";
-import { PrismaClient } from "@prisma/client";
-
-const db = new PrismaClient();
+import  getPrismaClient  from "@/lib/prisma";
+const session: { user: { dni: number; role: "Teacher" | "Superuser" | "Student" | "Parent" | "Administrator" } } = {
+  user: {
+    dni: 12345678,
+    role: "Teacher",
+  },
+}
+const prisma = getPrismaClient({id: session.user.dni, role: session.user.role});
 
 export async function submitAssignment(formData: FormData) {
   try {
@@ -12,7 +17,6 @@ export async function submitAssignment(formData: FormData) {
     const description = formData.get("description") || "";
     const file = formData.get("file") as File;
 
-    //zod validation
     const validatedData = assignmentSchema.parse({
       title,
       description,
@@ -22,7 +26,7 @@ export async function submitAssignment(formData: FormData) {
     // TODO: save file to server
     const fileUrl = `/uploads/${file.name}`;
 
-    await db.assignment.create({
+    await prisma.assignment.create({
       data: {
         title: validatedData.title,
         description: validatedData.description,

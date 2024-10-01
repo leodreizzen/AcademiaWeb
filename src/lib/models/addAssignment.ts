@@ -2,7 +2,6 @@ import { z } from "zod";
 
 const validExtensions = ["pdf", "docx", "pptx", "xlsx"];
 
-// Schema de validación con Zod
 export const assignmentSchema = z.object({
   title: z.string().min(1, "El título es obligatorio"),
   description: z.string().optional(),

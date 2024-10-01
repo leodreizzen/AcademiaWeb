@@ -13,7 +13,7 @@ import {
 import {User} from "@prisma/client";
 import {EmailSendResult} from "@/lib/email/emailSender";
 import sendResetPasswordEmail from "@/lib/email/resetPassword";
-import {getFullUrl} from "@/lib/utils";
+import {getFullUrl} from "@/lib/serverUtils";
 
 if(!process.env.VERCEL_URL){
     throw new Error("VERCEL_URL not set")

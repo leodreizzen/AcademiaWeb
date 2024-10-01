@@ -24,7 +24,7 @@ export async function fetchUserByEmail(email: string): Promise<User | null> {
 export async function createPasswordResetToken(user: User): Promise<string> {
     const prisma = getPrismaClient({id: 1, role: "Superuser"})
     const token = crypto.randomBytes(32).toString('hex');
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const tokenHash = crypto.createHash('sha256').update(token).digest('base64');
     await prisma.passwordResetToken.upsert({
         create: {
             token_hash: tokenHash,
@@ -36,7 +36,8 @@ export async function createPasswordResetToken(user: User): Promise<string> {
         },
         update: {
             token_hash: tokenHash,
-            issued_at: new Date()
+            issued_at: new Date(),
+            used: false
         },
         where: {
             dni: user.dni
@@ -49,7 +50,7 @@ function fetchPasswordResetToken(token: string, existingPrisma?: TransactionPris
     const prisma = existingPrisma || getPrismaClient({id: 1, role: "Superuser"})
     return prisma.passwordResetToken.findUnique({
         where: {
-            token_hash: crypto.createHash('sha256').update(token).digest('hex')
+            token_hash: crypto.createHash('sha256').update(token).digest('base64')
         }
     });
 }

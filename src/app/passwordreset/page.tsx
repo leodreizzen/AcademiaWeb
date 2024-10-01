@@ -5,8 +5,11 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {checkPasswordResetToken} from "@/lib/data/passwordReset";
 import PasswordResetForm from "@/components/ui/password_reset/PasswordResetForm";
+import {auth} from "@/auth";
 
 export default async function PasswordResetPage({searchParams: {token}}: { searchParams: { token: string } }) {
+    if((await auth())?.user)
+        redirect("/")
     if (!token) {
         redirect("/forgotpassword")
     }

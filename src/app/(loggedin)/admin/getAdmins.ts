@@ -2,15 +2,25 @@
 
 import getPrismaClient from "@/app/lib/prisma";
 import { ADMINS_PER_PAGE } from "./adminConstants";
+import { AdminQuery } from "./types";
 
 const prisma = getPrismaClient({id: 1, role: "Administrator"});
 
 
-export async function getAdmins(page: number) {
+export async function getAdmins({ page, dni, lastName }: AdminQuery) {
     try {
         return await prisma.administrator.findMany({
             skip: (page - 1) * ADMINS_PER_PAGE,
             take: ADMINS_PER_PAGE,
+            where: {
+                ...(dni && { dni: dni }),
+                ...(lastName && {
+                  lastName: {
+                    contains: lastName,
+                    mode: 'insensitive',
+                  },
+                }),
+            },
             include: {
                 user: true
             }

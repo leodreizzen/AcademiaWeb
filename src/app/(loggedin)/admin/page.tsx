@@ -1,13 +1,11 @@
 'use client';
-import { useEffect, useState } from "react";
-/*
-* Imports necesarios
-* */
 
+import { useEffect, useState } from "react";
 import { getAdmins, getTotalAdmins } from "./getAdmins";
 import AdminItem from "./adminItem";
-import { AdministatorUser } from "./types";
+import { AdministatorUser, AdminQuery } from "./types";
 import { ADMINS_PER_PAGE } from "./adminConstants";
+
 
 interface AdminListPageParams {
     page: string;
@@ -15,8 +13,11 @@ interface AdminListPageParams {
 
 export default function AdminListPage({ searchParams }: { searchParams: AdminListPageParams }) {
     const [page, setPage] = useState(Number(searchParams?.page) || 1);
+    const [dni, setDni] = useState<string>();
+    const [lastName, setLastName] = useState<string>();
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
+    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page });
 
     useEffect(() => {
         const fetchTotalAdministrators = async () => {
@@ -24,15 +25,19 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
             setTotalPages(Math.ceil(countAdministrators / ADMINS_PER_PAGE));
         };
         fetchTotalAdministrators();
-    }, [])
+    }, []);
     useEffect(() => {
         const fetchAdministrators = async () => {
-            const administratorsFromDB = await getAdmins(page);
+            const administratorsFromDB = await getAdmins(searchQuery);
             setAdministrators(administratorsFromDB);
         };
         fetchAdministrators();
-    }, [page])
+    }, [page, searchQuery]);
 
+    const searchAdministrator = () => {
+        setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+    }
+    
     const handleView = (id: number) => {
         // TODO: navigate to view administrator page
     };
@@ -48,11 +53,24 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
             <div className="p-8 bg-[#212937] rounded-lg">
                 <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
                 <div className="mt-8">
-                    <input type="text" name="dni" className="bg-[#394150] py-2 px-4 rounded-lg w-full border border-[#535c6b]" placeholder="DNI" />
+                    <input className="bg-[#394150] py-2 px-4 rounded-lg w-full border border-[#535c6b]"
+                        type="text"
+                        name="dni"
+                        placeholder="DNI"
+                        value={dni}
+                        onChange={e => setDni(e.target.value)}/>
                 </div>
                 <div className="flex mt-4 gap-4">
-                    <input type="text" name="apellido" className="bg-[#394150] py-2 px-4 rounded-lg grow border border-[#535c6b]" placeholder="Apellido" />
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200">Buscar</button>
+                    <input className="bg-[#394150] py-2 px-4 rounded-lg grow border border-[#535c6b]"
+                        type="text"
+                        name="lastName"
+                        placeholder="Apellido"
+                        value={lastName}
+                        onChange={e => setLastName(e.target.value)}/>
+                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200"
+                        type="button" onClick={searchAdministrator}>
+                        Buscar
+                    </button>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
                     {
@@ -64,14 +82,16 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
                 </div>
                 <div className="flex justify-center items-center gap-4 mt-8">
                     <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
-                        disabled={page == 1} onClick={() => setPage(page - 1)}>
+                        disabled={page == 1}
+                        onClick={() => setPage(page - 1)}>
                         Anterior
                     </button>
                     <button className="border border-white py-2 px-4 rounded-lg" disabled>
                         {page}
                     </button>
                     <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
-                        disabled={page == totalPages} onClick={() => setPage(page + 1)}>
+                        disabled={page == totalPages}
+                        onClick={() => setPage(page + 1)}>
                         Siguiente
                     </button>
                 </div>

@@ -5,7 +5,7 @@ import { z } from "zod";
 import  getPrismaClient  from "@/lib/prisma";
 const session: { user: { dni: number; role: "Teacher" | "Superuser" | "Student" | "Parent" | "Administrator" } } = {
   user: {
-    dni: 12345678,
+    dni: 22222222,
     role: "Teacher",
   },
 }

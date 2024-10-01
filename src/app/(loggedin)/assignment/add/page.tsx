@@ -8,6 +8,7 @@ export default async function AddAssignmentPage() {
     return (
         <div className="w-full flex flex-col items-center justify-center min-h-screen relative">
             <div className="mt-10 w-full max-w-lg border border-gray-300 p-4 rounded-md">
+                <h1 className="text-2xl font-bold text-left mb-2">Agregar TP</h1>
                 <ClientAddAssignmentForm />
             </div>
         </div>

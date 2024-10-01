@@ -17,18 +17,21 @@ async function createGrades(prisma: zPrismaClient) {
 }
 
 async function createSubjects(prisma: zPrismaClient) {
+    const grades = ["1º año", "2º año", "3º año", "4º año", "5º año", "6° año"]
     const subjects = ["Matemáticas", "Lengua", "Historia", "Geografía", "Biología", "Física", "Química", "Educación Física", "Arte", "Música", "Inglés", "Computación"]
-    for (const subject of subjects) {
-        await prisma.subject.create({
-            data: {
-                name: subject,
-                grade: {
-                    connect: {
-                        name: "1º año"
+    for (const grade of grades) {
+        for (const subject of subjects) {
+            await prisma.subject.create({
+                data: {
+                    name: subject,
+                    grade: {
+                        connect: {
+                            name: grade
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 }
 

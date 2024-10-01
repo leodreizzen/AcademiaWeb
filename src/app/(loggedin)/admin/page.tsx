@@ -1,106 +1,14 @@
-'use client';
-
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
-import { useEffect, useState } from "react";
-import { getAdmins, getTotalAdmins } from "./getAdmins";
-import AdminItem from "./adminItem";
-import { AdministatorUser, AdminQuery } from "./types";
-import { ADMINS_PER_PAGE } from "./adminConstants";
-
+import AdminList from "./AdminList";
 
 interface AdminListPageParams {
     page: string;
 }
 
-export default function AdminListPage({ searchParams }: { searchParams: AdminListPageParams }) {
-    const [page, setPage] = useState(Number(searchParams?.page) || 1);
-    const [dni, setDni] = useState<string>();
-    const [lastName, setLastName] = useState<string>();
-    const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page });
-
-    useEffect(() => {
-        const verifyPermission = async () => {
-            await assertPermission( {resource: Resource.ADMINISTRATOR, operation: "LIST"});
-        };
-        const fetchTotalAdministrators = async () => {
-            const countAdministrators = await getTotalAdmins();
-            setTotalPages(Math.ceil(countAdministrators / ADMINS_PER_PAGE));
-        };
-        fetchTotalAdministrators();
-        verifyPermission();
-    }, []);
-    useEffect(() => {
-        const fetchAdministrators = async () => {
-            const administratorsFromDB = await getAdmins(searchQuery);
-            setAdministrators(administratorsFromDB);
-        };
-        fetchAdministrators();
-    }, [page, searchQuery]);
-
-    const searchAdministrator = () => {
-        setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
-    }
-    
-    const handleView = (id: number) => {
-        // TODO: navigate to view administrator page
-    };
-    const handleEdit = (id: number) => {
-        // TODO: navigate to edit administrator page
-    };
-    const handleRemove = (id: number) => {
-        // TODO: remove administrator
-    };
+export default async function AdminListPage({ searchParams }: { searchParams: AdminListPageParams}) {
+    await assertPermission( {resource: Resource.ADMINISTRATOR, operation: "LIST"});
     return (
-        <div className="w-full flex flex-col items-center justify-center min-h-screen">
-            <div className="p-8 bg-[#212937] rounded-lg">
-                <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
-                <div className="mt-8">
-                    <input className="bg-[#394150] py-2 px-4 rounded-lg w-full border border-[#535c6b]"
-                        type="text"
-                        name="dni"
-                        placeholder="DNI"
-                        value={dni}
-                        onChange={e => setDni(e.target.value)}/>
-                </div>
-                <div className="flex mt-4 gap-4">
-                    <input className="bg-[#394150] py-2 px-4 rounded-lg grow border border-[#535c6b]"
-                        type="text"
-                        name="lastName"
-                        placeholder="Apellido"
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}/>
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200"
-                        type="button" onClick={searchAdministrator}>
-                        Buscar
-                    </button>
-                </div>
-                <div className="flex flex-col mt-8 gap-4">
-                    {
-                        administrators.map(administrator => (
-                            <AdminItem key={administrator.id} administrator={administrator} onView={handleView}
-                                onEdit={handleEdit} onRemove={handleRemove} />
-                        ))
-                    }
-                </div>
-                <div className="flex justify-center items-center gap-4 mt-8">
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
-                        disabled={page == 1}
-                        onClick={() => setPage(page - 1)}>
-                        Anterior
-                    </button>
-                    <button className="border border-white py-2 px-4 rounded-lg" disabled>
-                        {page}
-                    </button>
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
-                        disabled={page == totalPages}
-                        onClick={() => setPage(page + 1)}>
-                        Siguiente
-                    </button>
-                </div>
-            </div>
-        </div>
+        <AdminList pageQuery={searchParams.page} />
     );
 }

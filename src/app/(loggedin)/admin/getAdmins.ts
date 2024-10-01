@@ -1,14 +1,13 @@
 "use server"
 
-import getPrismaClient from "@/app/lib/prisma";
 import { ADMINS_PER_PAGE } from "./adminConstants";
 import { AdminQuery } from "./types";
-
-const prisma = getPrismaClient({id: 1, role: "Administrator"});
+import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 
 
 export async function getAdmins({ page, dni, lastName }: AdminQuery) {
     try {
+        const prisma = await getCurrentProfilePrismaClient();
         return await prisma.administrator.findMany({
             skip: (page - 1) * ADMINS_PER_PAGE,
             take: ADMINS_PER_PAGE,
@@ -33,6 +32,7 @@ export async function getAdmins({ page, dni, lastName }: AdminQuery) {
 
 export async function getTotalAdmins() {
     try {
+        const prisma = await getCurrentProfilePrismaClient();
         return await prisma.administrator.count();
     } catch (error) {
         console.error("Error fetching administrators:", error);

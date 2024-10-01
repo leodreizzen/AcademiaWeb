@@ -14,15 +14,10 @@ export default function AddAssignmentForm() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [selectedMateria, setSelectedMateria] = useState("Materia prueba");
 
   const uploadFile = async () => {
     if (!file) return null;
-
-    console.log("Cloud Name:", process.env.CLOUD_NAME);
-    console.log(
-      "Upload Preset:",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
-    );
 
     const formData = new FormData();
     formData.append("file", file);
@@ -65,6 +60,7 @@ export default function AddAssignmentForm() {
     const fileUrl = await uploadFile();
     if (fileUrl) {
       formData.append("fileUrl", fileUrl);
+      formData.append("materia", selectedMateria);
       const response = await submitAssignment(formData);
 
       if (response.success) {
@@ -86,11 +82,11 @@ export default function AddAssignmentForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-      <div className="flex space-x-4">
-        <div className="w-1/2 flex items-center">
+      <div className="w-full flex flex-col">
+        <div className="mb-4 flex items-center">
           <label
             htmlFor="file"
-            className="block text-md font-medium w-3/3 mr-2"
+            className="block text-md font-medium w-1/3 mr-2"
           >
             Subir archivo...
           </label>
@@ -98,13 +94,14 @@ export default function AddAssignmentForm() {
             id="file"
             name="file"
             type="file"
-            className="w-3/3"
+            className="w-2/3"
             required
             onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
           {errors?.file && <p className="text-red-500">{errors.file}</p>}
         </div>
-        <div className="w-1/2 flex items-center">
+
+        <div className="mb-4 flex items-center">
           <label htmlFor="title" className="block text-md font-medium w-1/3">
             Título
           </label>
@@ -118,6 +115,22 @@ export default function AddAssignmentForm() {
           {errors?.title && <p className="text-red-500">{errors.title}</p>}
         </div>
       </div>
+
+      <div className="flex items-center">
+        <label htmlFor="materia" className="block text-md font-medium w-1/4">
+          Materia
+        </label>
+        <select
+          id="materia"
+          name="materia"
+          className="w-3/4 border-gray-300 rounded-md"
+          value={selectedMateria}
+          onChange={(e) => setSelectedMateria(e.target.value)}
+        >
+          <option value="Materia prueba">Materia prueba</option>
+        </select>
+      </div>
+
       <div className="flex items-center">
         <label
           htmlFor="description"
@@ -127,11 +140,13 @@ export default function AddAssignmentForm() {
         </label>
         <TextArea id="description" name="description" className="w-3/4" />
       </div>
+
       {successMessage && (
         <div className="mb-4 p-2 text-green-700 bg-green-100 rounded-md">
           {successMessage}
         </div>
       )}
+
       <div className="flex justify-between items-center w-full mt-4">
         <Link href="/assignment">
           <Button className="w-3/3 transition duration-200">Volver</Button>

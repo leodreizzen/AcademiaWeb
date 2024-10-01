@@ -5,8 +5,6 @@ import {countTeachers} from "@/app/(loggedin)/teacher/fetchTeacher";
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
 
-export default async function TeacherListPage() {
-
 export default async function TeacherListPage({
                                                  searchParams,
                                              }: {
@@ -19,7 +17,6 @@ export default async function TeacherListPage({
 
 
     const results = await getTeachers(page, dni, lastName);
-    console.log(results)
     const count = await countTeachers();
 
     await assertPermission({resource: Resource.TEACHER, operation: "LIST"});

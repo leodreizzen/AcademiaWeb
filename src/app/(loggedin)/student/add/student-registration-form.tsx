@@ -50,7 +50,6 @@ export function StudentRegistrationFormComponent() {
   }
 
   const handleSelectedParent = (e: React.MouseEvent, parent: React.SetStateAction<{ id: number; dni: string; nombre: string; apellido: string; telefono: string }>) => {
-    console.log("HOLAAAA LPMMMM")
    e.preventDefault()
     if(selectedParent){
         setParent({ id: -1, dni: '', nombre: '', apellido: '', telefono: '' })
@@ -100,11 +99,8 @@ export function StudentRegistrationFormComponent() {
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    console.log("PREGUNTO EL SUBMIT")
     e.preventDefault();
     if (step === 2 && selectedParent) {
-      console.log("OK SUBMITEO")
-      console.log('Form submitted:', { ...formData, parent: selectedParent })
       // Reset form after submission
       setFormData({
         dni: '', nombre: '', apellido: '', telefono: '', direccion: '', correo: '',
@@ -117,7 +113,6 @@ export function StudentRegistrationFormComponent() {
   }
 
   const handleCreateNewParent = (e: React.MouseEvent) => {
-    console.log('New parent created:', newParentData)
     e.preventDefault();
     setIsDialogOpen(false)
     // Reset new parent form

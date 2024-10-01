@@ -1,12 +1,15 @@
 import {ListStudents} from "@/components/list/ListStudents"
 import {countStudents} from "@/app/(loggedin)/student/fetchStudents";
 import {getStudents} from "@/app/(loggedin)/student/getStudents";
+import {assertPermission} from "@/lib/access_control";
+import {Resource} from "@/lib/operation_list";
 
 export default async function StudentListPage({
                                                   searchParams,
                                               }: {
     searchParams: { [key: string]: string | undefined }
 }) {
+    await assertPermission({resource: Resource.STUDENT, operation: "LIST"});
 
     const dni = searchParams?.dni || '';
     const lastName = searchParams?.lastName || '';

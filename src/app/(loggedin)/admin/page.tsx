@@ -5,9 +5,8 @@ import { useEffect, useState } from "react";
 * */
 
 import { getAdmins } from "./getAdmins";
-import { Administrator, User } from "@prisma/client";
-
-type AdministatorUser = Administrator & { user: User };
+import AdminItem from "./adminItem";
+import { AdministatorUser } from "./types";
 
 interface AdminListPageParams {
     page: string;
@@ -44,30 +43,13 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
                 </div>
                 <div className="flex mt-4 gap-4">
                     <input type="text" name="apellido" className="bg-[#394150] py-2 px-4 rounded-lg grow border border-[#535c6b]" placeholder="Apellido" />
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg">Buscar</button>
+                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200">Buscar</button>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
                     {
                         administrators.map(administrator => (
-                            <div className="border border-white rounded-lg p-4 flex bg-[#394150] gap-12" key={administrator.id}>
-                                <div className="flex flex-col grow">
-                                    <h3 className="text-xl font-bold">
-                                        {administrator.user.firstName} {administrator.user.lastName}
-                                    </h3>
-                                    <p className="text-sm mt-2">DNI: {administrator.user.dni}</p>
-                                </div>
-                                <div className="flex gap-4">
-                                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b]" onClick={() => handleView(administrator.id)}>
-                                        Ver
-                                    </button>
-                                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b]" onClick={() => handleEdit(administrator.id)}>
-                                        Editar
-                                    </button>
-                                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b]" onClick={() => handleRemove(administrator.id)}>
-                                        Borrar
-                                    </button>
-                                </div>
-                            </div>
+                            <AdminItem key={administrator.id} administrator={administrator} onView={handleView}
+                                onEdit={handleEdit} onRemove={handleRemove} />
                         ))
                     }
                 </div>

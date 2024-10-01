@@ -4,10 +4,17 @@ import {Faker, es} from '@faker-js/faker'
 const faker = new Faker({locale: [es]})
 
 
+
+const randomDNI = () =>{ 
+    const MAX = 999999999
+    const MIN = 10000000
+    return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
+};
+
 test('Datos validos alumno', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -43,7 +50,7 @@ test('Datos vacios nombre y dni', async ({ page }) => {
 test('Email invalido', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -59,7 +66,7 @@ test('Email invalido', async ({ page }) => {
 test('Año no seleccionado', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -78,7 +85,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
     
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -104,7 +111,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
     
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -118,10 +125,10 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
-    await page.getByLabel("Dni").last().fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").last().fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
-    await page.getByLabel("Apellido").fill(faker.person.lastName());
+    await page.getByLabel("Apellido").last().fill(faker.person.lastName());
     await page.getByLabel("Dirección").fill(faker.location.streetAddress({useFullAddress: true}));
     await page.getByLabel("Correo electrónico").fill(faker.internet.email());
 
@@ -151,7 +158,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -177,8 +184,8 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) estudiante', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
-    await page.getByLabel("Número de teléfono").fill("2915222332");
+    await page.getByLabel("Dni").fill(randomDNI());
+    await page.getByLabel("Número de teléfono").fill("291522");
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
     await page.getByLabel("Dirección").fill(faker.location.streetAddress({useFullAddress: true}));
@@ -233,7 +240,7 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
 test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
     await page.getByLabel("Apellido").fill(faker.person.lastName());
@@ -250,7 +257,7 @@ test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page 
     await page.getByLabel("Dni").last().fill("3288180"); //Como me detecta dos dni, elijo el ultimo que es el del padre
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
-    await page.getByLabel("Apellido").fill(faker.person.lastName());
+    await page.getByLabel("Apellido").last().fill(faker.person.lastName());
     await page.getByLabel("Dirección").fill(faker.location.streetAddress({useFullAddress: true}));
     await page.getByLabel("Correo electrónico").fill(faker.internet.email());
     await page.getByLabel("Correo electrónico").fill("test2@gmail.com");
@@ -268,10 +275,10 @@ test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page 
 test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ page }) => {
     await page.goto('http://localhost:3000/student/add');
 
-    await page.getByLabel("Dni").fill((Math.random() * 100000000).toString().substring(0, 8));
+    await page.getByLabel("Dni").fill(randomDNI());
     await page.getByLabel("Número de teléfono").fill(faker.phone.number({style: 'international'}));
     await page.getByLabel("Nombre").fill(faker.person.firstName());
-    await page.getByLabel("Apellido").fill(faker.person.lastName());
+    await page.getByLabel("Apellido").last().fill(faker.person.lastName());
     await page.getByLabel("Dirección").fill(faker.location.streetAddress({useFullAddress: true}));
     await page.getByLabel("Correo electrónico").fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
@@ -283,10 +290,10 @@ test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
    
-    await page.getByLabel("Dni").last().fill((Math.random() * 100000000).toString().substring(0, 8)); //Como me detecta dos dni, elijo el ultimo que es el del padre
+    await page.getByLabel("Dni").last().fill(randomDNI()); //Como me detecta dos dni, elijo el ultimo que es el del padre
     await page.getByLabel("Número de teléfono").fill("291522");
     await page.getByLabel("Nombre").fill(faker.person.firstName());
-    await page.getByLabel("Apellido").fill(faker.person.lastName());
+    await page.getByLabel("Apellido").last().fill(faker.person.lastName());
     await page.getByLabel("Dirección").fill(faker.location.streetAddress({useFullAddress: true}));
     await page.getByLabel("Correo electrónico").fill(faker.internet.email());
 

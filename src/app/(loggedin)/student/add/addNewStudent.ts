@@ -3,10 +3,10 @@ import getPrismaClient from '@/lib/prisma';
 import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
 import {redirect} from "next/navigation";
-const prisma = getPrismaClient({id: 1, role: "Administrator"});
-
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
 export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number) {
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         await prisma.$transaction(async (prisma) => {
             const student = await prisma.student.create({

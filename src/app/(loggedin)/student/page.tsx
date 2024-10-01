@@ -18,7 +18,6 @@ export default async function StudentListPage({
 
 
     const results = await getStudents(page, dni, lastName);
-    console.log(results)
     const count = await countStudents();
 
 

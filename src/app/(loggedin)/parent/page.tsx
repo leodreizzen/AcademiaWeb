@@ -22,7 +22,6 @@ export default async function ParentListPage({
 
 
     const results = await getParents(page, dni, lastName);
-    console.log(results)
     const count = await countParents();
 
 

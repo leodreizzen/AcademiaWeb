@@ -1,14 +1,8 @@
 'use server';
-
-
-
-import getPrismaClient from "@/app/lib/prisma";
-
-const prisma = getPrismaClient({id: 1, role: "Administrator"});
-
-
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
 export async function fetchStudents(page: number) {
+    const prisma = await getCurrentProfilePrismaClient()
     const NUMBER_OF_PRODUCTS = 10;
     try {
 
@@ -26,6 +20,7 @@ export async function fetchStudents(page: number) {
 }
 
 export async function countStudents() {
+    const prisma = await getCurrentProfilePrismaClient()
     try {
         return await prisma.student.count();
     } catch (error) {

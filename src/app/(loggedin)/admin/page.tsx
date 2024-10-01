@@ -1,5 +1,7 @@
 'use client';
 
+import {assertPermission} from "@/lib/access_control";
+import {Resource} from "@/lib/operation_list";
 import { useEffect, useState } from "react";
 import { getAdmins, getTotalAdmins } from "./getAdmins";
 import AdminItem from "./adminItem";
@@ -20,11 +22,15 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
     const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page });
 
     useEffect(() => {
+        const verifyPermission = async () => {
+            await assertPermission( {resource: Resource.ADMINISTRATOR, operation: "LIST"});
+        };
         const fetchTotalAdministrators = async () => {
             const countAdministrators = await getTotalAdmins();
             setTotalPages(Math.ceil(countAdministrators / ADMINS_PER_PAGE));
         };
         fetchTotalAdministrators();
+        verifyPermission();
     }, []);
     useEffect(() => {
         const fetchAdministrators = async () => {
@@ -47,7 +53,6 @@ export default function AdminListPage({ searchParams }: { searchParams: AdminLis
     const handleRemove = (id: number) => {
         // TODO: remove administrator
     };
-    
     return (
         <div className="w-full flex flex-col items-center justify-center min-h-screen">
             <div className="p-8 bg-[#212937] rounded-lg">

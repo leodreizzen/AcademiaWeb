@@ -1,15 +1,12 @@
-/*
-* Imports de autenticacion
-* */
+import {auth} from "@/auth";
+import {redirect} from "next/navigation";
+import LoginForm from "@/components/ui/LoginForm";
 
-export default function LogInPage() {
-    return (
-        <div className=" w-full flex flex-col items-center justify-center min-h-screen relative">
-            <div className=" absolute">
-                <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
-                </div>
-            UN LOG IN LOCO
-            </div>
-        </div>
-    );
+export default async function LoginPage({searchParams: {callbackUrl}}: {searchParams: {callbackUrl?: string}}) {
+    if ((await auth())?.user) {
+        redirect(callbackUrl ?? "/")
+    }
+    else {
+        return <LoginForm/>
+    }
 }

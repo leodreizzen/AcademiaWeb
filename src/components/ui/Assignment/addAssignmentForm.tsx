@@ -8,7 +8,7 @@ import { TextArea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/ui/Assignment/fileupload";
 import { submitAssignment } from "@/app/server-actions/submitAssignment";
 
-export default function ClientAddAssignmentForm() {
+export default function AddAssignmentForm() {
   const [errors, setErrors] = useState<Partial<Record<"file" | "title" | "description", string[]>> | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 

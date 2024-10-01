@@ -94,7 +94,7 @@ export default function AddAssignmentForm() {
             id="file"
             name="file"
             type="file"
-            className="w-2/3"
+            className="w-3/3"
             required
             onChange={(e) => setFile(e.target.files?.[0] || null)}
           />

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import DownloadAssignment from "./downloadAssingment";
 import { getAssignments } from "@/app/server-actions/getAssignments";
+import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
 import { AssignmentListProps } from "@/types/assignment";
-
 
 export default function TPListPage({ initialAssignments }: AssignmentListProps) {
   const [assignments, setAssignments] = useState(initialAssignments);
@@ -20,6 +20,18 @@ export default function TPListPage({ initialAssignments }: AssignmentListProps) 
 
     fetchAssignments();
   }, []);
+
+  const handleDelete = async (assignmentId: string) => {
+    const confirmed = confirm("¿Estás seguro de que deseas eliminar esta asignación?");
+    if (confirmed) {
+      try {
+        await deleteAssignment(assignmentId); // Llama a tu función para eliminar la asignación
+        setAssignments(assignments.filter(assignment => assignment.id.toString() !== assignmentId)); // Actualiza el estado
+      } catch (error) {
+        console.error("Error al eliminar la asignación:", error);
+      }
+    }
+  };
 
   return (
     <div className="w-full flex flex-col relative ">
@@ -39,7 +51,15 @@ export default function TPListPage({ initialAssignments }: AssignmentListProps) 
                     <p className="text-sm ">{assignment.description}</p>
                   )}
                 </div>
-                <DownloadAssignment fileId={assignment.id.toString()} />
+                <div className="flex space-x-2">
+                  <DownloadAssignment fileId={assignment.id.toString()} />
+                  <button
+                    onClick={() => handleDelete(assignment.id.toString())}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

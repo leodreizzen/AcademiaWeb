@@ -1,10 +1,10 @@
 'use server';
-import getPrismaClient from '@/app/lib/prisma';
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
-const prisma = getPrismaClient({id: 1, role: "Administrator"});
 
 
 export async function fetchGrades() {
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.grade.findMany({
             include: {students: false, subjects: false},

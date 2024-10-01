@@ -1,11 +1,11 @@
 'use server';
-import getPrismaClient from '@/app/lib/prisma';
 import {revalidatePath} from "next/cache";
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
 
 
 export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number) {
-    const prisma = getPrismaClient({id: 1, role: "Administrator"});
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         await prisma.$transaction(async (prisma) => {
             const parent = await prisma.parent.create({

@@ -1,8 +1,9 @@
 'use server';
-import getPrismaClient from "@/app/lib/prisma";
 //TODO: QUITAR EL HARDCODEADO DE ID Y ROLE
-const prisma = getPrismaClient({id: 1, role: "Administrator"});
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+
 export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number) {
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         if (dni) {
             const NUMBER_OF_PRODUCTS = 10;

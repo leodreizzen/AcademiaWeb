@@ -1,7 +1,8 @@
 'use server';
-import getPrismaClient from '@/app/lib/prisma';
+import getPrismaClient from '@/lib/prisma';
 import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
+import {redirect} from "next/navigation";
 const prisma = getPrismaClient({id: 1, role: "Administrator"});
 
 
@@ -33,11 +34,11 @@ export async function addStudent(phoneNumber: string, address: string, email: st
             });
             console.log(`Student created with ID: ${student.id}`);
             revalidatePath("/student");
-
          } );
     } catch (error) {
         console.error("Error adding student:", error);
     }
+    redirect("/student");
 }
 
 

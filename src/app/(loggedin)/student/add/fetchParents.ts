@@ -1,7 +1,8 @@
 'use server';
-import getPrismaClient from "@/app/lib/prisma";
-const prisma = getPrismaClient({id: 1, role: "Administrator"});
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+
 export async function fetchParents(page: number) {
+    const prisma = await getCurrentProfilePrismaClient();
     const NUMBER_OF_PRODUCTS = 10;
     try {
         return await prisma.parent.findMany({
@@ -17,6 +18,7 @@ export async function fetchParents(page: number) {
     }
 }
 export async function countParents() {
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.parent.count();
     } catch (error) {

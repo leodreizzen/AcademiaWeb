@@ -17,13 +17,16 @@ export default function AdminItem({ administrator, onView, onEdit, onRemove }: A
                 <p className="text-sm mt-2">DNI: {administrator.user.dni}</p>
             </div>
             <div className="flex items-center gap-4">
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200" onClick={() => onView(administrator.id)}>
+                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onView(administrator.id)}
+                    disabled>
                     Ver
                 </button>
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200" onClick={() => onEdit(administrator.id)}>
+                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onEdit(administrator.id)}
+                    disabled>
                     Editar
                 </button>
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200" onClick={() => onRemove(administrator.id)}>
+                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onRemove(administrator.id)}
+                    disabled>
                     Borrar
                 </button>
             </div>

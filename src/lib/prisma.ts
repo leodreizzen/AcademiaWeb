@@ -10,8 +10,7 @@ function createPrismaClient(){
         {
             transactionOptions: {
                 maxWait: 10000,
-                timeout: 10000,
-                isolationLevel: 'Serializable'
+                timeout: 10000
             }
         }
     );

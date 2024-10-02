@@ -6,11 +6,19 @@ import {enhance} from "@zenstackhq/runtime";
 let prisma: ReturnType<typeof createPrismaClient>;
 
 function createPrismaClient(){
-    return new PrismaClient()
+    return new PrismaClient(
+        {
+            transactionOptions: {
+                maxWait: 10000,
+                timeout: 10000,
+                isolationLevel: 'Serializable'
+            }
+        }
+    );
 }
 
 if (process.env.NODE_ENV === 'production') {
-    prisma = createPrismaClient();
+    prisma = createPrismaClient( );
 } else {
     const globalWithPrisma = globalThis as typeof globalThis & {
         prisma: ReturnType<typeof createPrismaClient>;

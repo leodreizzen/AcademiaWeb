@@ -123,7 +123,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await expect(page).toHaveURL('http://localhost:3000/student/add');
 
-    await expect(page.locator('text="Registrar Alumno"')).toBeVisible();
+    expect(await page.locator('text="Registrar Alumno"')).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 
@@ -170,7 +170,7 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await expect(page).toHaveURL('http://localhost:3000/student/add');
     await page.waitForTimeout(1000);
-    await expect(page.locator('text="Registrar Alumno"')).toBeVisible();
+    expect(await page.locator('text="Registrar Alumno"')).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 });
@@ -200,7 +200,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     await expect(page).toHaveURL('http://localhost:3000/student/add');
     
-    await expect(page.locator('text="Registrar Alumno"')).toBeVisible();
+    expect(await page.locator('text="Registrar Alumno"')).toBeVisible();
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 
 });
@@ -230,7 +230,7 @@ test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) 
     );
 
     await page.locator('button[type="submit"]').click();
-    await expect(page.getByText("Asociar Responsable")).toBeVisible();
+    expect(await page.getByText("Asociar Responsable")).toBeVisible();
 
 
 
@@ -260,7 +260,7 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
     );
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-    await expect(page.getByText("Asociar Responsable")).toBeVisible();
+    expect(await page.getByText("Asociar Responsable")).toBeVisible();
 
 
 

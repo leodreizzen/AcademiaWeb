@@ -11,7 +11,7 @@ type SubjectsPerYear = {
 export default async function TeacherInformationPage({params} : {params: {id: string}}) {
 
     await assertPermission({resource: Resource.TEACHER, operation: "READ"});
-    const teacher = await getTeacherInfo(params.id)
+    const teacher = await getTeacherInfo(Number(params.id))
 
     if (!teacher) {
         return <div>Docente no encontrado</div>

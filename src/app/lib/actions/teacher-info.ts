@@ -1,11 +1,10 @@
-import getPrismaClient from "@/app/lib/prisma";
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
-const prisma = getPrismaClient({role: "Superuser", id: 1})
-
-export default async function getTeacherInfo(id: string) {
-    return prisma.teacher.findUnique({
+export default async function getTeacherInfo(id: number) {
+    const prisma = await getCurrentProfilePrismaClient()
+    return prisma.teacher.findFirst({
         where: {
-            id: parseInt(id)
+            id: id
         },
         select: {
             dni: true,

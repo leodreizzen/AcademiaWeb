@@ -123,7 +123,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await expect(page).toHaveURL('http://localhost:3000/student/add');
     await page.waitForTimeout(1000);
-    await expect(page.getByText("Registrar Alumno")).toBeVisible();
+    await expect(page.getByText("Nuevo Alumno")).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 

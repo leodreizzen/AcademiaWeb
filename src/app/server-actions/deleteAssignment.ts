@@ -19,10 +19,10 @@ const session: {
     role: session.user.role,
   });
 
-export async function deleteAssignment(assignmentId: string) {
+export async function deleteAssignment(assignmentId: number) {
   try {
     const assignment = await prisma.assignment.delete({
-      where: { id: parseInt(assignmentId) },
+      where: { id: assignmentId },
     });
     return { success: true, assignment };
   } catch (error) {

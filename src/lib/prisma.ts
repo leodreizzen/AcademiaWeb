@@ -6,7 +6,15 @@ import {enhance} from "@zenstackhq/runtime";
 let prisma: ReturnType<typeof createPrismaClient>;
 
 function createPrismaClient(){
-    return new PrismaClient()
+    return new PrismaClient(
+        {
+            transactionOptions: {
+                maxWait: 20000,
+                timeout: 10000,
+                isolationLevel: 'Serializable'
+            }
+        }
+    )
 }
 
 if (process.env.NODE_ENV === 'production') {

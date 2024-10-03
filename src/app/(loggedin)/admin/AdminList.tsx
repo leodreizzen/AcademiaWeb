@@ -5,6 +5,7 @@ import { AdministatorUser, AdminQuery } from "./types";
 import { getAdmins, getTotalAdmins } from "./getAdmins";
 import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
+import { usePathname, useRouter } from "next/navigation";
 
 interface AdminListProps {
     pageQuery?: number;
@@ -19,6 +20,8 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+    const { replace } = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         const fetchTotalAdministrators = async () => {
@@ -37,6 +40,11 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
 
     const searchAdministrator = () => {
         setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+        const params = new URLSearchParams({
+            dni: dni ?? '',
+            lastName: lastName ?? ''
+        });
+        replace(`${pathname}?${params.toString()}`);
     };
 
     const handleChangeDni = (newDNI: string) => {

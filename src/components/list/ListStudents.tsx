@@ -8,6 +8,7 @@ import { Search, Edit, Eye, Plus } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls"
 import { StudentWithUser } from "@/app/(loggedin)/student/data"
 import { usePathname, useRouter } from "next/navigation"
+import { removeStudent } from '@/app/(loggedin)/student/removeStudents';
 
 type PrincipalProps = {
   data: StudentWithUser[];
@@ -20,7 +21,7 @@ type PrincipalProps = {
 export function ListStudents({ data, count }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
-  const { replace, push } = useRouter();
+  const { replace, push, refresh } = useRouter();
   const pathname = usePathname();
 
   const handleSearch = () => {
@@ -50,6 +51,13 @@ export function ListStudents({ data, count }: PrincipalProps) {
   const handleView = (id: number) => {
     console.log(`View student with id: ${id}`)
     // Implement view functionality here
+  }
+
+  const handleRemove = async (id: number) => {
+    const doRemove = await removeStudent(id);
+    if (doRemove) {
+      refresh();
+    }
   }
 
   const handleCreate = () => {
@@ -100,6 +108,9 @@ export function ListStudents({ data, count }: PrincipalProps) {
                       </Button>
                       <Button variant="outline" size="sm" onClick={() => handleView(student.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Eye className="mr-2 h-4 w-4" /> Ver
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleRemove(student.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                        <Eye className="mr-2 h-4 w-4" /> Borrar
                       </Button>
                     </div>
                   </CardContent>

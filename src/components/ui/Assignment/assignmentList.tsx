@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DownloadAssignment from "./downloadAssingment";
-import { getAssignments } from "@/app/server-actions/getAssignments";
+import { getAssignments } from "@/app/(loggedin)/assignment/add/getAssignments";
 import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
 import { AssignmentType } from "@/types/assignment";
 import { Button } from "../button";
@@ -12,14 +12,14 @@ import { Card, CardContent } from "../card";
 import { usePathname, useRouter } from "next/navigation";
 import PaginationControls from "./PaginationControls";
 
-interface TPListPageProps {
+type TPListPageProps = {
   initialAssignments: AssignmentType[];
+  count: number;
 }
 
-export default function TPListPage({ initialAssignments }: TPListPageProps) {
+export default function TPListPage({ initialAssignments, count }: TPListPageProps) {
   const [assignments, setAssignments] = useState(initialAssignments);
   const [loading, setLoading] = useState(false);
-  const count = initialAssignments.length;
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const { replace, push } = useRouter();
@@ -28,7 +28,8 @@ export default function TPListPage({ initialAssignments }: TPListPageProps) {
   useEffect(() => {
     const fetchAssignments = async () => {
       setLoading(true);
-      const response = await getAssignments();
+      //TODO add page number hook?
+      const response = await getAssignments(0);
       setAssignments(response);
       setLoading(false);
     };

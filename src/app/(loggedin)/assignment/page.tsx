@@ -1,11 +1,24 @@
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
-import { getAssignments } from "@/app/server-actions/getAssignments";
+import { getAssignments } from "@/app/(loggedin)/assignment/add/getAssignments";
 import TPListPage from "@/components/ui/Assignment/assignmentList";
+import { countAssignments } from "./add/fetchAssignments";
 
-export default async function AssignmentPage() {
+export default async function AssignmentPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) {
   await assertPermission({ resource: Resource.ASSIGNMENT, operation: "LIST" });
-  const assignments = await getAssignments();
+  const title = searchParams?.title || "";
+  const subject = searchParams?.subject || "";
+  const page = Number(searchParams?.page) || 1;
+  const COUNT_PER_PAGE = 10;
 
-  return <TPListPage initialAssignments={assignments} />;
+  const assignments = await getAssignments(page, title, subject);
+  const count = await countAssignments();
+
+  const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
+
+  return <TPListPage initialAssignments={assignments} count={numberOfPages} />;
 }

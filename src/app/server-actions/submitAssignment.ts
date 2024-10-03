@@ -10,6 +10,7 @@ const assignmentSchema = z.object({
   materia: z.string(),
 });
 
+//TODO fix session?
 const session: {
   user: {
     dni: number;
@@ -32,13 +33,13 @@ export async function submitAssignment(formData: FormData) {
     const title = formData.get("title");
     const description = formData.get("description") || "";
     const fileUrl = formData.get("fileUrl");
-    const materia = formData.get("materia");
+    const subject = formData.get("subject");
 
     const validatedData = assignmentSchema.parse({
       title,
       description,
       fileUrl,
-      materia,
+      subject,
     });
 
     await prisma.assignment.create({
@@ -46,7 +47,7 @@ export async function submitAssignment(formData: FormData) {
         title: validatedData.title,
         description: validatedData.description,
         fileUrl: validatedData.fileUrl,
-        //materia: validatedData.materia, TODO
+        //subject: validatedData.subject, TODO
       },
     });
 

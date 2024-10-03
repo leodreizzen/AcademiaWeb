@@ -14,10 +14,12 @@ export async function getAdmins({ page, dni, lastName }: AdminQuery) {
             where: {
                 ...(dni && { dni: dni }),
                 ...(lastName && {
-                  lastName: {
-                    contains: lastName,
-                    mode: 'insensitive',
-                  },
+                    user: {
+                        lastName: {
+                          contains: lastName,
+                          mode: 'insensitive',
+                        },
+                    }
                 }),
             },
             include: {

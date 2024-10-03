@@ -75,7 +75,7 @@ test('Email invalido', async ({ page }) => {
 
 
     await expect(page).toHaveURL('http://localhost:3000/student/add');
-    await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
+    await expect(page.locator('text="Registrar Alumno"')).toBeVisible();
 });
 
 test('Año no seleccionado', async ({ page }) => {
@@ -168,8 +168,7 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student/add');
-    await page.waitForTimeout(1000);
+    await expect(page).toHaveURL('http://localhost:3000/student');
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
@@ -198,7 +197,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student/add');
+    await expect(page).toHaveURL('http://localhost:3000/student');
 
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);

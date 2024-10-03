@@ -7,16 +7,18 @@ import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
 
 interface AdminListProps {
-    pageQuery: string;
+    pageQuery?: number;
+    dniQuery?: string;
+    lastNameQuery?: string;
 }
 
-export default function AdminList({ pageQuery }: AdminListProps) {
-    const [page, setPage] = useState(Number(pageQuery) || 1);
-    const [dni, setDni] = useState<string>();
-    const [lastName, setLastName] = useState<string>();
+export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminListProps) {
+    const [page, setPage] = useState(pageQuery ?? 1);
+    const [dni, setDni] = useState<string | undefined>(dniQuery ?? undefined);
+    const [lastName, setLastName] = useState<string | undefined>(dniQuery != null ? undefined : (lastNameQuery ?? undefined));
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
-    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page });
+    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
 
     useEffect(() => {
         const fetchTotalAdministrators = async () => {

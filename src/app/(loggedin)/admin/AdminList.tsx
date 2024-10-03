@@ -35,7 +35,16 @@ export default function AdminList({ pageQuery }: AdminListProps) {
 
     const searchAdministrator = () => {
         setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
-    }
+    };
+
+    const handleChangeDni = (newDNI: string) => {
+        setDni(newDNI);
+        setLastName('');
+    };
+    const handleChangeLastname = (newLastname: string) => {
+        setLastName(newLastname);
+        setDni('');
+    };
     
     const handleView = (id: number) => {
         // TODO: navigate to view administrator page
@@ -56,7 +65,7 @@ export default function AdminList({ pageQuery }: AdminListProps) {
                         name="dni"
                         placeholder="DNI"
                         value={dni}
-                        onChange={e => setDni(e.target.value)}/>
+                        onChange={e => handleChangeDni(e.target.value)}/>
                 </div>
                 <div className="flex mt-4 gap-4">
                     <input className="bg-[#394150] py-2 px-4 rounded-lg grow border border-[#535c6b]"
@@ -64,7 +73,7 @@ export default function AdminList({ pageQuery }: AdminListProps) {
                         name="lastName"
                         placeholder="Apellido"
                         value={lastName}
-                        onChange={e => setLastName(e.target.value)}/>
+                        onChange={e => handleChangeLastname(e.target.value)}/>
                     <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200"
                         type="button" onClick={searchAdministrator}>
                         Buscar

@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import getTeacherInfo from "@/app/lib/actions/teacher-info";
+import {assertPermission} from "@/lib/access_control";
+import {Resource} from "@/lib/operation_list";
 
 type SubjectsPerYear = {
     [year: string]: string[]
@@ -8,7 +10,7 @@ type SubjectsPerYear = {
 
 export default async function TeacherInformationPage({params} : {params: {id: string}}) {
 
-
+    await assertPermission({resource: Resource.TEACHER, operation: "READ"});
     const teacher = await getTeacherInfo(params.id)
 
     if (!teacher) {
@@ -22,6 +24,8 @@ export default async function TeacherInformationPage({params} : {params: {id: st
         }
         subjectsPerYear[subject.gradeName].push(subject.name)
     })
+
+
 
 
     return (

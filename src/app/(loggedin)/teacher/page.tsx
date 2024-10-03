@@ -1,15 +1,28 @@
-/*
-Imports necesarios
-* */
 
-export default function TeacherListPage() {
+import {ListTeachers} from "@/components/list/ListTeachers";
+import {getTeachers} from "@/app/(loggedin)/teacher/getTeachers";
+import {countTeachers} from "@/app/(loggedin)/teacher/fetchTeacher";
+import {assertPermission} from "@/lib/access_control";
+import {Resource} from "@/lib/operation_list";
+
+export default async function TeacherListPage({
+                                                 searchParams,
+                                             }: {
+    searchParams: { [key: string]: string | undefined }
+}) {
+    const dni = searchParams?.dni || '';
+    const lastName = searchParams?.lastName || '';
+    const page = Number(searchParams?.page) || 1;
+    const COUNT_PER_PAGE = 10;
+
+
+    const results = await getTeachers(page, dni, lastName);
+    const count = await countTeachers();
+
+    await assertPermission({resource: Resource.TEACHER, operation: "LIST"});
+    const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
+
     return (
-        <div className=" w-full flex flex-col items-center justify-center min-h-screen relative">
-            <div className=" absolute">
-                <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
-                </div>
-                listado de teachers :P
-            </div>
-        </div>
+        <ListTeachers data={results} count={numberOfPages} />
     );
 }

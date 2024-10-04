@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Edit, Eye } from 'lucide-react'
+import { Search, Edit, Eye, Trash2 } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls";
 import {ParentWithUser} from "@/app/(loggedin)/parent/data";
 import {usePathname, useRouter} from "next/navigation";
+import { removeParent } from '@/app/(loggedin)/parent/removeParent';
 
 type PrincipalProps = {
   data: ParentWithUser[];
@@ -20,7 +21,7 @@ type PrincipalProps = {
 export function ListParents({ data, count }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
-  const { replace } = useRouter();
+  const { replace, refresh } = useRouter();
   const pathname = usePathname();
 
   const handleSearch = () => {
@@ -51,6 +52,13 @@ export function ListParents({ data, count }: PrincipalProps) {
     console.log(`View parent with id: ${id}`)
     // Implement view functionality here
   }
+  
+  const handleRemove = async (id: number) => {
+    const isRemove = await removeParent(id);
+    if (isRemove) {
+      refresh();
+    }
+  };
 
   return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
@@ -87,12 +95,15 @@ export function ListParents({ data, count }: PrincipalProps) {
                       <p className="font-semibold text-white text-xl">{parent.user.firstName} {parent.user.lastName}</p>
                       <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
                     </div>
-                    <div className="space-x-3">
+                    <div className="space-x-3 text-nowrap">
                       <Button variant="outline" size="default" onClick={() => handleEdit(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </Button>
                       <Button variant="outline" size="default" onClick={() => handleView(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Eye className="mr-2 h-4 w-4" /> Ver
+                      </Button>
+                      <Button variant="outline" size="default" onClick={() => handleRemove(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
+                        <Trash2 className="mr-2 h-4 w-4" /> Borrar
                       </Button>
                     </div>
                   </CardContent>

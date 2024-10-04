@@ -23,10 +23,11 @@ export async function fetchAssignmentsFiltered(
     } else {
       return await prisma.assignment.findMany({
         where: {
+          /* TODO: uncomment
           subject: {
             contains: subject,
             mode: "insensitive",
-          },
+          },*/
         },
       });
     }

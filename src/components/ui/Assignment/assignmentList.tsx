@@ -28,8 +28,7 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
   useEffect(() => {
     const fetchAssignments = async () => {
       setLoading(true);
-      //TODO add page number hook?
-      const response = await getAssignments(0);
+      const response = await getAssignments(1);
       setAssignments(response);
       setLoading(false);
     };

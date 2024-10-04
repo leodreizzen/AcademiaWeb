@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { TextArea } from "@/components/ui/textarea";
 import { submitAssignment } from "@/app/server-actions/submitAssignment";
 import Link from "next/link";
+import { generateSignature, uploadFileToCloudinary } from "@/lib/cloudinary";
 
 export default function AddAssignmentForm() {
   const [errors, setErrors] = useState<Partial<
@@ -19,24 +20,21 @@ export default function AddAssignmentForm() {
   const uploadFile = async () => {
     if (!file) return null;
 
+    const { apiKey, signature, timestamp } = await generateSignature();
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append(
       "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "my_unsigned_preset"
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"
     );
-
+    formData.append("api_key", '841126122268717');
+    formData.append("signature", signature);
+    formData.append("timestamp", timestamp.toString());
     setUploading(true);
     try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/duafjqwy9/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const responseData = await response.json();
-      if (!response.ok) {
+      const responseData = await uploadFileToCloudinary(formData);
+      if (!responseData.secure_url) {
         console.error("Cloudinary Error:", responseData);
         throw new Error(
           `Cloudinary upload failed: ${
@@ -56,16 +54,16 @@ export default function AddAssignmentForm() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
-
     const fileUrl = await uploadFile();
     if (fileUrl) {
       formData.append("fileUrl", fileUrl);
-      formData.append("materia", selectedMateria);
+      formData.append("subject", selectedMateria);
       const response = await submitAssignment(formData);
-
       if (response.success) {
         setSuccessMessage("¡El archivo se ha subido correctamente!");
         setErrors(null);
+        (event.target as HTMLFormElement).reset();
+        setFile(null);
       } else {
         if (response.errors?.fieldErrors) {
           setErrors(response.errors.fieldErrors);

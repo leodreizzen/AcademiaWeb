@@ -7,7 +7,7 @@ const assignmentSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   fileUrl: z.string().url(),
-  materia: z.string(),
+  subject: z.string(),
 });
 
 //TODO fix session?

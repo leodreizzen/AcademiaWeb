@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DownloadAssignment from "./downloadAssingment";
 import { getAssignments } from "@/app/(loggedin)/assignment/add/getAssignments";
 import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
 import { AssignmentType } from "@/types/assignment";
@@ -71,7 +70,12 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
   }
 
   function handleView(id: number): void {
-    console.log("Viewing TP with id", id);
+    const assignment = assignments.find((assignment) => assignment.id === id);
+    if (assignment && assignment.fileUrl) {
+      window.open(assignment.fileUrl, "_blank");
+    } else {
+      console.error("URL not found for assignment with id", id);
+    }
   }
 
   function handleEdit(id: number): void {

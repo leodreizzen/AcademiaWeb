@@ -28,7 +28,7 @@ export default function AddAssignmentForm() {
       "upload_preset",
       process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"
     );
-    formData.append("api_key", '841126122268717');
+    formData.append("api_key", apiKey);
     formData.append("signature", signature);
     formData.append("timestamp", timestamp.toString());
     setUploading(true);

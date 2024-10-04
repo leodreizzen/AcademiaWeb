@@ -1,34 +1,32 @@
-import { Page,expect } from "@playwright/test";
+import { Page, expect } from "@playwright/test";
 
 export async function searchAdminByDni(page: Page, Dni: string) {
-    await page.fill('input[placeholder="DNI"]', Dni);
-    await page.locator('button:has-text("Buscar")').click();
+    await page.getByPlaceholder('DNI').click();
+    await page.getByPlaceholder('DNI').fill(Dni);
+    await page.getByRole('button', { name: 'Buscar' }).click();
 
-    const expectedUrlPattern = new RegExp(`/admin`);
-    await page.waitForURL(expectedUrlPattern);
+    const expectedUrlPattern = new RegExp(`/admin\\?dni=${Dni}&lastName=`);
+    await page.waitForURL(expectedUrlPattern,{waitUntil: 'domcontentloaded'});
 
-    if (await page.isVisible(`text=${'Dni: '+Dni}`)) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    var bool = page.isVisible(`text=${'Dni: ' + Dni}`,{timeout:1000}).then((value) => {
+        return value;
+    });
+
+    return bool;
 
 }
 
 export async function searchAdminByLastName(page: Page, LastName: string) {
-    await page.fill('input[placeholder="Apellido"]', LastName);
+    await page.fill('input[name="lastName"]', LastName);
     await page.locator('button:has-text("Buscar")').click();
 
-    const expectedUrlPattern = new RegExp(`/admin`);
-    await page.waitForURL(expectedUrlPattern);
+    const expectedUrlPattern = new RegExp(`/admin\\?dni=&lastName=${LastName}`);
+    await page.waitForURL(expectedUrlPattern,{waitUntil: 'domcontentloaded'});
 
-    
 
-    if (await page.isVisible(`h3:has-text("${LastName}")`)) {
-        return true;
-    }
-    else {
-        return false;
-    }
+
+    var bool = page.isVisible(`h3:has-text("${LastName}")`,{timeout:1000}).then((value) => {
+        return value;
+    });
+    return bool;
 }

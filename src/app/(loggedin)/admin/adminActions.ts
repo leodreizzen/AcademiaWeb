@@ -45,11 +45,36 @@ export async function getTotalAdmins() {
 export async function removeAdmin(id: number) {
     try {
         const prisma = await getCurrentProfilePrismaClient();
+        const administrator = await prisma.administrator.findUnique({
+            where: {
+                id
+            }
+        });
         await prisma.administrator.delete({
             where: {
                 id
             }
         });
+        const user = await prisma.user.findUnique({
+            where: {
+                dni: administrator!.dni
+            },
+            include: {
+                profiles: true
+            }
+        });
+        if (user?.profiles.length === 1) {
+            await prisma.user.delete({
+                where: {
+                    dni: administrator!.dni
+                }
+            });
+            await prisma.profile.delete({
+                where: {
+                    id: user.profiles[0].id
+                }
+            });
+        }
         return true;
     } catch (error) {
         console.error("Error fetching administrators:", error);

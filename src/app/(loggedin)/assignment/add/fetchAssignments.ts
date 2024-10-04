@@ -24,3 +24,34 @@ export async function countAssignments() {
     return 0;
   }
 }
+
+export async function getAssignmentById(assignmentId: number) {
+  const prisma = await getCurrentProfilePrismaClient();
+  try {
+    return await prisma.assignment.findUnique({
+      where: {
+        id: assignmentId,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching assignment by id:", error);
+    return null;
+  }
+}
+
+export async function updateAssignment(assignmentId: number, data: any) {
+  const prisma = await getCurrentProfilePrismaClient();
+  try {
+    await prisma.assignment.update({
+      where: {
+        id: assignmentId,
+      },
+      data: {
+        title: data.title,
+        description: data.description,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating assignment:", error);
+  }
+}

@@ -79,7 +79,7 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
   }
 
   function handleEdit(id: number): void {
-    console.log("Editing TP with id", id);
+    push(`/assignment/${id}/edit`);
   }
 
   const handleCreate = () => {

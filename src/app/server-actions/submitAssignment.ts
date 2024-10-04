@@ -1,31 +1,13 @@
 'use server';
 
 import { z } from "zod";
-import getPrismaClient from "@/lib/prisma";
+import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 
 const assignmentSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   fileUrl: z.string().url(),
   subject: z.string(),
-});
-
-//TODO fix session?
-const session: {
-  user: {
-    dni: number;
-    role: "Teacher" | "Superuser" | "Student" | "Parent" | "Administrator";
-  };
-} = {
-  user: {
-    dni: 22222222,
-    role: "Teacher",
-  },
-};
-
-const prisma = getPrismaClient({
-  id: session.user.dni,
-  role: session.user.role,
 });
 
 export async function submitAssignment(formData: FormData) {
@@ -41,7 +23,7 @@ export async function submitAssignment(formData: FormData) {
       fileUrl,
       subject,
     });
-
+    const prisma = await getCurrentProfilePrismaClient();
     await prisma.assignment.create({
       data: {
         title: validatedData.title,

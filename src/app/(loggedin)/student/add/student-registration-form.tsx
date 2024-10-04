@@ -130,7 +130,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
 
 
             } else {
-                console.error("Failed to fetch company list")
+                alert("Fallo al buscar los responsables");
             }
         })
     }

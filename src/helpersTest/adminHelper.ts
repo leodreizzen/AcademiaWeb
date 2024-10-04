@@ -8,7 +8,7 @@ export async function searchAdminByDni(page: Page, Dni: string) {
     const expectedUrlPattern = new RegExp(`/admin\\?dni=${Dni}&lastName=`);
     await page.waitForURL(expectedUrlPattern,{waitUntil: 'domcontentloaded'});
 
-    var bool = page.isVisible(`text=${'Dni: ' + Dni}`,{timeout:1000}).then((value) => {
+    let bool = page.isVisible(`text=${'Dni: ' + Dni}`,{timeout:1000}).then((value) => {
         return value;
     });
 
@@ -25,7 +25,7 @@ export async function searchAdminByLastName(page: Page, LastName: string) {
 
 
 
-    var bool = page.isVisible(`h3:has-text("${LastName}")`,{timeout:1000}).then((value) => {
+    let bool = page.isVisible(`h3:has-text("${LastName}")`,{timeout:1000}).then((value) => {
         return value;
     });
     return bool;

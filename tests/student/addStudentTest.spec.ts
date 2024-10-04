@@ -239,9 +239,8 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
-    await page.locator('button[type="submit"]').click();
+    
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
 
     await expect(page.locator('form')).toContainText('Ingrese un dni válido para el estudiante');
 

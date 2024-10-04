@@ -10,7 +10,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentBack";
 import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
-import PaginationControls from "@/app/(loggedin)/student/add/paginationControls";
+import PaginationControlsWithEndpoint from "@/app/(loggedin)/student/add/paginationControlsWithEndpoint";
 import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -36,7 +36,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
     const [searchDNI, setSearchDNI] = useState('')
     const [searchLastName, setSearchLastName] = useState('')
     const [isDialogOpen, setIsDialogOpen] = useState(false)
-
+    const [parents, setParents] = useState<ParentWithUser[]>(data)
     const [selectedParents, setSelectedParents] = useState<ParentWithUser[]>([])
 
     const [grades, setGrades] = useState<string[]>([]);
@@ -123,8 +123,12 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
         searchParams.set("dni", dni);
         searchParams.set("lastName", lastName);
         fetch(`/api/internal/parent?${searchParams.toString()}`).then(async (res) => {
+            let respuestaJson;
             if (res.ok) {
-                setSelectedParents(await res.json() as ParentAPIResponse);
+                respuestaJson = await res.json() as ParentAPIResponse;
+               setParents(respuestaJson);
+
+
             } else {
                 console.error("Failed to fetch company list")
             }
@@ -199,10 +203,11 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label htmlFor="searchDNI" className="text-gray-300">Buscar por DNI</Label>
+
                                             <div className="flex space-x-3">
                                                 <Input
-                                                    type="text"
+                                                    type="number"
+                                                    min="0"
                                                     placeholder="Buscar por DNI"
                                                     value={searchDNI}
                                                     onChange={(e) => handleDniEdit(e.target.value)}
@@ -210,6 +215,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                                 />
                                             </div>
                                         </div>
+
                                         <div className="flex space-x-3">
                                             <Input
                                                 type="text"
@@ -218,13 +224,13 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                                 onChange={(e) => handleLastNameEdit(e.target.value)}
                                                 className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-5 max-w-md"
                                             />
-                                            <Button onClick={handleSearch} variant="secondary"
+                                            <Button type="button" onClick={handleSearch} variant="secondary"
                                                     className="bg-gray-600 hover:bg-gray-500 px-5">
                                                 <Search className="h-5 w-5"/>
                                             </Button>
                                         </div>
                                     </div>
-                                    {data.map((parent) => (
+                                    {parents.map((parent) => (
                                         <Card key={parent.id} className="bg-gray-700">
                                             <CardContent className="flex items-center justify-between p-3">
                                             <div>
@@ -247,7 +253,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                             </CardContent>
                                         </Card>
                                     ))}
-                                    <PaginationControls cantPages={count}/>
+                                    <PaginationControlsWithEndpoint onAction={handlePageChange} currentPage={page} lastPage={count}/>
                                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                                         <DialogTrigger asChild>
                                             <Button className="bg-green-600 text-white hover:bg-green-500 w-full mt-4">

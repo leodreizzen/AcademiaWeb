@@ -9,7 +9,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ParentAPIR
     await assertPermission({resource: Resource.PARENT, operation: "LIST"});
     const searchParams = request.nextUrl.searchParams
     const dni_param = searchParams.get('dni')
-    const lastName = searchParams.get('last_name')
+    const lastName = searchParams.get('lastName')
     const page_param = searchParams.get('page')
 
     if(page_param === ""){

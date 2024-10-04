@@ -11,7 +11,7 @@ export default async function HomePage() {
         redirect("/selectrole")
     }
 
-    let options = homeButtonsByRole[role]
+    const options = homeButtonsByRole[role]
 
     return (
         <div className="h-full bg-gray-900 text-white flex flex-col items-center justify-center p-4">

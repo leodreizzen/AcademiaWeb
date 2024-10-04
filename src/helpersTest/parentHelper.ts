@@ -8,7 +8,7 @@ export async function searchParentByDni(page: Page, Dni: string) {
     const expectedUrlPattern = new RegExp(`/parent\\?dni=${Dni}&lastName=`);
     await page.waitForURL(expectedUrlPattern,{waitUntil: 'domcontentloaded'});
 
-    let bool = page.isVisible(`text=${'Dni: ' + Dni}`,{timeout:1000}).then((value) => {
+    const bool = page.isVisible(`text=${'Dni: ' + Dni}`,{timeout:1000}).then((value) => {
         return value;
     });
 
@@ -26,7 +26,7 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 
 
 
-    let bool = page.isVisible(`p:has-text("${LastName}")`,{timeout:1000}).then((value) => {
+    const bool = page.isVisible(`p:has-text("${LastName}")`,{timeout:1000}).then((value) => {
         return value;
     });
     return bool;

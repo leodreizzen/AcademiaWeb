@@ -231,7 +231,7 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="input-dni"]').fill("4488180");
+    await page.locator('input[id="input-dni"]').fill("448818");
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());

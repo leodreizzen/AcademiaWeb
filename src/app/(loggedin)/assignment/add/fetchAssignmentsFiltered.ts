@@ -11,8 +11,9 @@ export async function fetchAssignmentsFiltered(
   try {
     if (title) {
       const NUMBER_OF_PRODUCTS = 10;
+      const skip = Math.max(0, (page - 1) * NUMBER_OF_PRODUCTS);
       const results = await prisma.assignment.findMany({
-        skip: (page - 1) * NUMBER_OF_PRODUCTS,
+        skip: skip,
         take: NUMBER_OF_PRODUCTS,
         where: {
           title: {
@@ -25,7 +26,7 @@ export async function fetchAssignmentsFiltered(
         },
       });
 
-      return results.map(result => ({
+      return results.map((result) => ({
         ...result,
         subjectName: result.subject.name,
       }));
@@ -36,15 +37,15 @@ export async function fetchAssignmentsFiltered(
             name: {
               contains: subject,
               mode: "insensitive",
-            }
-          }
+            },
+          },
         },
         include: {
           subject: true,
         },
       });
 
-      return results.map(result => ({
+      return results.map((result) => ({
         ...result,
         subjectName: result.subject.name,
       }));

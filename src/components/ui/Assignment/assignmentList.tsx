@@ -14,9 +14,12 @@ import PaginationControls from "./PaginationControls";
 type TPListPageProps = {
   initialAssignments: AssignmentType[];
   count: number;
-}
+};
 
-export default function TPListPage({ initialAssignments, count }: TPListPageProps) {
+export default function TPListPage({
+  initialAssignments,
+  count,
+}: TPListPageProps) {
   const [assignments, setAssignments] = useState(initialAssignments);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
@@ -42,9 +45,7 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
       try {
         await deleteAssignment(assignmentId);
         setAssignments(
-          assignments.filter(
-            (assignment) => assignment.id !== assignmentId
-          )
+          assignments.filter((assignment) => assignment.id !== assignmentId)
         );
       } catch (error) {
         console.error("Error al eliminar la asignación:", error);
@@ -60,6 +61,19 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
 
     replace(`${pathname}?${params.toString()}`);
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!title && !subject) {
+        const data = await getAssignments(1);
+        setAssignments(data);
+      } else {
+        const data = await getAssignments(1, title, subject);
+        setAssignments(data);
+      }
+    };
+
+    fetchData();
+  }, [title, subject]);
 
   function handleTitleEdit(value: string): void {
     setTitle(value);
@@ -101,79 +115,86 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
             Agregar TP
           </Button>
         </div>
+
         {loading ? (
           <p className="text-center">Cargando...</p>
-        ) : assignments.length > 0 ? (
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
-            <Input
-              type="text"
-              placeholder="Buscar por titulo"
-              onChange={(e) => handleTitleEdit(e.target.value)}
-              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
-            />
-            <Input
-              type="text"
-              placeholder="Buscar por materia"
-              onChange={(e) => handleSubjectEdit(e.target.value)}
-              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
-            />
-            <Button
-              onClick={handleSearch}
-              variant="secondary"
-              className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto"
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="mt-6 space-y-4 max-h-[40vh] overflow-y-auto">
-            {assignments.map((assignment) => (
-              <Card key={assignment.id} className="bg-gray-700">
-                <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 space-y-3 sm:space-y-0">
-                  <div>
-                    <p className="font-semibold text-white text-xl">
-                      {assignment.title}
-                    </p>
-                    <p className="text-base text-gray-400 mt-1">
-                      {assignment.subjectName}
-                    </p>
-                  </div>
-                  <div className="flex space-x-3 w-full sm:w-auto">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(assignment.id)}
-                      className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
-                    >
-                      <Edit className="mr-2 h-4 w-4" /> Editar
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleView(assignment.id)}
-                      className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
-                    >
-                      <Eye className="mr-2 h-4 w-4" /> Ver
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(assignment.id)}
-                      className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
-                    >
-                      <Eye className="mr-2 h-4 w-4" /> Borrar
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="mt-6">
-            <PaginationControls cantPages={count} />
-          </div>
-        </div>
         ) : (
-            <p className="text-center text-white text-lg">No hay trabajos prácticos subidos aún.</p>
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <Input
+                type="text"
+                placeholder="Buscar por titulo"
+                onChange={(e) => handleTitleEdit(e.target.value)}
+                className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
+              />
+              <Input
+                type="text"
+                placeholder="Buscar por materia"
+                onChange={(e) => handleSubjectEdit(e.target.value)}
+                className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
+              />
+              <Button
+                onClick={handleSearch}
+                variant="secondary"
+                className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            </div>
+
+            {assignments.length > 0 ? (
+              <div className="mt-6 space-y-4 max-h-[40vh] overflow-y-auto">
+                {assignments.map((assignment) => (
+                  <Card key={assignment.id} className="bg-gray-700">
+                    <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 space-y-3 sm:space-y-0">
+                      <div>
+                        <p className="font-semibold text-white text-xl">
+                          {assignment.title}
+                        </p>
+                        <p className="text-base text-gray-400 mt-1">
+                          {assignment.subjectName}
+                        </p>
+                      </div>
+                      <div className="flex space-x-3 w-full sm:w-auto">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(assignment.id)}
+                          className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                        >
+                          <Edit className="mr-2 h-4 w-4" /> Editar
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleView(assignment.id)}
+                          className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                        >
+                          <Eye className="mr-2 h-4 w-4" /> Ver
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(assignment.id)}
+                          className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                        >
+                          <Eye className="mr-2 h-4 w-4" /> Borrar
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-white text-lg">
+                No hay trabajos prácticos subidos aún.
+              </p>
+            )}
+
+            <div className="mt-6">
+              <PaginationControls cantPages={count} />
+            </div>
+          </div>
         )}
       </div>
     </div>

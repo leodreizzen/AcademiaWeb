@@ -5,9 +5,10 @@ import { AssignmentType } from "@/types/assignment";
 export async function fetchAssignments(page: number): Promise<AssignmentType[]> {
   const prisma = await getCurrentProfilePrismaClient();
   const NUMBER_OF_PRODUCTS = 10;
+  const skip = Math.max(0, (page - 1) * NUMBER_OF_PRODUCTS);
   try {
     const assignments = await prisma.assignment.findMany({
-      skip: (page - 1) * NUMBER_OF_PRODUCTS,
+      skip: skip,
       take: NUMBER_OF_PRODUCTS,
       include: {
         subject: true

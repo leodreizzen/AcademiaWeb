@@ -1,5 +1,6 @@
 import {createClient} from "@1password/sdk"
 import dotenv from "dotenv";
+import crypto from "crypto";
 if(!process.env.CI)
     dotenv.config({path: ".env.local"});
 
@@ -35,6 +36,26 @@ async function loadSecrets() {
     const filePath = path.join(currentDirectory, ".env");
     console.log("Writing secrets to", filePath);
     fs.writeFileSync(filePath, env);
+    const testDataKey= secrets.get("TEST_DATA_KEY")
+    if(!testDataKey){
+        throw new Error("TEST_DATA_KEY is required (change remote secrets)")
+    }
+    decryptTestData(Buffer.from(testDataKey, "hex"));
 }
 
-loadSecrets().catch(err => console.error("Error downloading secrets: " + err.message));
+function decryptTestData(key: Buffer) {
+    console.log("Decrypting test data")
+    const cwd = process.cwd();
+    const encryptedWithIv = fs.readFileSync(path.join(cwd,"prisma","data.json.encrypted"));
+    const iv = encryptedWithIv.subarray(0, 16);
+    const encryptedData = encryptedWithIv.subarray(16);
+
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    let decrypted = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
+
+    const outputFilePath = path.join(cwd, "prisma", "data.json");
+    fs.writeFileSync(outputFilePath, decrypted);
+    console.log(`Decrypted file saved in: ${outputFilePath}`);
+}
+
+loadSecrets().catch(err => console.error("Error downloading secrets: " + err));

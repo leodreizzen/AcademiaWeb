@@ -59,6 +59,7 @@ test.describe('Remove admin', () => {
         await page.waitForURL('/');
 
         console.log('Admin nuevo logeado correctamente');
+        await menuButton.click();
         await logoutButton.click();
 
         await page.waitForURL('/login');
@@ -86,7 +87,7 @@ test.describe('Remove admin', () => {
         await page.fill('input[name="password"]', DNI.toString());
         await page.click('button[type="submit"]');
 
-        expect (await page.locator('text=El usuario no existe').isVisible()  || await page.locator('text=La contraseña ingresada es incorrecta')).toBe(true);
+        await expect(page.locator('body')).toContainText('El usuario no existe');
 
 
     });

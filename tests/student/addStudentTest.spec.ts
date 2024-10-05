@@ -231,6 +231,7 @@ test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) 
     await page.locator('button[type="submit"]').click();
     expect(await page.getByText("Asociar Responsable")).toBeVisible();
 
+    
 
 
 });

@@ -171,7 +171,7 @@ export default function AddAssignmentForm() {
           value={selectedGradeId?.toString() || ""}
           onChange={handleGradeChange}
         >
-          <option value="">Select a grade</option>
+          <option value="">Selecciona un curso</option>
           {grades.map((grade) => (
             <option key={grade.id} value={grade.id.toString()}>
               {grade.name}
@@ -191,7 +191,7 @@ export default function AddAssignmentForm() {
           value={selectedSubjectId?.toString() || ""}
           onChange={(e) => setSelectedSubjectId(Number(e.target.value))}
         >
-          <option value="">Select a subject</option>
+          <option value="">Selecciona una materia</option>
           {grades
             .find((grade) => grade.id === selectedGradeId)
             ?.subjects.map((subject) => (

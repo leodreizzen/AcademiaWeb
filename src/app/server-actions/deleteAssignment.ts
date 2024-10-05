@@ -1,25 +1,9 @@
 'use server'
 
-import getPrismaClient from "@/lib/prisma";
-
-const session: {
-    user: {
-      dni: number;
-      role: "Teacher" | "Superuser" | "Student" | "Parent" | "Administrator";
-    };
-  } = {
-    user: {
-      dni: 22222222,
-      role: "Teacher",
-    },
-  };
-  
-  const prisma = getPrismaClient({
-    id: session.user.dni,
-    role: session.user.role,
-  });
+import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 
 export async function deleteAssignment(assignmentId: number) {
+  const prisma = await getCurrentProfilePrismaClient();
   try {
     const assignment = await prisma.assignment.delete({
       where: { id: assignmentId },

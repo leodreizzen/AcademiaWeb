@@ -6,22 +6,11 @@ import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number) {
     const prisma = await getCurrentProfilePrismaClient()
     try {
-        if (dni) {
+        if (lastName) {
             const NUMBER_OF_PRODUCTS = 10;
             return await prisma.parent.findMany({
                 skip: (page - 1) * NUMBER_OF_PRODUCTS,
                 take: NUMBER_OF_PRODUCTS,
-                where: {
-                    user: {
-                        dni: Number(dni)
-                    }
-                },
-                include : {
-                    user: true
-                }
-            })
-        } else {
-            return await prisma.parent.findMany({
                 where: {
                     user: {
                         lastName: {
@@ -34,6 +23,27 @@ export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastN
                     user: true
                 }
             })
+        } else if(dni){
+            return await prisma.parent.findMany({
+                where: {
+                    user: {
+                        dni: Number(dni)
+                    }
+                },
+                include : {
+                    user: true
+                }
+            })
+        }
+        else{
+            const NUMBER_OF_PRODUCTS = 10;
+            return await prisma.parent.findMany({
+                skip: (page - 1) * NUMBER_OF_PRODUCTS,
+                take: NUMBER_OF_PRODUCTS,
+                include: {
+                    user: true
+                }
+            });
         }
     }
     catch(error)
@@ -42,3 +52,4 @@ export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastN
         return [];
     }
 }
+

@@ -38,7 +38,7 @@ test.beforeEach(async ({ page }) => {
 
        
 
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
+        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
         expect(await searchAdminByDni(page, DNI)).toBe(true);
 
 

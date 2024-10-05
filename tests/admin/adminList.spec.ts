@@ -24,7 +24,7 @@ test.describe('Testing listado admin', () => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
+        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
         await expect(await searchAdminByDni(page, DNISeeded)).toBeTruthy();
         
     });
@@ -36,7 +36,7 @@ test.describe('Testing listado admin', () => {
         
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
+        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
 
         await expect(await searchAdminByDni(page, '123456789')).toBeFalsy();
         

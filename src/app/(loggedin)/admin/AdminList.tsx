@@ -72,7 +72,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
         push('/admin/add');
     };
     return (
-        <div className="w-full flex flex-col items-center justify-center min-h-screen text-white">
+        <div className="w-full flex flex-col items-center justify-center min-h-screen text-white bg-gray-900">
             <div className="p-8 bg-[#212937] rounded-lg">
                 <div className="flex justify-between">
                     <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>

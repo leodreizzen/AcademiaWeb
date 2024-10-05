@@ -63,15 +63,10 @@ export async function removeAdmin(id: number) {
                 profiles: true
             }
         });
-        if (user?.profiles.length === 1) {
+        if (user?.profiles.length === 0) {
             await prisma.user.delete({
                 where: {
                     dni: administrator!.dni
-                }
-            });
-            await prisma.profile.delete({
-                where: {
-                    id: user.profiles[0].id
                 }
             });
         }

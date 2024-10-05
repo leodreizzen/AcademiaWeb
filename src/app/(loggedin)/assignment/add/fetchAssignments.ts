@@ -1,14 +1,23 @@
 "use server";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import { AssignmentType } from "@/types/assignment";
 
-export async function fetchAssignments(page: number) {
+export async function fetchAssignments(page: number): Promise<AssignmentType[]> {
   const prisma = await getCurrentProfilePrismaClient();
   const NUMBER_OF_PRODUCTS = 10;
   try {
-    return await prisma.assignment.findMany({
+    const assignments = await prisma.assignment.findMany({
       skip: (page - 1) * NUMBER_OF_PRODUCTS,
       take: NUMBER_OF_PRODUCTS,
+      include: {
+        subject: true
+      }
     });
+
+    return assignments.map(assignment => ({
+      ...assignment,
+      subjectName: assignment.subject.name
+    }));
   } catch (error) {
     console.error("Error fetching assignments:", error);
     return [];

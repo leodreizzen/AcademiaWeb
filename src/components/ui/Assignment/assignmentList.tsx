@@ -135,7 +135,7 @@ export default function TPListPage({ initialAssignments, count }: TPListPageProp
                       {assignment.title}
                     </p>
                     <p className="text-base text-gray-400 mt-1">
-                      {assignment.description}
+                      {assignment.subjectName}
                     </p>
                   </div>
                   <div className="flex space-x-3 w-full sm:w-auto">

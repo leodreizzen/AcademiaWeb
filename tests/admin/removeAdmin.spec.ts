@@ -13,11 +13,11 @@ test.describe('Remove admin', () => {
     test('Eliminar admin, luego no se puede logear ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
-        //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
+        
         await page.locator('button:has-text("Agregar administrador")').click();
-        //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
+        
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
         await page.fill('input[id="input-firstName"]', faker.person.firstName());
@@ -67,7 +67,7 @@ test.describe('Remove admin', () => {
 
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();;
 
         await searchAdminByDni(page, DNI);
         await page.locator('button:has-text("Borrar")').click();

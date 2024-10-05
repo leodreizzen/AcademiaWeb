@@ -11,23 +11,18 @@ export async function addParent(phoneNumber: string, address: string, email: str
         return await prisma.$transaction(async (prisma) => {
             const existingProfile = await prisma.profile.findFirst({
                 where: {
-                    OR:[
-                        {
-                            dni: dni,
-                            role: "Student"
-                        },
-                        {
-                            dni: dni,
-                            role: "Parent",
-                        }
-                    ]
+                    dni: dni
                 }
             })
-            if(existingProfile)
-                return {
-                    success: false,
-                    error: `Ya existe un ${existingProfile.role == "Parent"? "padre" : "alumno"} con ese dni`
+            if(existingProfile){
+                if(existingProfile.role == "Student" || existingProfile.role == "Parent"){
+                    return {
+                        success: false,
+                        error: `Ya existe un ${existingProfile.role == "Student"? "alumno" : "responsable"} con ese dni`
+                    }
                 }
+            }
+
 
             const parent = await prisma.parent.create({
                 data: {
@@ -35,11 +30,16 @@ export async function addParent(phoneNumber: string, address: string, email: str
                     email: email,
                     address: address,
                     user: {
-                        create: {
-                            firstName: name,
-                            lastName: surname,
-                            dni: dni,
-                            password: dni.toString()
+                        connectOrCreate: {
+                            where: {
+                                dni: dni
+                            },
+                            create: {
+                                firstName: name,
+                                lastName: surname,
+                                dni: dni,
+                                password: dni.toString()
+                            }
                         }
                     }
                 },

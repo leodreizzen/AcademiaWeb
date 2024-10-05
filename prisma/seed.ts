@@ -1,12 +1,24 @@
 import {PrismaClient} from "@prisma/client";
 import {enhance, PrismaClient as zPrismaClient} from "@zenstackhq/runtime";
-import {Faker, es} from '@faker-js/faker'
+import fs from "fs";
+import {PersonListSchema, PersonList, StudentType} from "@/lib/models/seeder/person";
 
-const faker = new Faker({locale: [es]})
 const prisma: zPrismaClient = enhance(new PrismaClient(), {user: {role: "Superuser", id: 1}} );
 
+
+const grades = ["1º año", "2º año", "3º año", "4º año", "5º año", "6° año"]
+
+function getJsonFromFile(path: string){
+    const rawdata = fs.readFileSync(path).toString();
+    return JSON.parse(rawdata);
+}
+
+
+const dataRaw = getJsonFromFile("data.json")
+
+const data: PersonList = PersonListSchema.parse(dataRaw)
+
 async function createGrades(prisma: zPrismaClient) {
-    const grades = ["1º año", "2º año", "3º año", "4º año", "5º año", "6° año"]
     for (const grade of grades) {
         await prisma.grade.create({
             data: {
@@ -17,7 +29,6 @@ async function createGrades(prisma: zPrismaClient) {
 }
 
 async function createSubjects(prisma: zPrismaClient) {
-    const grades = ["1º año", "2º año", "3º año", "4º año", "5º año", "6° año"]
     const subjects = ["Matemáticas", "Lengua", "Historia", "Geografía", "Biología", "Física", "Química", "Educación Física", "Arte", "Música", "Inglés", "Computación"]
     for (const grade of grades) {
         for (const subject of subjects) {
@@ -37,180 +48,96 @@ async function createSubjects(prisma: zPrismaClient) {
 
 
 async function createUsers(prisma: zPrismaClient) {
-    const email = "leodreizzen@gmail.com"
-    const student = await prisma.student.create({
-        data: {
-            phoneNumber: faker.phone.number({style: 'international'}),
-            email: email,
-            grade: {
-                connect: {
-                    name: "1º año"
-                }
-            },
-            address: faker.location.streetAddress({useFullAddress: true}),
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 11111111,
-                    password: "alumno"
-                }
+
+    for (const person of data) {
+        await prisma.user.create({
+            data: {
+                dni: person.dni,
+                firstName: person.firstName,
+                lastName: person.lastName,
+                password: person.password,
             }
+        })
+
+        if(person.roles.includes("student")){
+            const student = person as StudentType
+
+            /* Its assumed parents are created before students */
+
+            const parents = await prisma.parent.findMany({
+                where: {
+                    dni: {
+                        in: student.parentDnis
+                    }
+                }
+            })
+            await prisma.student.create({
+                data: {
+                    parents: {
+                        connect: parents
+                    },
+                    user: {
+                        connect: {
+                            dni: person.dni
+                        }
+                    },
+                    grade: {
+                        connect: {
+                            name: grades[Math.floor(Math.random() * grades.length)]
+                        }
+                    },
+                    address: person.address,
+                    phoneNumber: person.phoneNumber,
+                    email: person.email
+                }
+            })
         }
-    })
 
-    const parentTeacherStudent = await prisma.student.create({
-        data: {
-            phoneNumber: faker.phone.number({style: 'international'}),
-            email: email,
-            grade: {
-                connect: {
-                    name: "1º año"
+        if (person.roles.includes("teacher")) {
+            await prisma.teacher.create({
+                data: {
+                    user: {
+                        connect: {
+                            dni: person.dni
+                        }
+                    },
+                    address: person.address,
+                    phoneNumber: person.phoneNumber,
+                    email: person.email
                 }
-            },
-            address: faker.location.streetAddress({useFullAddress: true}),
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 55555555,
-                    password: "alumno"
-                }
-            }
+            })
         }
-    })
 
-    await prisma.teacher.create({
-        data: {
-            phoneNumber: faker.phone.number({style: 'international'}),
-            email: email,
-            address: faker.location.streetAddress({useFullAddress: true}),
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 22222222,
-                    password: "profesor"
+        if (person.roles.includes("parent")) {
+            await prisma.parent.create({
+                data: {
+                    user: {
+                        connect: {
+                            dni: person.dni
+                        }
+                    },
+                    address: person.address,
+                    phoneNumber: person.phoneNumber,
+                    email: person.email
                 }
-            },
-            subjects: {
-                connect: {
-                    id: 2
-                }
-            }
+            })
         }
-    })
 
-    await prisma.administrator.create({
-        data: {
-            phoneNumber: faker.phone.number({style: 'international'}),
-            email: email,
-            address: faker.location.streetAddress({useFullAddress: true}),
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 33333333,
-                    password: "admin"
+        if (person.roles.includes("administrator")) {
+            await prisma.administrator.create({
+                data: {
+                    user: {
+                        connect: {
+                            dni: person.dni
+                        }
+                    },
+                    address: person.address,
+                    phoneNumber: person.phoneNumber,
+                    email: person.email
                 }
-            }
+            })
         }
-    })
-
-    await prisma.parent.create({
-        data: {
-            phoneNumber: faker.phone.number({style: 'international'}),
-            email: email,
-            address: faker.location.streetAddress({useFullAddress: true}),
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 44444444,
-                    password: "padre"
-                }
-            },
-            children: {
-                connect: {
-                    id: student.id
-                }
-            }
-        }
-    })
-
-    const parentTeacherPhoneNumber = faker.phone.number({style: 'international'})
-    const parentTeacherAddress = faker.location.streetAddress({useFullAddress: true})
-
-    await prisma.parent.create({
-        data: {
-            phoneNumber: parentTeacherPhoneNumber,
-            email: email,
-            address: parentTeacherAddress,
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 66666666,
-                    password: "padre"
-                }
-            },
-            children: {
-                connect: {
-                    id: parentTeacherStudent.id
-                }
-            }
-        }
-    })
-
-    await prisma.teacher.create({
-        data: {
-            phoneNumber: parentTeacherPhoneNumber,
-            email: email,
-            address: parentTeacherAddress,
-            user: {
-                connect: {
-                    dni: 66666666
-                }
-            },
-            subjects: {
-                connect: {
-                    id: 1
-                }
-            }
-        }
-    })
-
-    const teacherAdminPhoneNumber = faker.phone.number({style: 'international'})
-    const teacherAdminAddress = faker.location.streetAddress({useFullAddress: true})
-
-    await prisma.teacher.create({
-        data: {
-            phoneNumber: teacherAdminPhoneNumber,
-            email: email,
-            address: teacherAdminAddress,
-            user: {
-                create: {
-                    firstName: faker.person.firstName(),
-                    lastName: faker.person.lastName(),
-                    dni: 77777777,
-                    password: "profesor"
-                }
-            }
-        }
-    })
-
-    await prisma.administrator.create({
-        data: {
-            phoneNumber: teacherAdminPhoneNumber,
-            email: email,
-            address: teacherAdminAddress,
-            user: {
-                connect: {
-                    dni: 77777777
-                }
-            }
-        }
-    })
+    }
 }
 
 async function seed(){

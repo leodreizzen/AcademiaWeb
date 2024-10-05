@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { z } from "zod";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
@@ -8,6 +8,7 @@ const assignmentSchema = z.object({
   description: z.string().optional(),
   fileUrl: z.string().url(),
   subject: z.string(),
+  grade: z.string(),
 });
 
 export async function submitAssignment(formData: FormData) {
@@ -16,12 +17,14 @@ export async function submitAssignment(formData: FormData) {
     const description = formData.get("description") || "";
     const fileUrl = formData.get("fileUrl");
     const subject = formData.get("subject");
+    const grade = formData.get("grade");
 
     const validatedData = assignmentSchema.parse({
       title,
       description,
       fileUrl,
       subject,
+      grade,
     });
     const prisma = await getCurrentProfilePrismaClient();
     await prisma.assignment.create({
@@ -29,7 +32,7 @@ export async function submitAssignment(formData: FormData) {
         title: validatedData.title,
         description: validatedData.description,
         fileUrl: validatedData.fileUrl,
-        //subject: validatedData.subject, TODO
+        subjectId: Number(validatedData.subject),
       },
     });
 

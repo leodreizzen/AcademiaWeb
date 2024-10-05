@@ -12,7 +12,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin (CASO POSITIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();
@@ -49,7 +49,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin DNI (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();
@@ -72,7 +72,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin nombre (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();
@@ -95,7 +95,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin apellido (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();
@@ -118,7 +118,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin telefono (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();
@@ -141,7 +141,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin email (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();
@@ -164,7 +164,7 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin direccion (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
         await page.locator('button:has-text("Agregar administrador")').click();

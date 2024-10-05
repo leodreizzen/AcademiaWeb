@@ -16,7 +16,7 @@ test.describe('Remove admin', () => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -39,7 +39,7 @@ test.describe('Remove admin', () => {
 
 
 
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
+        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
         expect(await searchAdminByDni(page, DNI)).toBe(true);
 
 

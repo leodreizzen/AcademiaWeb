@@ -20,7 +20,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
-    const { replace } = useRouter();
+    const { replace, push } = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
@@ -68,10 +68,19 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
             setAdministrators(administrators.filter(admin => admin.id !== id));
         }
     };
+    const handleAdd = () => {
+        push('/admin/add');
+    };
     return (
         <div className="w-full flex flex-col items-center justify-center min-h-screen text-white">
             <div className="p-8 bg-[#212937] rounded-lg">
-                <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
+                <div className="flex justify-between">
+                    <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
+                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200"
+                        type="button" onClick={handleAdd}>
+                        Agregar administrador
+                    </button>
+                </div>
                 <div className="mt-8">
                     <input className="bg-[#394150] py-2 px-4 rounded-lg w-full border border-[#535c6b]"
                         type="text"

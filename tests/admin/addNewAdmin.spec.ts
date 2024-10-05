@@ -3,7 +3,6 @@ import { login } from '@/helpersTest/loginHelper';
 import { searchAdminByDni, searchAdminByLastName } from '@/helpersTest/adminHelper';
 import { randomDNI } from '@/helpersTest/studentHelper';
 import { faker } from '@faker-js/faker';
-import { Dialog } from '@radix-ui/react-dialog';
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -16,7 +15,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -25,8 +24,6 @@ test.beforeEach(async ({ page }) => {
         await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
-
-
 
         page.on('dialog', dialog => {
             expect(dialog.message()).toBe('El admin se ha registrado correctamente');
@@ -55,7 +52,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         await page.getByLabel('DNI').click({delay: 100});
         await page.getByLabel('DNI').type('',{delay: 1000});
@@ -78,7 +75,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -101,7 +98,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -124,7 +121,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -147,7 +144,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -170,7 +167,7 @@ test.beforeEach(async ({ page }) => {
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.goto('/admin/add', { waitUntil: 'domcontentloaded' });
+        await page.locator('button:has-text("Agregar administrador")').click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);

@@ -9,7 +9,7 @@ import { Input } from "../input";
 import { Edit, Eye, Search } from "lucide-react";
 import { Card, CardContent } from "../card";
 import { usePathname, useRouter } from "next/navigation";
-import PaginationControls from "./PaginationControls";
+import PaginationControls from "@/components/list/PaginationControls";
 
 type TPListPageProps = {
   initialAssignments: AssignmentType[];

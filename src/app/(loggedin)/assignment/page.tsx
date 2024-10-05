@@ -1,7 +1,7 @@
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
 import { getAssignments } from "@/app/(loggedin)/assignment/add/getAssignments";
-import TPListPage from "@/components/ui/Assignment/assignmentList";
+import TPListPage from "@/components/ui/Assignment/ListAssignment";
 import { countAssignments } from "./add/fetchAssignments";
 
 export default async function AssignmentPage({

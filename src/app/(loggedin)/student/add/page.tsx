@@ -1,10 +1,10 @@
 import {StudentRegistrationFormComponent} from "@/app/(loggedin)/student/add/student-registration-form";
-import {countParents} from "@/app/(loggedin)/student/add/fetchParents";
-import {getParents} from "@/app/(loggedin)/student/add/getParents";
 
 
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
+import {getParents} from "@/app/(loggedin)/parent/getParents";
+import {countParents} from "@/app/(loggedin)/parent/fetchParent";
 
 export default async function AddStudentPage({
                                                  searchParams,

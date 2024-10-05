@@ -31,7 +31,7 @@ export function AdminRegistrationFormComponent() {
             alert(resul.error)
         } else {
             alert("El admin se ha registrado correctamente")
-            router.push("/student")
+            router.push("/admin")
         }
 
     }

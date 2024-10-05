@@ -21,7 +21,7 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/');
 
         
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
         await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
@@ -34,7 +34,7 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/');
 
         
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
         await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
 
@@ -46,7 +46,7 @@ test.describe('Testing listado admin', () => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
 
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
         await expect(await searchAdminByLastName(page, LastNameSeeded)).toBeTruthy();
@@ -58,7 +58,7 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/');
 
         
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
         await expect(await searchAdminByLastName(page, 'asdasdasdasdasd')).toBeFalsy();

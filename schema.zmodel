@@ -80,7 +80,7 @@ model Administrator extends Profile {
     phoneNumber String
     address     String
     email       String
-    @@allow('update, read', auth().role == "Administrator")
+    @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
 }
 

@@ -54,9 +54,11 @@ export function ListParents({ data, count }: PrincipalProps) {
   }
   
   const handleRemove = async (id: number) => {
-    const isRemove = await removeParent(id);
-    if (isRemove) {
+    const error = await removeParent(id);
+    if (error == null) {
       refresh();
+    } else {
+      alert(error);
     }
   };
 

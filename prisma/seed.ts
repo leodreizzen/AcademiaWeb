@@ -1,9 +1,10 @@
 import {PrismaClient} from "@prisma/client";
 import {enhance, PrismaClient as zPrismaClient} from "@zenstackhq/runtime";
 import fs from "fs";
-import {PersonListSchema, PersonList, StudentType} from "@/lib/models/seeder/person";
+import {PersonListSchema, PersonList} from "@/lib/models/seeder/person";
+import path from "node:path";
 
-const prisma: zPrismaClient = enhance(new PrismaClient(), {user: {role: "Superuser", id: 1}} );
+const prisma: zPrismaClient = enhance(new PrismaClient({transactionOptions: {timeout: 15000, maxWait: 15000}}), {user: {role: "Superuser", id: 1}} );
 
 
 const grades = ["1º año", "2º año", "3º año", "4º año", "5º año", "6° año"]
@@ -14,11 +15,12 @@ function getJsonFromFile(path: string){
 }
 
 
-const dataRaw = getJsonFromFile("data.json")
+const dataRaw = getJsonFromFile(path.join("prisma","data.json"))
 
 const data: PersonList = PersonListSchema.parse(dataRaw)
 
 async function createGrades(prisma: zPrismaClient) {
+    console.log("Creating grades")
     for (const grade of grades) {
         await prisma.grade.create({
             data: {
@@ -29,9 +31,13 @@ async function createGrades(prisma: zPrismaClient) {
 }
 
 async function createSubjects(prisma: zPrismaClient) {
+    console.log("Creating subjects")
+    console.log("Progress 0%")
     const subjects = ["Matemáticas", "Lengua", "Historia", "Geografía", "Biología", "Física", "Química", "Educación Física", "Arte", "Música", "Inglés", "Computación"]
-    for (const grade of grades) {
-        for (const subject of subjects) {
+    for (let i = 0; i < grades.length; i++) {
+        const grade = grades[i]
+        for (let j = 0; j < subjects.length; j++) {
+            const subject = subjects[j]
             await prisma.subject.create({
                 data: {
                     name: subject,
@@ -42,14 +48,18 @@ async function createSubjects(prisma: zPrismaClient) {
                     }
                 }
             })
+            console.log(`Progress: ${((i*subjects.length + j + 1)/(grades.length*subjects.length)*100).toFixed(2)}%`)
         }
     }
 }
 
 
 async function createUsers(prisma: zPrismaClient) {
+    console.log("Creating users")
+    console.log(`Progress: 0%`)
 
-    for (const person of data) {
+    for (let i = 0; i < data.length; i++) {
+        const person = data[i];
         await prisma.user.create({
             data: {
                 dni: person.dni,
@@ -60,14 +70,14 @@ async function createUsers(prisma: zPrismaClient) {
         })
 
         if(person.roles.includes("student")){
-            const student = person as StudentType
-
+            if(!person.parentDnis)
+                throw new Error("Parent dnis not found")
             /* Its assumed parents are created before students */
 
             const parents = await prisma.parent.findMany({
                 where: {
                     dni: {
-                        in: student.parentDnis
+                        in: person.parentDnis
                     }
                 }
             })
@@ -137,6 +147,7 @@ async function createUsers(prisma: zPrismaClient) {
                 }
             })
         }
+        console.log(`Progress: ${((i+1)/data.length*100).toFixed(2)}%`)
     }
 }
 

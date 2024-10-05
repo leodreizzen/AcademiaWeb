@@ -5,7 +5,7 @@ const dniMessage = "Los DNI tienen que tener de 7 a 9 dígitos, y ser solo núme
 const dniSchema = z.coerce.number({message: dniMessage}).min(minDigits(7), {message: dniMessage}).max(maxDigits(9), {message: dniMessage});
 
 export const PersonSchema = z.object({
-    roles: z.enum(["parent", "teacher", "student", "administrator"]),
+    roles: z.array(z.enum(["parent", "teacher", "student", "administrator"])),
     phoneNumber: z.string(),
     email: z.string().email(),
     address: z.string(),
@@ -13,20 +13,21 @@ export const PersonSchema = z.object({
     lastName: z.string(),
     dni: dniSchema,
     password: z.string(),
+    alias: z.string().optional(),
+    parentDnis: z.array(dniSchema).optional()
+}).refine((value)=>{
+    if(value.roles.includes("student"))
+        return value.parentDnis !== undefined && value.parentDnis.length > 0;
+    else
+        return value.parentDnis === undefined
 });
 
-export const StudentSchema = PersonSchema.extend({
-    roles: z.enum(["student"]),
-    parentDnis: z.array(dniSchema),
-});
 
 export const PersonListSchema = z.array(PersonSchema);
 
 export type PersonList = z.infer<typeof PersonListSchema>;
 
 export type PersonType = z.infer<typeof PersonSchema>;
-
-export type StudentType = z.infer<typeof StudentSchema>;
 
 
 

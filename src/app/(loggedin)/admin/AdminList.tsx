@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AdministatorUser, AdminQuery } from "./types";
-import { getAdmins, getTotalAdmins } from "./getAdmins";
+import { getAdmins, getTotalAdmins, removeAdmin } from "./adminActions";
 import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
@@ -62,14 +62,17 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     const handleEdit = (id: number) => {
         // TODO: navigate to edit administrator page
     };
-    const handleRemove = (id: number) => {
-        // TODO: remove administrator
+    const handleRemove = async (id: number) => {
+        const isRemove = await removeAdmin(id);
+        if (isRemove) {
+            setAdministrators(administrators.filter(admin => admin.id !== id));
+        }
     };
     const handleAdd = () => {
         push('/admin/add');
     };
     return (
-        <div className="w-full flex flex-col items-center justify-center min-h-screen text-white">
+        <div className="w-full flex flex-col items-center justify-center min-h-screen text-white bg-gray-900">
             <div className="p-8 bg-[#212937] rounded-lg">
                 <div className="flex justify-between">
                     <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>

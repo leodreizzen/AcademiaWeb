@@ -25,8 +25,7 @@ export default function AdminItem({ administrator, onView, onEdit, onRemove }: A
                     disabled>
                     Editar
                 </button>
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onRemove(administrator.id)}
-                    disabled>
+                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onRemove(administrator.id)}>
                     Borrar
                 </button>
             </div>

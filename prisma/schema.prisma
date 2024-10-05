@@ -19,14 +19,15 @@ generator client {
 model User {
   /// @allow('read', true)
   /// @deny('update', true)
-  dni       Int       @id()
-  lastName  String
-  firstName String
-  profiles  Profile[]
+  dni        Int                 @id()
+  lastName   String
+  firstName  String
+  profiles   Profile[]
   /// @omit
   /// @password
   /// @allow('update', true)
-  password  String
+  password   String
+  resetToken PasswordResetToken?
 }
 
 /// @@allow('read', true)
@@ -120,6 +121,8 @@ model Assignment {
   description String?
   fileUrl     String
   uploadDate  DateTime @default(now())
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  subjectId   Int
 }
 
 /// @@allow('read', true)
@@ -135,11 +138,21 @@ model Grade {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Subject {
-  id        Int       @id() @default(autoincrement())
-  name      String
-  grade     Grade     @relation(fields: [gradeName], references: [name])
-  gradeName String
-  teachers  Teacher[]
+  id          Int          @id() @default(autoincrement())
+  name        String
+  grade       Grade        @relation(fields: [gradeName], references: [name])
+  gradeName   String
+  teachers    Teacher[]
+  assignments Assignment[]
 
   @@unique([gradeName, name])
+}
+
+/// @@allow('all', auth().role == 'Superuser')
+model PasswordResetToken {
+  token_hash String   @id()
+  issued_at  DateTime @default(now())
+  user       User     @relation(fields: [dni], references: [dni], onDelete: Cascade)
+  dni        Int      @unique()
+  used       Boolean  @default(false)
 }

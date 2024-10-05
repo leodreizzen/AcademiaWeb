@@ -15,6 +15,8 @@ model User {
     profiles  Profile[]
     password  String        @omit @password @allow('update', true)
 
+    resetToken PasswordResetToken?
+
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
@@ -88,6 +90,8 @@ model Assignment {
     description String?
     fileUrl     String
     uploadDate  DateTime @default(now())
+    subject     Subject  @relation(fields: [subjectId], references: [id])
+    subjectId   Int
 
     @@allow('read', true)
     @@allow('all', auth().role == "Teacher")
@@ -109,9 +113,20 @@ model Subject {
     grade     Grade  @relation(fields: [gradeName], references: [name])
     gradeName String
     teachers  Teacher[]
+    assignments Assignment[]
 
     @@unique([gradeName, name])
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model PasswordResetToken{
+    token_hash String @id
+    issued_at DateTime @default(now())
+    user User @relation(fields: [dni], references: [dni], onDelete: Cascade)
+    dni Int @unique
+    used Boolean @default(false)
+
     @@allow('all', auth().role == "Superuser")
 }

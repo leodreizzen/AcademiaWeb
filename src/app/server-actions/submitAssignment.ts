@@ -4,7 +4,7 @@ import { z } from "zod";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 
 const assignmentSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, "El título es obligatorio"),
   description: z.string().optional(),
   fileUrl: z.string().url(),
   subject: z.string(),

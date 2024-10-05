@@ -46,7 +46,6 @@ test.describe('Testing listado admin', () => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
 
-        
         await page.locator('a:has-text("Administradores")').click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 

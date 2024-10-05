@@ -1,24 +1,45 @@
 'use server';
 import {revalidatePath} from "next/cache";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {ActionResult} from "@/app/(loggedin)/student/add/types";
 
 
 
-export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number) {
+export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number): Promise<ActionResult> {
     const prisma = await getCurrentProfilePrismaClient();
     try {
-        await prisma.$transaction(async (prisma) => {
+        return await prisma.$transaction(async (prisma) => {
+            const existingProfile = await prisma.profile.findFirst({
+                where: {
+                    dni: dni
+                }
+            })
+            if(existingProfile){
+                if(existingProfile.role == "Student" || existingProfile.role == "Parent"){
+                    return {
+                        success: false,
+                        error: `Ya existe un ${existingProfile.role == "Student"? "alumno" : "responsable"} con ese dni`
+                    }
+                }
+            }
+
+
             const parent = await prisma.parent.create({
                 data: {
                     phoneNumber: phoneNumber,
                     email: email,
                     address: address,
                     user: {
-                        create: {
-                            firstName: name,
-                            lastName: surname,
-                            dni: dni,
-                            password: dni.toString()
+                        connectOrCreate: {
+                            where: {
+                                dni: dni
+                            },
+                            create: {
+                                firstName: name,
+                                lastName: surname,
+                                dni: dni,
+                                password: dni.toString()
+                            }
                         }
                     }
                 },
@@ -26,11 +47,16 @@ export async function addParent(phoneNumber: string, address: string, email: str
             revalidatePath("/student/add")
             revalidatePath("/parent")
             console.log(`Parent created with ID: ${parent.id}`);
-            return 0;
+            return {
+                success: true
+            };
         });
     } catch (error) {
         console.error("Error adding parent:", error);
-        return -1;
+        return{
+            success: false,
+            error: "Error al agregar el padre"
+        };
     }
 }
 

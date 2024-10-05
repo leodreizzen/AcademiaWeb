@@ -101,7 +101,7 @@ model Teacher {
 
 /// @@allow('read', true)
 /// @@auth
-/// @@allow('update, read', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Administrator {
   id                   Int     @id()

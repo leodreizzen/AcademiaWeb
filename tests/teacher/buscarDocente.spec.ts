@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../src/helpersTest/loginHelper';
+import { login } from '@/helpersTest/loginHelper';
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');

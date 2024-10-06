@@ -14,7 +14,9 @@ test.describe('Testing info teacher', () => {
     test('info correspondiente al docente buscado desde rol administrador', async ({ page })=> {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.getByRole('link', { name: 'Docentes' }).click();
+        const firstButton = await page.locator('button:has-text("Docentes")');  
+        await expect(firstButton).toBeVisible();
+        await firstButton.click();
         const result = await searchTeacherByDni(page, dniDefaultTeacher);
         expect(result).toBeTruthy();
         const viewButton = page.locator('button:has-text("Ver")');
@@ -26,7 +28,7 @@ test.describe('Testing info teacher', () => {
     test('Verificar detalles del primer docente', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.getByRole('link', { name: 'Docentes' }).click();
+        await page.getByRole('link', { name: 'Docentes' }).first().click();
         const { name: expectedName, dni: expectedDNI } = await getFirstTeacherDetails(page);
         await page.locator('.rounded-xl button:has-text("Ver")').first().click();
         const { fullName: resultFullName, dni: resultDni } = await getTeacherDetails(page);

@@ -29,7 +29,7 @@ export async function changePassword(dni: number, _data: ChangePasswordData): Pr
                 success: false,
                 message: "Usuario no encontrado"
             }
-        const passwordCorrect = bcrypt.compare(data.data.password, user.password)
+        const passwordCorrect = await bcrypt.compare(data.data.password, user.password)
         if(!passwordCorrect)
             return {
                 success: false,

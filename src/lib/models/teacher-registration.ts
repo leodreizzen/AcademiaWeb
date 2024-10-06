@@ -14,7 +14,7 @@ export const TeacherRegistrationModel = z.object(
         name: z.string().min(2, invalidName),
         lastName: z.string().min(2, invalidLastName),
         email: z.string().email(invalidEmail),
-        phoneNumber: z.string().min(5, invalidPhone),
+        phoneNumber: z.string().min(8, invalidPhone),
         address: z.string().min(5, invalidAddress),
     }
 );

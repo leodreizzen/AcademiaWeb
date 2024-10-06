@@ -135,39 +135,48 @@ export default function AddAssignmentForm() {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
-      <div className="w-full flex flex-col">
-        <div className="mb-4 flex items-center">
-          <label htmlFor="file" className="block text-md font-medium w-1/3 mr-2">
-            Subir archivo...
+      <div className="w-full flex flex-col space-y-4">
+        {/* File Upload */}
+        <div className="flex items-center">
+          <label htmlFor="file" className="block text-md font-medium text-white w-1/3 mr-4">
+            Subir archivo
           </label>
           <Input
             id="file"
             name="file"
             type="file"
-            className="w-3/3"
+            className="w-2/3 bg-gray-700 text-white border-gray-600 rounded-md"
             required
             onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
-          {errors?.file && <p className="text-red-500">{errors.file}</p>}
         </div>
-
-        <div className="mb-4 flex items-center">
-          <label htmlFor="title" className="block text-md font-medium w-1/3">
+        {errors?.file && <p className="text-red-500 text-sm mt-1">{errors.file}</p>}
+  
+        {/* Title */}
+        <div className="flex items-center">
+          <label htmlFor="title" className="block text-md font-medium text-white w-1/3 mr-4">
             Título
           </label>
-          <Input id="title" name="title" type="text" className="w-2/3" required />
-          {errors?.title && <p className="text-red-500">{errors.title}</p>}
+          <Input
+            id="title"
+            name="title"
+            type="text"
+            className="w-2/3 bg-gray-700 text-white border-gray-600 rounded-md"
+            required
+          />
         </div>
+        {errors?.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
       </div>
-
-      <div className="flex items-center">
-        <label htmlFor="grade" className="block text-md font-medium w-1/4">
+  
+      {/* Grade Selector */}
+      <div className="flex items-center space-x-4">
+        <label htmlFor="grade" className="block text-md font-medium text-white w-1/4">
           Curso
         </label>
         <select
           id="grade"
           name="grade"
-          className="w-3/4 border-gray-300 rounded-md"
+          className="w-3/4 bg-gray-700 text-white border-gray-600 rounded-md"
           value={selectedGradeId?.toString() || ""}
           onChange={handleGradeChange}
         >
@@ -179,15 +188,16 @@ export default function AddAssignmentForm() {
           ))}
         </select>
       </div>
-
-      <div className="flex items-center">
-        <label htmlFor="subject" className="block text-md font-medium w-1/4">
+  
+      {/* Subject Selector */}
+      <div className="flex items-center space-x-4">
+        <label htmlFor="subject" className="block text-md font-medium text-white w-1/4">
           Materia
         </label>
         <select
           id="subject"
           name="subject"
-          className="w-3/4 border-gray-300 rounded-md"
+          className="w-3/4 bg-gray-700 text-white border-gray-600 rounded-md"
           value={selectedSubjectId?.toString() || ""}
           onChange={(e) => setSelectedSubjectId(Number(e.target.value))}
         >
@@ -201,31 +211,41 @@ export default function AddAssignmentForm() {
             ))}
         </select>
       </div>
-
-      <div className="flex items-center">
-        <label htmlFor="description" className="block text-md font-medium w-1/4">
+  
+      {/* Description */}
+      <div className="flex items-center space-x-4">
+        <label htmlFor="description" className="block text-md font-medium text-white w-1/4">
           Descripción
         </label>
-        <TextArea id="description" name="description" className="w-3/4" />
+        <TextArea
+          id="description"
+          name="description"
+          className="w-3/4 bg-gray-700 text-white border-gray-600 rounded-md"
+        />
       </div>
-
+  
+      {/* Success Message */}
       {successMessage && (
         <div className="mb-4 p-2 text-green-700 bg-green-100 rounded-md">
           {successMessage}
         </div>
       )}
-
-      <div className="flex justify-between items-center w-full mt-4">
+  
+      {/* Buttons */}
+      <div className="flex justify-between items-center w-full mt-6">
         <Link href="/assignment">
-          <Button className="w-3/3 transition duration-200">Volver</Button>
-        </Link>
-
-        <div className="flex justify-end">
-          <Button type="submit" className="transition duration-200" disabled={uploading}>
-            {uploading ? "Subiendo..." : "Subir"}
+          <Button className="bg-gray-600 text-white hover:bg-gray-500 transition duration-200">
+            Volver
           </Button>
-        </div>
+        </Link>
+        <Button
+          type="submit"
+          className="bg-green-600 text-white hover:bg-green-500 transition duration-200"
+          disabled={uploading}
+        >
+          {uploading ? "Subiendo..." : "Subir"}
+        </Button>
       </div>
     </form>
-  )
+  );  
 }

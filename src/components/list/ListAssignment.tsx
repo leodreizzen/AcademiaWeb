@@ -27,11 +27,19 @@ interface Grade {
   subjects: Subject[];
 }
 
-export default function TPListPage({ data = [], count, totalAssignments }: TPListPageProps) {
+export default function TPListPage({
+  data = [],
+  count,
+  totalAssignments,
+}: TPListPageProps) {
   const [title, setTitle] = useState("");
   const [grades, setGrades] = useState<Grade[]>([]);
-  const [selectedGradeName, setSelectedGradeName] = useState<string | null>(null);
-  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null);
+  const [selectedGradeName, setSelectedGradeName] = useState<string | null>(
+    null
+  );
+  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(
+    null
+  );
 
   const { replace, push } = useRouter();
   const pathname = usePathname();
@@ -40,7 +48,9 @@ export default function TPListPage({ data = [], count, totalAssignments }: TPLis
   useEffect(() => {
     setTitle(searchParams.get("title") || "");
     setSelectedGradeName(searchParams.get("grade") || null);
-    setSelectedSubjectId(searchParams.get("subject") ? Number(searchParams.get("subject")) : null);
+    setSelectedSubjectId(
+      searchParams.get("subject") ? Number(searchParams.get("subject")) : null
+    );
 
     async function fetchGradesAndSubjects() {
       try {
@@ -76,7 +86,7 @@ export default function TPListPage({ data = [], count, totalAssignments }: TPLis
       title: title,
       subject: selectedSubjectId?.toString() || "",
       grade: selectedGradeName || "",
-      page: "1", // Reset to first page on new search
+      page: "1",
     });
 
     replace(`${pathname}?${params.toString()}`);
@@ -148,9 +158,9 @@ export default function TPListPage({ data = [], count, totalAssignments }: TPLis
             <select
               id="grade"
               name="grade"
-              className="bg-gray-700 text-white border-gray-600 flex-grow text-lg"
               value={selectedGradeName || ""}
               onChange={handleGradeChange}
+              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
             >
               <option value="">Selecciona un curso</option>
               {grades.map((grade) => (
@@ -159,12 +169,13 @@ export default function TPListPage({ data = [], count, totalAssignments }: TPLis
                 </option>
               ))}
             </select>
+
             <select
               id="subject"
               name="subject"
-              className="bg-gray-700 text-white border-gray-600 flex-grow text-lg py-2 sm:py-5"
               value={selectedSubjectId?.toString() || ""}
               onChange={handleSubjectChange}
+              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
             >
               <option value="">Selecciona una materia</option>
               {selectedGradeName &&

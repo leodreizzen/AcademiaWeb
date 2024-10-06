@@ -1,7 +1,7 @@
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
 import { getAssignments } from "@/app/(loggedin)/assignment/add/getAssignments";
-import TPListPage from "@/components/ui/Assignment/ListAssignment";
+import TPListPage from "@/components/list/ListAssignment";
 import { countAssignments } from "./add/fetchAssignments";
 
 export default async function AssignmentPage({
@@ -17,8 +17,7 @@ export default async function AssignmentPage({
 
   const assignments = await getAssignments(page, title, subject);
   const count = await countAssignments();
-
   const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
 
-  return <TPListPage initialAssignments={assignments} count={numberOfPages} />;
+  return <TPListPage data={assignments} count={numberOfPages} />;
 }

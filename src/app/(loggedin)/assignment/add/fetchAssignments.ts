@@ -14,7 +14,6 @@ export async function fetchAssignments(page: number): Promise<AssignmentType[]> 
         subject: true
       }
     });
-
     return assignments.map(assignment => ({
       ...assignment,
       subjectName: assignment.subject.name

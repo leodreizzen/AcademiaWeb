@@ -76,3 +76,24 @@ export async function removeAdmin(id: number) {
         return false;
     }
 }
+
+export async function getAdmin(id: number) {
+    const prisma = await getCurrentProfilePrismaClient()
+    return prisma.administrator.findFirst({
+        where: {
+            id: id
+        },
+        select: {
+            dni: true,
+            phoneNumber: true,
+            address: true,
+            email: true,
+            user: {
+                select: {
+                    firstName: true,
+                    lastName: true
+                }
+            }
+        }
+    });
+}

@@ -1,7 +1,7 @@
 "use server"
 import {ChangePasswordData, ChangePasswordModel} from "@/lib/models/change-password";
 import getPrismaClient, {getRawPrismaClient} from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const rawPrisma = getRawPrismaClient()
 const prisma = getPrismaClient({id: 1, role:"Superuser"})

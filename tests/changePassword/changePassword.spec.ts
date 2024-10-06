@@ -25,10 +25,9 @@ test.describe('Change password', () => {
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        page.on('dialog', dialog => {
-            dialog.dismiss();
-        }
-        );
+        page.once('dialog', async dialog => {
+            await dialog.accept();
+        });
 
         await page.locator('button[type="submit"]').click();
 
@@ -66,7 +65,7 @@ test.describe('Change password', () => {
 
         await page.fill('input[id="input-newPasswordConfirmation"]', newPassword);
 
-        page.on('dialog', dialog => {
+        page.once('dialog', dialog => {
             expect(dialog.message()).toBe('Contraseña actualizada');
             dialog.dismiss();
         }
@@ -74,9 +73,13 @@ test.describe('Change password', () => {
 
         await page.locator('button[type="submit"]').click();
 
+        await page.waitForURL('/');
+
         await menuButton.click();
 
         await logoutButton.click();
+
+        await page.waitForURL('/login');
 
         await expect(page.locator('h3:has-text("Iniciar sesión")')).toBeVisible();
 

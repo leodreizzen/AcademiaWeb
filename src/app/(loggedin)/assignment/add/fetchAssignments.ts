@@ -16,7 +16,8 @@ export async function fetchAssignments(page: number): Promise<AssignmentType[]> 
     });
     return assignments.map(assignment => ({
       ...assignment,
-      subjectName: assignment.subject.name
+      subjectName: assignment.subject.name,
+      gradeName: assignment.subject.gradeName
     }));
   } catch (error) {
     console.error("Error fetching assignments:", error);

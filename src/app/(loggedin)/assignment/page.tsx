@@ -11,11 +11,12 @@ export default async function AssignmentPage({
 }) {
   await assertPermission({ resource: Resource.ASSIGNMENT, operation: "LIST" });
   const title = searchParams?.title || "";
-  const subject = searchParams?.subject || "";
+  const subject = parseInt(searchParams?.subject || "-1", 10);
+  const grade = searchParams?.grade || "-1";
   const page = Number(searchParams?.page) || 1;
   const COUNT_PER_PAGE = 10;
 
-  const assignments = await getAssignments(page, title, subject);
+  const assignments = await getAssignments(page, title, subject, grade);
   const count = await countAssignments();
   const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
 

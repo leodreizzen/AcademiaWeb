@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,22 +9,67 @@ import PaginationControls from "@/components/list/PaginationControls";
 import { AssignmentType } from "@/types/assignment";
 import { usePathname, useRouter } from "next/navigation";
 import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
+import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
 
 type TPListPageProps = {
   data: AssignmentType[];
   count: number;
 };
 
+interface Subject {
+  id: number;
+  name: string;
+}
+
+interface Grade {
+  name: string;
+  subjects: Subject[];
+}
+
 export default function TPListPage({ data = [], count }: TPListPageProps) {
   const [title, setTitle] = useState("");
-  const [subject, setSubject] = useState("");
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [selectedGradeName, setSelectedGradeName] = useState<string | null>(null);
+  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null);
+
   const { replace, push } = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    async function fetchGradesAndSubjects() {
+      try {
+        const data = await getGradesAndSubjects();
+        const processedGrades = data.grades.map((grade: any) => ({
+          name: grade.name || "Unnamed Grade",
+          subjects: (grade.subjects || []).map((subject: any) => ({
+            id: Number(subject.id) || Math.floor(Math.random() * 1000000),
+            name: subject.name || "Unnamed Subject",
+          })),
+        }));
+        setGrades(processedGrades);
+      } catch (error) {
+        console.error("Error fetching grades and subjects:", error);
+      }
+    }
+    fetchGradesAndSubjects();
+  }, []);
+
+  const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const gradeName = e.target.value;
+    setSelectedGradeName(gradeName || null);
+    setSelectedSubjectId(null);
+  };
+
+  const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const subjectId = e.target.value;
+    setSelectedSubjectId(subjectId ? Number(subjectId) : null);
+  };
 
   const handleSearch = () => {
     const params = new URLSearchParams({
       title: title,
-      subject: subject,
+      subject: selectedSubjectId?.toString() || "",
+      grade: selectedGradeName || "",
     });
 
     replace(`${pathname}?${params.toString()}`);
@@ -32,12 +77,7 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
 
   const handleTitleEdit = (value: string) => {
     setTitle(value);
-    setSubject(""); // Si buscas por título, limpia el campo de materia
-  };
-
-  const handleSubjectEdit = (value: string) => {
-    setTitle(""); // Si buscas por materia, limpia el campo de título
-    setSubject(value);
+    setSelectedSubjectId(null);
   };
 
   const handleEdit = (id: number) => {
@@ -98,13 +138,37 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
               onChange={(e) => handleTitleEdit(e.target.value)}
               className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
             />
-            <Input
-              type="text"
-              placeholder="Buscar por materia"
-              value={subject}
-              onChange={(e) => handleSubjectEdit(e.target.value)}
-              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
-            />
+            <select
+              id="grade"
+              name="grade"
+              className="bg-gray-700 text-white border-gray-600 flex-grow text-lg"
+              value={selectedGradeName || ""}
+              onChange={handleGradeChange}
+            >
+              <option value="">Selecciona un curso</option>
+              {grades.map((grade) => (
+                <option key={grade.name} value={grade.name}>
+                  {grade.name}
+                </option>
+              ))}
+            </select>
+            <select
+              id="subject"
+              name="subject"
+              className="bg-gray-700 text-white border-gray-600 flex-grow text-lg py-2 sm:py-5"
+              value={selectedSubjectId?.toString() || ""}
+              onChange={handleSubjectChange}
+            >
+              <option value="">Selecciona una materia</option>
+              {selectedGradeName &&
+                grades
+                  .find((grade) => grade.name === selectedGradeName)
+                  ?.subjects.map((subject) => (
+                    <option key={subject.id} value={subject.id.toString()}>
+                      {subject.name}
+                    </option>
+                  ))}
+            </select>
             <Button
               onClick={handleSearch}
               variant="secondary"
@@ -125,7 +189,7 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
                       {assignment.title}
                     </p>
                     <p className="text-base text-gray-400 mt-1">
-                      {assignment.subjectName}
+                      {assignment.gradeName + " " + assignment.subjectName}
                     </p>
                   </div>
                   <div className="flex space-x-3 w-full sm:w-auto">
@@ -171,4 +235,3 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
     </div>
   );
 }
-

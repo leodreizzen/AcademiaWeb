@@ -3,6 +3,7 @@ import { Faker, es } from '@faker-js/faker'
 import { login } from '@/helpersTest/loginHelper';
 import { searchStudentByDni, searchStudentByLastName } from '@/helpersTest/studentHelper';
 import { beforeEach } from "node:test";
+import { Dialog } from "@radix-ui/react-dialog";
 
 const faker = new Faker({ locale: [es] })
 
@@ -23,20 +24,22 @@ test('Datos validos alumno', async ({ page }) => {
     await login(page, '33333333', 'admin');
     await page.waitForURL('/')    
 
-    await page.goto('http://localhost:3000/student/add');
+    await page.getByRole('navigation').getByRole('link', { name: 'Alumnos' }).click();
+    await page.locator('text="Nuevo Alumno"').click();
 
-    await page.locator('input[id="dni"]').fill(randomDNI());
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.getByLabel('Buscar por DNI')).toBeVisible();
-    await expect(page.getByText('Buscar por apellido')).toBeVisible();
+    await expect(page.getByPlaceholder('Buscar por DNI')).toBeVisible();
+    await expect(page.getByPlaceholder('Buscar por apellido')).toBeVisible();
     await expect(page.getByText('Nuevo Responsable')).toBeVisible();
 
 
@@ -48,12 +51,12 @@ test('Datos vacios nombre y dni', async ({ page }) => {
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill("");
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill("");
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await expect(await page.locator('button[type="submit"]')).toBeDisabled();
@@ -65,12 +68,12 @@ test('Email invalido', async ({ page }) => {
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill(randomDNI());
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(" testgmail.com");
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(" testgmail.com");
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
 
@@ -83,12 +86,12 @@ test('Año no seleccionado', async ({ page }) => {
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill(randomDNI());
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
 
     await expect(page.locator('button[type="submit"]')).toBeDisabled();
 
@@ -105,12 +108,12 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     var dni = randomDNI();
 
-    await page.locator('input[id="dni"]').fill(dni);
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(dni);
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await page.locator('button[type="submit"]').click();
@@ -136,12 +139,12 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     var dni = randomDNI();
 
-    await page.locator('input[id="dni"]').fill(dni);
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(dni);
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await page.locator('button[type="submit"]').click();
@@ -150,12 +153,12 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
-    await page.locator('input[id="newParentDni"]').fill(randomDNI());
-    await page.locator('input[id="newParentTelefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="newParentNombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="newParentApellido"]').last().fill(faker.person.lastName());
-    await page.locator('input[id="newParentDireccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="newParentCorreo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-name"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-surname"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
 
     await page.getByRole('button', { name: 'Agregar' }).click();
 
@@ -183,12 +186,12 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     var dni = randomDNI();
 
-    await page.locator('input[id="dni"]').fill(dni);
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(dni);
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await page.locator('button[type="submit"]').click();
@@ -210,27 +213,16 @@ test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) 
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill(randomDNI());
-    await page.locator('input[id="telefono"]').fill("291522");
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill("291522");
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+    await expect(page.locator('form')).toContainText('Ingrese un número de teléfono válido para el estudiante');
 
-    await page.locator('button[type="submit"]').click();
-
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
-
-    page.on('dialog', dialog => {
-        expect(dialog.message()).toBe('Ingrese un número de teléfono válido para el estudiante');
-        dialog.dismiss();
-    }
-    );
-
-    await page.locator('button[type="submit"]').click();
-    expect(await page.getByText("Asociar Responsable")).toBeVisible();
-
+    
 
 
 });
@@ -240,26 +232,18 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill("4488180");
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill("448818");
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
-    await page.locator('button[type="submit"]').click();
+    
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
 
-    page.on('dialog', dialog => {
-        expect(dialog.message()).toBe('Ingrese un dni válido para el estudiante');
-        dialog.dismiss();
-    }
-    );
-
-    await page.getByRole('button', { name: 'Registrar' }).click();
-    expect(await page.getByText("Asociar Responsable")).toBeVisible();
+    await expect(page.locator('form')).toContainText('Ingrese un dni válido para el estudiante');
 
 
 
@@ -270,12 +254,12 @@ test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page 
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill(randomDNI());
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await page.locator('button[type="submit"]').click();
@@ -284,20 +268,13 @@ test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page 
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
-    await page.locator('input[id="newParentDni"]').fill("3288180"); //Como me detecta dos dni, elijo el ultimo que es el del padre
-    await page.locator('input[id="newParentTelefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="newParentNombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="newParentApellido"]').last().fill(faker.person.lastName());
-    await page.locator('input[id="newParentDireccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="newParentCorreo"]').fill(faker.internet.email());
-
-    page.on('dialog', dialog => {
-        expect(dialog.message()).toBe('Ingrese un dni válido para el responsable');
-        dialog.dismiss();
-    }
-    );
-
-    await page.getByRole('button', { name: 'Agregar' }).click();
+    await page.locator('input[id="input-dni"]').fill("328818"); //Como me detecta dos dni, elijo el ultimo que es el del padre
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-name"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-surname"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
+    await expect(page.getByLabel('Nuevo Responsable')).toContainText('Ingrese un dni válido para el responsable');
 
 });
 
@@ -306,12 +283,12 @@ test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ 
     await page.waitForURL('/')    
     await page.goto('http://localhost:3000/student/add');
 
-    await page.locator('input[id="dni"]').fill(randomDNI());
-    await page.locator('input[id="telefono"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="nombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="apellido"]').last().fill(faker.person.lastName());
-    await page.locator('input[id="direccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="correo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
     await page.locator('button[type="submit"]').click();
@@ -321,19 +298,49 @@ test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
 
-    await page.locator('input[id="newParentDni"]').fill(randomDNI()); //Como me detecta dos dni, elijo el ultimo que es el del padre
-    await page.locator('input[id="newParentTelefono"]').fill("291522");
-    await page.locator('input[id="newParentNombre"]').fill(faker.person.firstName());
-    await page.locator('input[id="newParentApellido"]').last().fill(faker.person.lastName());
-    await page.locator('input[id="newParentDireccion"]').fill(faker.location.streetAddress({ useFullAddress: true }));
-    await page.locator('input[id="newParentCorreo"]').fill(faker.internet.email());
+    await page.locator('input[id="input-dni"]').fill(randomDNI()); //Como me detecta dos dni, elijo el ultimo que es el del padre
+    await page.locator('input[id="input-phoneNumber"]').fill("291522");
+    await page.locator('input[id="input-name"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-surname"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
+
+    await expect(page.getByLabel('Nuevo Responsable')).toContainText('Ingrese un número de teléfono válido para el responsable');
+
+});
+
+test('Caso de falla DNI DUPLICADO', async ({ page }) => {
+
+
+    await login(page, '33333333', 'admin');
+    await page.waitForURL('/')
+
+
+    await page.goto('http://localhost:3000/student/add');
+
+    var dni = '11111111'
+
+    await page.locator('input[id="input-dni"]').fill(dni);
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
+    await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+
+    await page.locator('button[type="submit"]').click();
+
+    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     page.on('dialog', dialog => {
-        expect(dialog.message()).toBe('Ingrese un número de teléfono válido para el responsable');
+        expect(dialog.message()).toBe('Ya existe un alumno con ese dni');
         dialog.dismiss();
     }
     );
 
-    await page.getByRole('button', { name: 'Agregar' }).click();
+    await page.locator('button[type="submit"]').click();
 
 });
+

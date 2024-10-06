@@ -18,6 +18,7 @@ import {StudentSchemaWithoutGrade, StudentDataWithoutGrade, ParentData, ParentSc
 import {FieldForm} from "@/components/ui/FieldForm";
 import {ParentAPIResponse} from "@/app/api/internal/parent/types";
 import {Search} from "lucide-react";
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 
 type PrincipalProps = {
@@ -25,12 +26,15 @@ type PrincipalProps = {
     count: number;
 };
 
+
+
 export function StudentRegistrationFormComponent({data, count}: PrincipalProps) {
     const {register, handleSubmit: handleSubmit1, formState, getValues} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
-    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
+    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
     const [grade, setGrade] = useState("");
     const isValid = formState.isValid && grade !== "";
     const isValid2 = formState2.isValid
+    const [noParents, setNoParents] = useState(false)
     const [step, setStep] = useState(1)
     const [page, setPage] = useState(1)
     const [searchDNI, setSearchDNI] = useState('')
@@ -91,6 +95,12 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
         } else {
             alert("El responsable se ha registrado correctamente")
             setIsDialogOpen(false)
+            resetField("dni")
+            resetField("phoneNumber")
+            resetField("name")
+            resetField("surname")
+            resetField("address")
+            resetField("email")
 
         }
 
@@ -126,8 +136,8 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
             let respuestaJson;
             if (res.ok) {
                 respuestaJson = await res.json() as ParentAPIResponse;
-               setParents(respuestaJson);
-
+                respuestaJson.length === 0 ? setNoParents(true) : setNoParents(false);
+                setParents(respuestaJson)
 
             } else {
                 alert("Fallo al buscar los responsables");
@@ -230,6 +240,12 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                             </Button>
                                         </div>
                                     </div>
+
+                                    {
+                                        noParents &&
+                                        <NoResultCard/>
+                                    }
+
                                     {parents.map((parent) => (
                                         <Card key={parent.id} className="bg-gray-700">
                                             <CardContent className="flex items-center justify-between p-3">

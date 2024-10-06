@@ -24,7 +24,7 @@ test('Datos validos alumno', async ({ page }) => {
     await login(page, '33333333', 'admin');
     await page.waitForURL('/')    
 
-    await page.locator('text="Alumnos"').click();
+    await page.getByRole('navigation').getByRole('link', { name: 'Alumnos' }).click();
     await page.locator('text="Nuevo Alumno"').click();
 
 
@@ -222,6 +222,7 @@ test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) 
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
     await expect(page.locator('form')).toContainText('Ingrese un número de teléfono válido para el estudiante');
 
+    
 
 
 });

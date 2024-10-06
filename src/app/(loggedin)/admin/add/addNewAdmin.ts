@@ -1,10 +1,10 @@
 'use server';
 
-import {ActionResult, ParentWithUser} from "@/app/(loggedin)/student/add/types";
+import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
-export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number): Promise<ActionResult>  {
+export async function addAdmin(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number): Promise<ActionResult>  {
     const prisma = await getCurrentProfilePrismaClient();
     let result: ActionResult;
     try {
@@ -15,21 +15,13 @@ export async function addStudent(phoneNumber: string, address: string, email: st
                 }
             })
             if(existingUser)
-                return {success: false, error: "Ya existe un alumno con ese dni"}
+                return {success: false, error: "Ya existe un administrador con ese dni"}
 
-            const student = await prisma.student.create({
+            const admin = await prisma.administrator.create({
                 data: {
                     phoneNumber: phoneNumber,
                     email: email,
-                    grade: {
-                        connect: {
-                            name: gradeName
-                        }
-                    },
                     address: address,
-                    parents: {
-                        connect: parents.map((parent) => ({id: parent.id})),
-                    },
                     user: {
                         create: {
                             firstName: name,
@@ -41,23 +33,16 @@ export async function addStudent(phoneNumber: string, address: string, email: st
                 }
             });
 
-            console.log(`Student created with ID: ${student.id}`);
-            revalidatePath("/student");
+            console.log(`Admin created with ID: ${admin.id}`);
+            revalidatePath("/admin");
             return {success: true}
 
         } );
     } catch (error) {
-        console.error("Error adding student:", error);
-        return {success: false, error: "Error al agregar el alumno"}
+        console.error("Error adding admin:", error);
+        return {success: false, error: "Error al agregar el admin"}
     }
 
     return result;
 }
-
-
-
-
-
-
-
 

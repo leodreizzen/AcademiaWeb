@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test.describe('Change password', () => {
-    test('Change password with correct data', async ({ page }) => {
+    test('Cambiar contraseña (CASO VALIDO)', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
@@ -87,10 +87,85 @@ test.describe('Change password', () => {
 
         await page.waitForURL('/');
 
-        expect (await page.locator('h3:has-text("Bienvenido a AcademiaWeb")')).toBeVisible();
+        await expect(page.getByRole('heading')).toContainText('Bienvenido a AcademiaWeb');
 
     }
     );
+
+    test('Cambiar contraseña con contraseña actual incorrecta(CASO NEGATIVO)', async ({ page }) => {
+        await login(page, '33333333', 'admin');
+        await page.waitForURL('/');
+        
+
+        const menuButton = page.locator('button[aria-haspopup="menu"]');
+        await menuButton.click();
+        const changePasswordBtn = page.locator('text=Cambiar contraseña');
+
+        await changePasswordBtn.click();
+
+        await page.waitForURL('/changepassword');
+
+        await page.fill('input[id="input-password"]', 'CasiLePegoALeo');
+
+        const newPassword = 'Contrasena123@';
+
+        await page.fill('input[id="input-newPassword"]', newPassword);
+
+        await page.fill('input[id="input-newPasswordConfirmation"]', newPassword);
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByRole('main')).toContainText('Contraseña incorrecta');
+
+        await page.fill('input[id="input-password"]', 'admin');
+
+        const shortPasswordWith12 = 'Contra123@';
+
+        const PasswordWithCapitalLetter = 'Contrasenaaaaaaa';
+
+        const PasswordWithNumber = 'contrasenaaaaaaa123@';
+
+        const PasswordWithoutSpecialCharacter = 'Contrasenaaaaaaa123';
+
+
+
+
+        await page.fill('input[id="input-newPassword"]', shortPasswordWith12);
+
+        await page.fill('input[id="input-newPasswordConfirmation"]', PasswordWithCapitalLetter);
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByRole('main')).toContainText('La contraseña debe tener al menos 12 caracteres');
+
+        await expect(page.getByRole('main')).toContainText('La contraseña debe contener al menos un número.');
+
+        await page.fill('input[id="input-newPassword"]', PasswordWithNumber);
+
+        await page.fill('input[id="input-newPasswordConfirmation"]', PasswordWithoutSpecialCharacter);
+
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByRole('main')).toContainText('La contraseña debe contener al menos una letra mayúscula');
+
+        await expect(page.getByRole('main')).toContainText('La contraseña debe contener al menos un carácter especial.');
+
+
+        await page.fill('input[id="input-newPassword"]', "Contraseña123@");
+
+        await page.fill('input[id="input-newPasswordConfirmation"]', "Contraseña123@@");
+
+        await page.locator('button[type="submit"]').click();
+
+        await expect(page.getByRole('main')).toContainText('Las contraseñas no coinciden');
+
+
+
+    }
+    );
+
+
 
 });
 

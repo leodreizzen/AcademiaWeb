@@ -2,8 +2,8 @@
 
 
 import {TeacherRegistrationData} from "@/lib/models/teacher-registration";
-import getPrismaClient from "@/app/lib/prisma";
 import {Prisma} from "@prisma/client";
+import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
 type SuccessResponse = {
     success: true
@@ -18,9 +18,8 @@ export type TeacherRegistrationResponse = SuccessResponse | ErrorResponse
 
 type TeacherRegistrationDataWithGrades = TeacherRegistrationData & {assignedGrades: {[key: string]: string[]}}
 
-const prisma = getPrismaClient({role: "Superuser", id: 1})
-
 export async function obtainGradesWithSubjects() {
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.grade.findMany({
             select: {name: true, subjects: {select: {name: true}}}
@@ -32,6 +31,7 @@ export async function obtainGradesWithSubjects() {
 }
 
 export async function createTeacherRegistration(data: TeacherRegistrationDataWithGrades) {
+    const prisma = await getCurrentProfilePrismaClient();
     try {
         const res: TeacherRegistrationResponse = await prisma.$transaction(async tx => {
                 const {assignedGrades, ...teacherData} = data

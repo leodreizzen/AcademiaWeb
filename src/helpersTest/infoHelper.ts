@@ -4,12 +4,13 @@ export async function getFirstTeacherDetails(page: Page) {
     const firstPersonSelector = '.rounded-xl';
     const nameSelector = firstPersonSelector + ' p.font-semibold';
     const dniSelector = firstPersonSelector + ' p.text-base';
-    const expectedName = await page.locator(nameSelector).first().textContent();
-    const expectedDNI = await page.locator(dniSelector).first().textContent();
+    const expectedName = (await page.locator(nameSelector).first().textContent()) || 'Nombre no encontrado';
+    const expectedDNI = (await page.locator(dniSelector).first().textContent())?.replace('DNI: ', '').trim() || 'DNI no encontrado';
+
 
     return {
         name: expectedName,
-        dni: expectedDNI.replace('DNI: ', '').trim(),
+        dni: expectedDNI,
     };
 }
 

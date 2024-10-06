@@ -7,13 +7,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search, Edit, Eye, Plus } from "lucide-react";
 import PaginationControls from "@/components/list/PaginationControls";
 import { AssignmentType } from "@/types/assignment";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
 import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
 
 type TPListPageProps = {
   data: AssignmentType[];
   count: number;
+  totalAssignments: number;
 };
 
 interface Subject {
@@ -26,7 +27,7 @@ interface Grade {
   subjects: Subject[];
 }
 
-export default function TPListPage({ data = [], count }: TPListPageProps) {
+export default function TPListPage({ data = [], count, totalAssignments }: TPListPageProps) {
   const [title, setTitle] = useState("");
   const [grades, setGrades] = useState<Grade[]>([]);
   const [selectedGradeName, setSelectedGradeName] = useState<string | null>(null);
@@ -34,8 +35,13 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
 
   const { replace, push } = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
+    setTitle(searchParams.get("title") || "");
+    setSelectedGradeName(searchParams.get("grade") || null);
+    setSelectedSubjectId(searchParams.get("subject") ? Number(searchParams.get("subject")) : null);
+
     async function fetchGradesAndSubjects() {
       try {
         const data = await getGradesAndSubjects();
@@ -52,7 +58,7 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
       }
     }
     fetchGradesAndSubjects();
-  }, []);
+  }, [searchParams]);
 
   const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const gradeName = e.target.value;
@@ -70,6 +76,7 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
       title: title,
       subject: selectedSubjectId?.toString() || "",
       grade: selectedGradeName || "",
+      page: "1", // Reset to first page on new search
     });
 
     replace(`${pathname}?${params.toString()}`);
@@ -231,6 +238,9 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
         <div className="mt-6">
           <PaginationControls cantPages={count} />
         </div>
+        <p className="text-center text-white text-sm mt-2">
+          Total de trabajos prácticos: {totalAssignments}
+        </p>
       </div>
     </div>
   );

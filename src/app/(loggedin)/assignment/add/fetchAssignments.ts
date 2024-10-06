@@ -14,24 +14,19 @@ export async function fetchAssignments(page: number): Promise<AssignmentType[]> 
         subject: true
       }
     });
+
+    const count = await prisma.assignment.count({
+    });
+
     return assignments.map(assignment => ({
       ...assignment,
       subjectName: assignment.subject.name,
-      gradeName: assignment.subject.gradeName
+      gradeName: assignment.subject.gradeName,
+      count: count,
     }));
   } catch (error) {
     console.error("Error fetching assignments:", error);
     return [];
-  }
-}
-
-export async function countAssignments() {
-  const prisma = await getCurrentProfilePrismaClient();
-  try {
-    return await prisma.assignment.count();
-  } catch (error) {
-    console.error("Error counting assignments:", error);
-    return 0;
   }
 }
 

@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { login } from '@/helpersTest/loginHelper';
-import { searchAdminByDni, searchAdminByLastName } from '@/helpersTest/adminHelper';
 import { randomDNI } from '@/helpersTest/studentHelper';
 import { faker } from '@faker-js/faker';
 
@@ -14,9 +13,9 @@ test.describe('Change password', () => {
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
-        //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
+
         await page.getByRole('button', { name: 'Nuevo administrador' }).click();
-        //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
+
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
         await page.fill('input[id="input-firstName"]', faker.person.firstName());

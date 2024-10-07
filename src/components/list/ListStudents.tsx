@@ -43,13 +43,11 @@ export function ListStudents({ data, count }: PrincipalProps) {
   }
 
   const handleEdit = (id: number) => {
-    console.log(`Edit student with id: ${id}`)
-    // Implement edit functionality here
+    push(`/student/${id}/edit`)
   }
 
   const handleView = (id: number) => {
-    console.log(`View student with id: ${id}`)
-    // Implement view functionality here
+    push(`/student/${id}`)
   }
 
   const handleCreate = () => {
@@ -95,10 +93,10 @@ export function ListStudents({ data, count }: PrincipalProps) {
                       <p className="text-base text-gray-400 mt-1">DNI: {student.user.dni}</p>
                     </div>
                     <div className="flex space-x-3 w-full sm:w-auto">
-                      <Button variant="outline" size="sm" onClick={() => handleEdit(student.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                      <Button variant="outline" size="sm" onClick={() => handleEdit(student.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleView(student.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                      <Button variant="outline" size="sm" onClick={() => handleView(student.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Eye className="mr-2 h-4 w-4" /> Ver
                       </Button>
                     </div>

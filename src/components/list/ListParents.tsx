@@ -20,7 +20,7 @@ type PrincipalProps = {
 export function ListParents({ data, count }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
-  const { replace } = useRouter();
+  const { push, replace } = useRouter();
   const pathname = usePathname();
 
   const handleSearch = () => {
@@ -43,13 +43,11 @@ export function ListParents({ data, count }: PrincipalProps) {
   }
 
   const handleEdit = (id: number) => {
-    console.log(`Edit parent with id: ${id}`)
-    // Implement edit functionality here
+    push(`/parent/${id}/edit`)
   }
 
   const handleView = (id: number) => {
-    console.log(`View parent with id: ${id}`)
-    // Implement view functionality here
+    push(`/parent/${id}`)
   }
 
   return (
@@ -88,10 +86,10 @@ export function ListParents({ data, count }: PrincipalProps) {
                       <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
                     </div>
                     <div className="space-x-3">
-                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
+                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </Button>
-                      <Button variant="outline" size="default" onClick={() => handleView(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
+                      <Button variant="outline" size="default" onClick={() => handleView(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Eye className="mr-2 h-4 w-4" /> Ver
                       </Button>
                     </div>

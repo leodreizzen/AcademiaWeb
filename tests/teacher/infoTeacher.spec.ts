@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { login } from '@/helpersTest/loginHelper';
 import { searchTeacherByDni} from '@/helpersTest/teacherHelper';
-import { getFirstTeacherDetails, getTeacherDetails } from '@/helpersTest/infoHelper';
+import { getFirstPersonDetails, getPersonDetails } from '@/helpersTest/infoHelper';
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -29,9 +29,9 @@ test.describe('Testing info teacher', () => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Docentes' }).first().click();
-        const { name: expectedName, dni: expectedDNI } = await getFirstTeacherDetails(page);
+        const { name: expectedName, dni: expectedDNI } = await getFirstPersonDetails(page);
         await page.locator('.rounded-xl button:has-text("Ver")').first().click();
-        const { fullName: resultFullName, dni: resultDni } = await getTeacherDetails(page);
+        const { fullName: resultFullName, dni: resultDni } = await getPersonDetails(page);
         await expect(resultFullName).toBe(expectedName);
         await expect(resultDni).toBe(expectedDNI);
     });

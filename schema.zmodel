@@ -30,6 +30,7 @@ model Profile {
 
     @@unique([dni, role])
     @@allow('read', true)
+    @@allow('delete', auth().role == "Administrator")
     @@delegate(role)
     @@auth
 }

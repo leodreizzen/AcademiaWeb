@@ -24,7 +24,7 @@ test('Datos validos alumno', async ({ page }) => {
     await login(page, '33333333', 'admin');
     await page.waitForURL('/')    
 
-    await page.locator('text="Alumnos"').click();
+    await page.getByRole('navigation').getByRole('link', { name: 'Alumnos' }).click();
     await page.locator('text="Nuevo Alumno"').click();
 
 

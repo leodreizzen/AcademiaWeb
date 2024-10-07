@@ -1,4 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { AdministatorUser } from "./types";
+import { Edit, Eye, Trash2 } from "lucide-react";
 
 interface AdminItemParams {
     administrator: AdministatorUser;
@@ -17,18 +19,15 @@ export default function AdminItem({ administrator, onView, onEdit, onRemove }: A
                 <p className="text-sm mt-2">DNI: {administrator.user.dni}</p>
             </div>
             <div className="flex items-center gap-4">
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onView(administrator.id)}
-                    disabled>
-                    Ver
-                </button>
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onEdit(administrator.id)}
-                    disabled>
-                    Editar
-                </button>
-                <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200 disabled:cursor-not-allowed" onClick={() => onRemove(administrator.id)}
-                    disabled>
-                    Borrar
-                </button>
+                <Button variant="outline" size="sm" onClick={() => onEdit(administrator.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                    <Edit className="mr-2 h-4 w-4" /> Editar
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => onView(administrator.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                    <Eye className="mr-2 h-4 w-4" /> Ver
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => onRemove(administrator.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                    <Trash2 className="mr-2 h-4 w-4" /> Borrar
+                </Button>
             </div>
         </div>
     );

@@ -21,7 +21,7 @@ test.describe('Testing listado parent', () => {
     test('Listado parent buscado por DNI (CASO POSITIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Padres")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Padres' }).click();
         await page.waitForURL('/parent',{waitUntil: 'domcontentloaded'});
         await expect(await searchParentByDni(page, DNISeeded)).toBeTruthy();
     }
@@ -30,7 +30,7 @@ test.describe('Testing listado parent', () => {
     test('Listado parent buscado por DNI (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Padres")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Padres' }).click();
         await page.waitForURL('/parent',{waitUntil: 'domcontentloaded'});
         await expect(await searchParentByDni(page, '123456789')).toBeFalsy();
     }
@@ -39,7 +39,7 @@ test.describe('Testing listado parent', () => {
     test('Listado parent buscado por Apellido (CASO POSITIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Padres")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Padres' }).click();
         await expect(await searchParentByLastName(page, LastNameSeeded)).toBeTruthy();
     }
     );
@@ -47,7 +47,7 @@ test.describe('Testing listado parent', () => {
     test('Listado parent buscado por Apellido (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Padres")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Padres' }).click();
         await expect(await searchParentByLastName(page, 'asdasdasdasdasdasd')).toBeFalsy();
     }
     );

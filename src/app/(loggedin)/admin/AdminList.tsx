@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { AdministatorUser, AdminQuery } from "./types";
-import { getAdmins, getTotalAdmins } from "./getAdmins";
+import { getAdmins, getTotalAdmins, removeAdmin } from "./adminActions";
 import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
+import { Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface AdminListProps {
     pageQuery?: number;
@@ -20,7 +23,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
-    const { replace } = useRouter();
+    const { replace, push } = useRouter();
     const pathname = usePathname();
 
     useEffect(() => {
@@ -32,11 +35,11 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     }, [])
     useEffect(() => {
         const fetchAdministrators = async () => {
-            const administratorsFromDB = await getAdmins(searchQuery);
+            const administratorsFromDB = await getAdmins({...searchQuery, page});
             setAdministrators(administratorsFromDB);
         };
         fetchAdministrators();
-    }, [searchQuery]);
+    }, [searchQuery, page]);
 
     const searchAdministrator = () => {
         setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
@@ -57,37 +60,49 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     };
     
     const handleView = (id: number) => {
-        // TODO: navigate to view administrator page
+        push(`/admin/${id}`);
     };
     const handleEdit = (id: number) => {
-        // TODO: navigate to edit administrator page
+        push(`/admin/${id}/edit`);
     };
-    const handleRemove = (id: number) => {
-        // TODO: remove administrator
+    const handleRemove = async (id: number) => {
+        const isRemove = await removeAdmin(id);
+        if (isRemove) {
+            setAdministrators(administrators.filter(admin => admin.id !== id));
+        }
+    };
+    const handleAdd = () => {
+        push('/admin/add');
     };
     return (
-        <div className="w-full flex flex-col items-center justify-center min-h-screen text-white">
+        <div className="w-full flex flex-col items-center justify-center min-h-screen text-white bg-gray-900">
             <div className="p-8 bg-[#212937] rounded-lg">
-                <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
+                <div className="flex justify-between">
+                    <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
+                    <Button onClick={handleAdd} variant="secondary" className="bg-green-600 hover:bg-green-500 text-white">
+                        <Plus className="mr-2 h-4 w-4" /> Nuevo administrador
+                    </Button>
+                </div>
                 <div className="mt-8">
-                    <input className="bg-[#394150] py-2 px-4 rounded-lg w-full border border-[#535c6b]"
+                    <Input
                         type="text"
-                        name="dni"
-                        placeholder="DNI"
+                        placeholder="Buscar por DNI"
                         value={dni}
-                        onChange={e => handleChangeDni(e.target.value)}/>
+                        onChange={e => handleChangeDni(e.target.value)}
+                        className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
+                    />
                 </div>
                 <div className="flex mt-4 gap-4">
-                    <input className="bg-[#394150] py-2 px-4 rounded-lg grow border border-[#535c6b]"
+                    <Input
                         type="text"
-                        name="lastName"
-                        placeholder="Apellido"
+                        placeholder="Buscar por Apellido"
                         value={lastName}
-                        onChange={e => handleChangeLastname(e.target.value)}/>
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit hover:bg-[#5a6475] transition-colors duration-200"
-                        type="button" onClick={searchAdministrator}>
-                        Buscar
-                    </button>
+                        onChange={e => handleChangeLastname(e.target.value)}
+                        className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
+                    />
+                    <Button onClick={searchAdministrator} variant="secondary" className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
+                        <Search className="h-5 w-5" />
+                    </Button>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
                     {
@@ -98,19 +113,25 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                     }
                 </div>
                 <div className="flex justify-center items-center gap-4 mt-8">
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
+                    <Button
+                        className='bg-[#59999C] hover:bg-[#5FC8CD]'
+                        size="lg"
                         disabled={page == 1}
-                        onClick={() => setPage(page - 1)}>
+                        onClick={() => setPage(page - 1)}
+                    >
                         Anterior
-                    </button>
-                    <button className="border border-white py-2 px-4 rounded-lg" disabled>
+                    </Button>
+                    <div className="border border-white py-2 px-4 rounded-lg">
                         {page}
-                    </button>
-                    <button className="bg-[#4c5564] py-2 px-4 rounded-lg border border-[#535c6b] h-fit enabled:hover:bg-[#5a6475] transition-colors duration-200"
+                    </div>
+                    <Button
+                        className='bg-[#59999C] hover:bg-[#5FC8CD]'
+                        size="lg"
                         disabled={page == totalPages}
-                        onClick={() => setPage(page + 1)}>
+                        onClick={() => setPage(page + 1)}
+                    >
                         Siguiente
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

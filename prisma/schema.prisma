@@ -4,142 +4,148 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
-    directUrl = env("DIRECT_DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model User {
-    /// @allow('read', true)
-    /// @deny('update', true)
-    dni Int @id()
-    lastName String
-    firstName String
-    profiles Profile[]
-    /// @omit
-    /// @password
-    /// @allow('update', true)
-    password String
+  /// @allow('read', true)
+  /// @deny('update', true)
+  dni       Int       @id()
+  lastName  String
+  firstName String
+  profiles  Profile[]
+  /// @omit
+  /// @password
+  /// @allow('update', true)
+  password  String
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@delegate(role)
 /// @@auth
 model Profile {
-    dni Int
-    user User @relation(fields: [dni], references: [dni])
-    id Int @id() @default(autoincrement())
-    role String
-    delegate_aux_superuser Superuser?
-    delegate_aux_student Student?
-    delegate_aux_parent Parent?
-    delegate_aux_teacher Teacher?
-    delegate_aux_administrator Administrator?
+  dni                        Int
+  user                       User           @relation(fields: [dni], references: [dni])
+  id                         Int            @id() @default(autoincrement())
+  role                       String
+  delegate_aux_superuser     Superuser?
+  delegate_aux_student       Student?
+  delegate_aux_parent        Parent?
+  delegate_aux_teacher       Teacher?
+  delegate_aux_administrator Administrator?
 
-    @@unique([dni, role])
+  @@unique([dni, role])
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
 model Superuser {
-    id Int @id()
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int     @id()
+  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Student {
-    id Int @id()
-    phoneNumber String
-    address String
-    email String
-    parents Parent[]
-    grade Grade @relation(fields: [gradeName], references: [name])
-    gradeName String
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int      @id()
+  phoneNumber          String
+  address              String
+  email                String
+  parents              Parent[]
+  grade                Grade    @relation(fields: [gradeName], references: [name])
+  gradeName            String
+  delegate_aux_profile Profile  @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Parent {
-    id Int @id()
-    phoneNumber String
-    address String
-    email String
-    children Student[]
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int       @id()
+  phoneNumber          String
+  address              String
+  email                String
+  children             Student[]
+  delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Teacher {
-    id Int @id()
-    phoneNumber String
-    address String
-    email String
-    subjects Subject[]
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int       @id()
+  phoneNumber          String
+  address              String
+  email                String
+  subjects             Subject[]
+  delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
-/// @@allow('update, read', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Administrator {
-    id Int @id()
-    phoneNumber String
-    address String
-    email String
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int     @id()
+  phoneNumber          String
+  address              String
+  email                String
+  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 /// @@allow('all', auth().role == 'Superuser')
 model Assignment {
-    id Int @id() @default(autoincrement())
-    title String
-    description String?
-    fileUrl String
-    uploadDate DateTime @default(now())
+  id          Int      @id() @default(autoincrement())
+  title       String
+  description String?
+  fileUrl     String
+  uploadDate  DateTime @default(now())
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Grade {
-    name String @id()
-    subjects Subject[]
-    students Student[]
+  name     String    @id()
+  subjects Subject[]
+  students Student[]
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Subject {
-    id Int @id() @default(autoincrement())
-    name String
-    grade Grade @relation(fields: [gradeName], references: [name])
-    gradeName String
-    teachers Teacher[]
+  id        Int       @id() @default(autoincrement())
+  name      String
+  grade     Grade     @relation(fields: [gradeName], references: [name])
+  gradeName String
+  teachers  Teacher[]
 
-    @@unique([gradeName, name])
+  @@unique([gradeName, name])
 }

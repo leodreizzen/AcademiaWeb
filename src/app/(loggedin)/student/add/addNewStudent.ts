@@ -2,7 +2,6 @@
 
 import {ActionResult, ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
-import {redirect} from "next/navigation";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
 export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number): Promise<ActionResult>  {

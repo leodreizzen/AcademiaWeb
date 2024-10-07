@@ -3,7 +3,7 @@ import { Page, expect } from "@playwright/test";
 export async function searchAdminByDni(page: Page, Dni: string) {
     await page.getByPlaceholder('DNI').click();
     await page.getByPlaceholder('DNI').fill(Dni);
-    await page.getByRole('button', { name: 'Buscar' }).click();
+    await page.locator('.p-8 > div:nth-child(3) > .inline-flex').click();
 
     const expectedUrlPattern = new RegExp(`/admin\\?dni=${Dni}&lastName=`);
     await page.waitForURL(expectedUrlPattern,{waitUntil: 'domcontentloaded'});
@@ -17,8 +17,8 @@ export async function searchAdminByDni(page: Page, Dni: string) {
 }
 
 export async function searchAdminByLastName(page: Page, LastName: string) {
-    await page.fill('input[name="lastName"]', LastName);
-    await page.locator('button:has-text("Buscar")').click();
+    await page.getByPlaceholder("Buscar por Apellido").fill(LastName);
+    await page.locator('.p-8 > div:nth-child(3) > .inline-flex').click();
 
     const expectedUrlPattern = new RegExp(`/admin\\?dni=&lastName=${LastName}`);
     await page.waitForURL(expectedUrlPattern,{waitUntil: 'domcontentloaded'});

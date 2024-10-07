@@ -31,6 +31,7 @@ model User {
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@delegate(role)
 /// @@auth
 model Profile {
@@ -48,6 +49,7 @@ model Profile {
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
@@ -57,6 +59,7 @@ model Superuser {
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -73,6 +76,7 @@ model Student {
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -87,6 +91,7 @@ model Parent {
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -101,6 +106,7 @@ model Teacher {
 }
 
 /// @@allow('read', true)
+/// @@allow('delete', auth().role == 'Administrator')
 /// @@auth
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')

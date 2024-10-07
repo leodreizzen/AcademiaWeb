@@ -12,6 +12,8 @@ const adminPrivileges: PermissionList[] = [
     {resource: Resource.STUDENT, operations: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"]},
     {resource: Resource.TEACHER, operations: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"]},
     {resource: Resource.ADMINISTRATOR, operations: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"]},
+    {resource: Resource.USER, operations: ["DELETE"]},
+    {resource: Resource.PROFILE, operations: ["DELETE"]},
 ];
 
 const teacherPrivileges: PermissionList[] = [

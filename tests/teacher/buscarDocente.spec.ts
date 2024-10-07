@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../src/helpersTest/loginHelper';
+import { login } from '@/helpersTest/loginHelper';
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -15,7 +15,7 @@ test.describe('Testing buscar docente', () => {
         const dni = '22222222';
         const viewportSize = await page.viewportSize();
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' })
         await docentesLink.click();
 
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -39,7 +39,7 @@ test.describe('Testing buscar docente', () => {
 
         const apellido = 'Pepita';
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
@@ -61,7 +61,7 @@ test.describe('Testing buscar docente', () => {
 
         const apellido = 'asdf';
         //Test para desktop
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
@@ -83,7 +83,7 @@ test.describe('Testing buscar docente', () => {
 
         const dni = '01111111';
         //Test para desktop
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -105,7 +105,7 @@ test.describe('Testing buscar docente', () => {
 
         const dni = '77777777';
         //Test para desktop
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -134,7 +134,7 @@ test.describe('Testing buscar docente', () => {
 
         const apellido = 'Pepito';
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
@@ -167,7 +167,7 @@ test.describe('Testing buscar docente', () => {
         const dni = '22222222';
         const viewportSize = await page.viewportSize();
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         var inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -201,7 +201,7 @@ test.describe('Testing buscar docente', () => {
 
         const apellido = 'Pepito';
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         var inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');

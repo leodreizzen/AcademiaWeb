@@ -4,7 +4,8 @@ export enum Resource {
     TEACHER = "TEACHER",
     ADMINISTRATOR = "ADMINISTRATOR",
     ASSIGNMENT = "ASSIGNMENT",
-    USER = "USER"
+    USER = "USER",
+    PROFILE = "PROFILE"
 }
 
 const Operation = {
@@ -13,7 +14,8 @@ const Operation = {
     [Resource.TEACHER]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"] as const,
     [Resource.ADMINISTRATOR]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"] as const,
     [Resource.ASSIGNMENT]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"] as const,
-    [Resource.USER]: ["CHANGE_OWN_PASSWORD"] as const
+    [Resource.USER]: ["CHANGE_OWN_PASSWORD", "DELETE"] as const,
+    [Resource.PROFILE]: ["DELETE"] as const
 } as const;
 
 type Operations = {

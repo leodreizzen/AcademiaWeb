@@ -12,10 +12,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin (CASO POSITIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -38,7 +38,7 @@ test.beforeEach(async ({ page }) => {
 
        
 
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333VerEditarBorrar')).toBeVisible();
+        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
         expect(await searchAdminByDni(page, DNI)).toBe(true);
 
 
@@ -49,10 +49,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin DNI (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         await page.getByLabel('DNI').click({delay: 100});
         await page.getByLabel('DNI').type('',{delay: 1000});
@@ -72,10 +72,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin nombre (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -95,10 +95,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin apellido (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -118,10 +118,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin telefono (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -141,10 +141,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin email (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -164,10 +164,10 @@ test.beforeEach(async ({ page }) => {
     test('Crear nuevo admin sin direccion (CASO NEGATIVO) ', async ({ page }) => {
         await login(page, '33333333', 'admin');
         await page.waitForURL('/');
-        await page.locator('a:has-text("Administradores")').click();
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.locator('button:has-text("Agregar administrador")').click();
+        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);

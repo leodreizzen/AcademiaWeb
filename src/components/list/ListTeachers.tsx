@@ -48,8 +48,8 @@ export function ListTeachers({ data, count }: PrincipalProps) {
     }
 
     const handleView = (id: number) => {
-        console.log(`View teacher with id: ${id}`)
-        // Implement view functionality here
+        console.log(id)
+        push(`/teacher/${id}`)
     }
 
     const handleCreate = () => {
@@ -95,10 +95,10 @@ export function ListTeachers({ data, count }: PrincipalProps) {
                                     <p className="text-base text-gray-400 mt-1">DNI: {teacher.user.dni}</p>
                                 </div>
                                 <div className="flex space-x-3 w-full sm:w-auto">
-                                    <Button variant="outline" size="sm" onClick={() => handleEdit(teacher.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                                    <Button variant="outline" size="sm" onClick={() => handleEdit(teacher.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                         <Edit className="mr-2 h-4 w-4" /> Editar
                                     </Button>
-                                    <Button variant="outline" size="sm" onClick={() => handleView(teacher.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                                    <Button variant="outline" size="sm" onClick={() => handleView(teacher.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                         <Eye className="mr-2 h-4 w-4" /> Ver
                                     </Button>
                                 </div>

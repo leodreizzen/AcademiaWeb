@@ -2,8 +2,6 @@ import { expect, test } from "@playwright/test";
 import { Faker, es } from '@faker-js/faker'
 import { login } from '@/helpersTest/loginHelper';
 import { searchStudentByDni, searchStudentByLastName } from '@/helpersTest/studentHelper';
-import { beforeEach } from "node:test";
-import { Dialog } from "@radix-ui/react-dialog";
 import {getTestUser} from "../testdata";
 
 const faker = new Faker({ locale: [es] })

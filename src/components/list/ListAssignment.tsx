@@ -10,6 +10,8 @@ import { AssignmentType } from "@/types/assignment";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
 import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
+import { SelectValue } from "@radix-ui/react-select";
 
 type TPListPageProps = {
   data: AssignmentType[];
@@ -70,14 +72,14 @@ export default function TPListPage({
     fetchGradesAndSubjects();
   }, [searchParams]);
 
-  const handleGradeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const gradeName = e.target.value;
+  const handleGradeChange = (e: string) => {
+    const gradeName = e;
     setSelectedGradeName(gradeName || null);
     setSelectedSubjectId(null);
   };
 
-  const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const subjectId = e.target.value;
+  const handleSubjectChange = (e: string) => {
+    const subjectId = e;
     setSelectedSubjectId(subjectId ? Number(subjectId) : null);
   };
 
@@ -150,43 +152,50 @@ export default function TPListPage({
           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
             <Input
               type="text"
-              placeholder="Buscar por título"
+              placeholder="Título"
               value={title}
               onChange={(e) => handleTitleEdit(e.target.value)}
               className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
             />
-            <select
-              id="grade"
+            <Select
               name="grade"
               value={selectedGradeName || ""}
-              onChange={handleGradeChange}
-              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
+              onValueChange={handleGradeChange}
             >
-              <option value="">Selecciona un curso</option>
-              {grades.map((grade) => (
-                <option key={grade.name} value={grade.name}>
-                  {grade.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5">
+                <SelectValue placeholder="Curso" />
+              </SelectTrigger>
+              <SelectContent>
+                {grades.map((grade) => (
+                  <SelectItem key={grade.name} value={grade.name}>
+                    {grade.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <select
-              id="subject"
+            <Select
               name="subject"
               value={selectedSubjectId?.toString() || ""}
-              onChange={handleSubjectChange}
-              className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
+              onValueChange={handleSubjectChange}
             >
-              <option value="">Selecciona una materia</option>
-              {selectedGradeName &&
-                grades
-                  .find((grade) => grade.name === selectedGradeName)
-                  ?.subjects.map((subject) => (
-                    <option key={subject.id} value={subject.id.toString()}>
-                      {subject.name}
-                    </option>
-                  ))}
-            </select>
+              <SelectTrigger className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5">
+                <SelectValue placeholder="Materia" />
+              </SelectTrigger>
+              <SelectContent>
+                {selectedGradeName &&
+                  grades
+                    .find((grade) => grade.name === selectedGradeName)
+                    ?.subjects.map((subject) => (
+                      <SelectItem
+                        key={subject.id}
+                        value={subject.id.toString()}
+                      >
+                        {subject.name}
+                      </SelectItem>
+                    ))}
+              </SelectContent>
+            </Select>
             <Button
               onClick={handleSearch}
               variant="secondary"

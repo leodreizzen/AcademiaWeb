@@ -1,6 +1,6 @@
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
-import AddAssignmentForm from "@/components/ui/Assignment/addAssignmentForm";
+import AddAssignmentForm from "@/app/(loggedin)/assignment/add/addAssignmentForm";
 
 export default async function AddAssignmentPage() {
   await assertPermission({

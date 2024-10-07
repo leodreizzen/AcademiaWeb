@@ -20,7 +20,9 @@ test.describe('Testing buscar estudiante', () => {
             await login(page, '33333333', 'admin');
             await page.waitForURL('/')
     
-            const studentsLink = page.locator('a[href="/student"]');
+            const studentsLink = page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })
+
+
             await studentsLink.click();
     
             const result = await searchStudentByDni(page, dniSeedeado);
@@ -32,7 +34,7 @@ test.describe('Testing buscar estudiante', () => {
             await page.waitForURL('/')
     
     
-            const studentsLink = page.locator('a[href="/student"]');
+            const studentsLink = page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })
             await studentsLink.click();
     
             const result = await searchStudentByLastName(page,lastNameSeed);
@@ -45,7 +47,7 @@ test.describe('Testing buscar estudiante', () => {
     
             const lastName = 'ApellidoInexistente';
     
-            const studentsLink = page.locator('a[href="/student"]');
+            const studentsLink = page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })
             await studentsLink.click();
     
             const result = await searchStudentByLastName(page, lastName);
@@ -58,7 +60,7 @@ test.describe('Testing buscar estudiante', () => {
     
             const dni = '999999999';
     
-            const studentsLink = page.locator('a[href="/student"]');
+            const studentsLink = page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })
             await studentsLink.click();
     
             const result = await searchStudentByDni(page, dni);

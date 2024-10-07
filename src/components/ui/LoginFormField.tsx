@@ -20,7 +20,7 @@ export function LoginFormField<T extends FieldValues>({label, type, autoComplete
     const inputId = `input-${registerRes.name}`
     return (
         <div className={clsx("space-y-1 flex flex-col", className)}>
-            <Label htmlFor="dni" className="text-gray-300 mb-1">{label}</Label>
+            <Label htmlFor={inputId} className="text-gray-300 mb-1">{label}</Label>
             <Input type={type} className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500" autoComplete={autoComplete}
                    required={required} value={value} {...registerRes} id={inputId} autoFocus={autoFocus} />
             <ErrorMessage name={registerRes.name} errors={errors} as={<span className={"text-red-400 text-sm"}/>}/>

@@ -27,6 +27,12 @@ export type ParentFormData = {
     correo: string,
 }
 
+export type ActionResult = {
+    success: true,
+} | {
+    success: false,
+    error: string,
+}
 
 
 export interface ParentWithUser extends Parent{

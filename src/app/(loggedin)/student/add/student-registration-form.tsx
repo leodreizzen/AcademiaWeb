@@ -1,481 +1,329 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentBack";
 import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
-import PaginationControls from "@/app/(loggedin)/student/add/paginationControls";
+import PaginationControlsWithEndpoint from "@/app/(loggedin)/student/add/paginationControlsWithEndpoint";
+import {useRouter} from "next/navigation";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {StudentSchemaWithoutGrade, StudentDataWithoutGrade, ParentData, ParentSchema} from "@/lib/models/studentParent";
+import {FieldForm} from "@/components/ui/FieldForm";
+import {ParentAPIResponse} from "@/app/api/internal/parent/types";
+import {Search} from "lucide-react";
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 
 type PrincipalProps = {
-  data: ParentWithUser[];
-  count: number;
+    data: ParentWithUser[];
+    count: number;
 };
 
-export function StudentRegistrationFormComponent({ data, count }: PrincipalProps) {
-  const [step, setStep] = useState(1)
-  const [yearSelected, setYearSelected] = useState("")
-  const [formData, setFormData] = useState({
-    dni: '',
-    nombre: '',
-    apellido: '',
-    telefono: '',
-    direccion: '',
-    correo: '',
-    anio: ''
-  })
-
-  const [searchDNI, setSearchDNI] = useState('')
-  const [searchApellido, setSearchApellido] = useState('')
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [newParentData, setNewParentData] = useState({
-    dni: '',
-    nombre: '',
-    apellido: '',
-    telefono: '',
-    direccion: '',
-    correo: '',
-  })
-
-  const [parents, setParents] = useState<ParentWithUser[]>([])
 
 
-  const [grades, setGrades] = useState<string[]>([]);
+export function StudentRegistrationFormComponent({data, count}: PrincipalProps) {
+    const {register, handleSubmit: handleSubmit1, formState, getValues} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
+    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
+    const [grade, setGrade] = useState("");
+    const isValid = formState.isValid && grade !== "";
+    const isValid2 = formState2.isValid
+    const [noParents, setNoParents] = useState(false)
+    const [step, setStep] = useState(1)
+    const [page, setPage] = useState(1)
+    const [searchDNI, setSearchDNI] = useState('')
+    const [searchLastName, setSearchLastName] = useState('')
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [parents, setParents] = useState<ParentWithUser[]>(data)
+    const [selectedParents, setSelectedParents] = useState<ParentWithUser[]>([])
 
-  useEffect(() => {
-    const fetchGradesData = async () => {
-        const response = await fetchGrades();
-        setGrades(response.map((grade) => grade.name));
-    };
+    const [grades, setGrades] = useState<string[]>([]);
+    const router = useRouter();
 
-    fetchGradesData();
-  }, []);
+    useEffect(() => {
+        const fetchGradesData = async () => {
+            const response = await fetchGrades();
+            setGrades(response.map((grade) => grade.name));
+        };
+
+        fetchGradesData();
+    }, []);
 
 
+    const handleSelectedParent = (e: React.MouseEvent, parent: ParentWithUser) => {
+        e.preventDefault()
+        if (selectedParents.some(p => p.id === parent.id)) {
+            setSelectedParents(selectedParents.filter(p => p.id !== parent.id))
+        } else if (selectedParents.length < 2) {
+            setSelectedParents([...selectedParents, parent])
+        }
 
-
-  const handleSelectedParent = (e: React.MouseEvent, parent: ParentWithUser) => {
-   e.preventDefault()
-    if (parents.some(p => p.id === parent.id)) {
-      setParents(parents.filter(p => p.id !== parent.id))
-    } else if (parents.length < 2) {
-      setParents([...parents, parent])
     }
 
-  }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    if (name === 'telefono' || name === 'dni') {
-      const numericValue = value.replace(/\D/g, '');
-      setFormData(prev => ({...prev, [name]: numericValue}));
-    }else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
-  }
-
-  const handleNewParentInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    if (name === 'telefono' || name === 'dni') {
-      const numericValue = value.replace(/\D/g, '')
-      setNewParentData(prev => ({ ...prev, [name]: numericValue }))
-    } else {
-      setNewParentData(prev => ({ ...prev, [name]: value }))
-    }
-  }
-    const handleYearSelected = (value: string) => {
-        setYearSelected(value)
-        setFormData(prev => ({ ...prev, anio: value }))
-  }
-
-
-  const isStep1Valid = () => {
-    return Object.values(formData).every(field => field.trim() !== '')
-  }
-
-  const isNewParentValid = () => {
-    return Object.values(newParentData).every(field => field.trim() !== '')
-  }
-
-  const continueNextStep = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (step === 1 && isStep1Valid()) {
-      setStep(2)
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-
-      e.preventDefault();
-      if (step === 2 && parents.length > 0) {
-          const resul = await addStudentToDataBase(formData, parents, yearSelected)
-          if (resul && resul.errors) {
-              alert(resul.message)
-          } else {
-              // Reset form after submission
-              setFormData({
-                  dni: '', nombre: '', apellido: '', telefono: '', direccion: '', correo: '', anio: '',
-              })
-              setParents([])
-              setYearSelected("")
-              setStep(1)
-              // }
-
-
-          }
-      }
-  }
-
-  const handleCreateNewParent = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    const result = await addParentToDataBase(newParentData);
-    if(result && result.errors){
-        alert(result.message)
-    }
-    else{
-
-        setIsDialogOpen(false)
-         // Reset new parent form
-        setNewParentData({
-            dni: '',
-            nombre: '',
-            apellido: '',
-            telefono: '',
-            direccion: '',
-            correo: '',
-          })
+    const continueNextStep = () => {
+        if (step === 1 && isValid) {
+            setStep(2)
+        }
     }
 
-  }
+    const handleSubmitStep2 = async (e: React.FormEvent) => {
 
-  const handleSearch = () => {
-    // Here you would typically fetch data based on searchDNI and searchApellido
-    console.log('Searching for:', { dni: searchDNI, apellido: searchApellido })
-    // For now, we'll just log the search parameters
-  }
+        e.preventDefault();
+        if (step === 2 && selectedParents.length > 0) {
+            const resul = await addStudentToDataBase({...getValues(), gradeName: grade}, selectedParents)
+            console.log("BUENAS", resul)
+            if (!resul.success) {
+                alert(resul.error)
+            } else {
+                alert("El alumno se ha registrado correctamente")
+                router.push("/student")
+            }
+        }
+    }
 
-  return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-4xl mx-auto bg-gray-800 text-gray-100">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-gray-100">
-              {step === 1 ? "Registrar Alumno" : "Asociar Responsable"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {step===1 ? (
-                <>
-                  <form onSubmit={continueNextStep} className="space-y-6">
+    const handleCreateNewParent = async () => {
+        const result = await addParentToDataBase(getValues2());
+        if (!result.success) {
+            alert(result.error)
+        } else {
+            alert("El responsable se ha registrado correctamente")
+            setIsDialogOpen(false)
+            resetField("dni")
+            resetField("phoneNumber")
+            resetField("name")
+            resetField("surname")
+            resetField("address")
+            resetField("email")
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="dni" className="text-gray-300">DNI</Label>
-                          <Input
-                              id="dni"
-                              name="dni"
-                              value={formData.dni}
-                              onChange={handleInputChange}
-                              required
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="nombre" className="text-gray-300">Nombre</Label>
-                          <Input
-                              id="nombre"
-                              name="nombre"
-                              value={formData.nombre}
-                              onChange={handleInputChange}
-                              required
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="direccion" className="text-gray-300">Dirección</Label>
-                          <Input
-                              id="direccion"
-                              name="direccion"
-                              value={formData.direccion}
-                              onChange={handleInputChange}
-                              required
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
+        }
 
-                        <div className="space-y-2">
-                          <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
-                          <Select
-                              name="anio"
-                              value={yearSelected}
-                              onValueChange={handleYearSelected}
-                          >
-                            <SelectTrigger className="bg-grey-700 text-gray-100 border-gray-600 focus:border-gray-500">
-                              <SelectValue placeholder="Elija un año"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {grades.map((grade) => (
-                                  <SelectItem
-                                      key={grade}
-                                      className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                                      value={grade}
-                                  >
-                                    {grade}
-                                  </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+    }
+
+    const handlePageChange = (page: number) => {
+        setPage(page);
+        fetchParents(page, searchDNI, searchLastName);
+    }
 
 
-                      </div>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="telefono" className="text-gray-300">Número de teléfono</Label>
-                          <Input
-                              id="telefono"
-                              name="telefono"
-                              type="tel"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              value={formData.telefono}
-                              onChange={handleInputChange}
-                              required
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="apellido" className="text-gray-300">Apellido</Label>
-                          <Input
-                              id="apellido"
-                              name="apellido"
-                              value={formData.apellido}
-                              onChange={handleInputChange}
-                              required
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="correo" className="text-gray-300">Correo electrónico</Label>
-                          <Input
-                              id="correo"
-                              name="correo"
-                              type="email"
-                              value={formData.correo}
-                              onChange={handleInputChange}
-                              required
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
+    const handleSearch = () => {
+        setPage(1);
+        fetchParents(1, searchDNI, searchLastName);
+    }
+
+    const handleDniEdit = (dni: string) => {
+        setSearchDNI(dni);
+        setSearchLastName("")
+    }
+
+    const handleLastNameEdit = (lastName: string) => {
+        setSearchDNI("");
+        setSearchLastName(lastName)
+    }
+
+    function fetchParents(page: number, dni: string, lastName: string){
+        const searchParams = new URLSearchParams();
+        searchParams.set("page", page.toString());
+        searchParams.set("dni", dni);
+        searchParams.set("lastName", lastName);
+        fetch(`/api/internal/parent?${searchParams.toString()}`).then(async (res) => {
+            let respuestaJson;
+            if (res.ok) {
+                respuestaJson = await res.json() as ParentAPIResponse;
+                respuestaJson.length === 0 ? setNoParents(true) : setNoParents(false);
+                setParents(respuestaJson)
+
+            } else {
+                alert("Fallo al buscar los responsables");
+            }
+        })
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+            <Card className="w-full max-w-4xl mx-auto bg-gray-800 text-gray-100">
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold text-gray-100">
+                        {step === 1 ? "Registrar Alumno" : "Asociar Responsable"}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {step === 1 ? (
+                        <>
+                            <form onSubmit={handleSubmit1(continueNextStep)} className="space-y-6">
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <FieldForm label="DNI" type="number" registerRes={register("dni")} errors={formState.errors}/>
+                                        <FieldForm label="Telefono" type="number" registerRes={register("phoneNumber")} errors={formState.errors}/>
+                                        <FieldForm label="Nombre" type="string" registerRes={register("firstName")} errors={formState.errors}/>
+                                        <FieldForm label="Apellido" type="string" registerRes={register("lastName")} errors={formState.errors}/>
+                                        <FieldForm label="Direccion" type="string" registerRes={register("address")} errors={formState.errors}/>
+                                        <FieldForm label="Correo electrónico" type="string" registerRes={register("email")} errors={formState.errors}/>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
+                                            <Select
+                                                name="anio"
+                                                value={grade}
+                                                onValueChange={setGrade}
+                                            >
+                                                <SelectTrigger
+                                                    className="bg-grey-700 text-gray-100 border-gray-600 focus:border-gray-500">
+                                                    <SelectValue placeholder="Elija un año"/>
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {grades.map((grade) => (
+                                                        <SelectItem
+                                                            key={grade}
+                                                            className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
+                                                            value={grade}
+                                                        >
+                                                            {grade}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
 
 
 
-
-                      </div>
-                    </div>
-
-
-
-                      <Button
-                          type="submit"
-                          disabled={!isStep1Valid()}
-                          className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
-                      >
-                        Siguiente
-                      </Button>
+                                    </div>
+                                <Button
+                                    type="submit"
+                                    disabled={!isValid}
+                                    className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
+                                >
+                                    Siguiente
+                                </Button>
 
 
-                  </form>
+                            </form>
+
+                        </>
+
+                    ) : (
+
+                        <>
+                            <form onSubmit={handleSubmitStep2} className="space-y-6">
+                                <div className="space-y-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+
+                                            <div className="flex space-x-3">
+                                                <Input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Buscar por DNI"
+                                                    value={searchDNI}
+                                                    onChange={(e) => handleDniEdit(e.target.value)}
+                                                    className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-5 max-w-md"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex space-x-3">
+                                            <Input
+                                                type="text"
+                                                placeholder="Buscar por Apellido"
+                                                value={searchLastName}
+                                                onChange={(e) => handleLastNameEdit(e.target.value)}
+                                                className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-5 max-w-md"
+                                            />
+                                            <Button type="button" onClick={handleSearch} variant="secondary"
+                                                    className="bg-gray-600 hover:bg-gray-500 px-5">
+                                                <Search className="h-5 w-5"/>
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {
+                                        noParents &&
+                                        <NoResultCard/>
+                                    }
+
+                                    {parents.map((parent) => (
+                                        <Card key={parent.id} className="bg-gray-700">
+                                            <CardContent className="flex items-center justify-between p-3">
+                                            <div>
+                                                    <p className="font-semibold text-white text-xl">{parent.user.firstName} {parent.user.lastName}</p>
+                                                    <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
+                                                </div>
+                                                <div className="space-x-3">
+                                                    <Button
+                                                        onClick={(e) => handleSelectedParent(e, parent)}
+                                                        className={`${
+                                                            selectedParents.some(p => p.id === parent.id)
+                                                                ? 'bg-blue-600 text-white'
+                                                                : 'bg-gray-600 text-gray-100'
+                                                        } hover:bg-blue-500`}
+                                                        disabled={selectedParents.length === 2 && !selectedParents.some(p => p.id === parent.id)}
+                                                    >
+                                                        {selectedParents.some(p => p.id === parent.id) ? 'Seleccionado' : 'Seleccionar'}
+                                                    </Button>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
+                                    <PaginationControlsWithEndpoint onAction={handlePageChange} currentPage={page} lastPage={count}/>
+                                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button className="bg-green-600 text-white hover:bg-green-500 w-full mt-4">
+                                                Nuevo Responsable
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="bg-gray-800 text-gray-100">
+                                            <DialogHeader>
+                                                <DialogTitle>Nuevo Responsable</DialogTitle>
+                                            </DialogHeader>
+                                            <div className="space-y-4">
+                                                <FieldForm label="DNI" type="number" registerRes={register2("dni")} errors={formState2.errors}/>
+                                                <FieldForm label="Telefono" type="number" registerRes={register2("phoneNumber")} errors={formState2.errors}/>
+                                                <FieldForm label="Nombre" type="string" registerRes={register2("name")} errors={formState2.errors}/>
+                                                <FieldForm label="Apellido" type="string" registerRes={register2("surname")} errors={formState2.errors}/>
+                                                <FieldForm label="Direccion" type="string" registerRes={register2("address")} errors={formState2.errors}/>
+                                                <FieldForm label="Correo electrónico" type="string" registerRes={register2("email")} errors={formState2.errors}/>
+                                                <Button
+                                                    onClick={handleSubmit2(handleCreateNewParent)}
+                                                    disabled={!isValid2}
+                                                    className="w-full bg-green-600 text-white hover:bg-green-500"
+                                                >
+                                                    Agregar
+                                                </Button>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
 
 
-                </>
+                                </div>
+                                <CardFooter className="flex justify-between">
+                                    <Button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setStep(1)
+                                        }}
+                                        className="bg-gray-700 text-gray-100 hover:bg-gray-600"
+                                    >
+                                        Volver
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        disabled={selectedParents.length === 0}
+                                        className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
+                                    >
+                                        Registrar
+                                    </Button>
+                                </CardFooter>
+                            </form>
+                        </>
+                    )}
+                </CardContent>
 
-
-            ) : (
-
-                <>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="searchDNI" className="text-gray-300">Buscar por DNI</Label>
-                          <Input
-                              id="searchDNI"
-                              value={searchDNI}
-                              onChange={(e) => setSearchDNI(e.target.value)}
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="searchApellido" className="text-gray-300">Buscar por Apellido</Label>
-                          <Input
-                              id="searchApellido"
-                              value={searchApellido}
-                              onChange={(e) => setSearchApellido(e.target.value)}
-                              className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                          />
-                        </div>
-                      </div>
-                      <Button
-                          onClick={handleSearch}
-                          className="bg-blue-600 text-white hover:bg-blue-500"
-                      >
-                        Buscar
-                      </Button>
-                          {data.map((parent) => (
-                              <Card key={parent.id} className="bg-gray-700">
-                                  <CardContent className="flex items-center justify-between p-3">
-                                      <div>
-                                          <p className="font-semibold text-white text-xl">{parent.user.firstName} {parent.user.lastName}</p>
-                                          <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
-                                      </div>
-                                      <div className="space-x-3">
-                                          <Button
-                                              onClick={(e) => handleSelectedParent(e,parent)}
-                                              className={`${
-                                                  parents.some(p => p.id === parent.id)
-                                                      ? 'bg-blue-600 text-white'
-                                                      : 'bg-gray-600 text-gray-100'
-                                              } hover:bg-blue-500`}
-                                              disabled={parents.length === 2 && !parents.some(p => p.id === parent.id)}
-                                          >
-                                              {parents.some(p => p.id === parent.id) ? 'Seleccionado' : 'Seleccionar'}
-                                          </Button>
-                                      </div>
-                                  </CardContent>
-                              </Card>
-                          ))}
-                    <PaginationControls cantPages={count} />
-                      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button className="bg-green-600 text-white hover:bg-green-500 w-full mt-4">
-                            Nuevo Responsable
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-800 text-gray-100">
-                          <DialogHeader>
-                            <DialogTitle>Nuevo Responsable</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="newParentDni" className="text-gray-300">DNI</Label>
-                              <Input
-                                  id="newParentDni"
-                                  name="dni"
-                                  value={newParentData.dni}
-                                  onChange={handleNewParentInputChange}
-                                  required
-                                  className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="newParentNombre" className="text-gray-300">Nombre</Label>
-                              <Input
-                                  id="newParentNombre"
-                                  name="nombre"
-                                  value={newParentData.nombre}
-                                  onChange={handleNewParentInputChange}
-                                  required
-                                  className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="newParentApellido" className="text-gray-300">Apellido</Label>
-                              <Input
-                                  id="newParentApellido"
-                                  name="apellido"
-                                  value={newParentData.apellido}
-                                  onChange={handleNewParentInputChange}
-                                  required
-                                  className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="newParentTelefono" className="text-gray-300">Número de teléfono</Label>
-                              <Input
-                                  id="newParentTelefono"
-                                  name="telefono"
-                                  type="tel"
-                                  inputMode="numeric"
-                                  pattern="[0-9]*"
-                                  value={newParentData.telefono}
-                                  onChange={handleNewParentInputChange}
-                                  required
-                                  className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="newParentDireccion" className="text-gray-300">Dirección</Label>
-                              <Input
-                                  id="newParentDireccion"
-                                  name="direccion"
-                                  value={newParentData.direccion}
-                                  onChange={handleNewParentInputChange}
-                                  required
-                                  className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="newParentCorreo" className="text-gray-300">Correo electrónico</Label>
-                              <Input
-                                  id="newParentCorreo"
-                                  name="correo"
-                                  type="email"
-                                  value={newParentData.correo}
-                                  onChange={handleNewParentInputChange}
-                                  required
-                                  className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
-                              />
-                            </div>
-                            <Button
-                                onClick={handleCreateNewParent}
-                                disabled={!isNewParentValid()}
-                                className="w-full bg-green-600 text-white hover:bg-green-500"
-                            >
-                              Agregar
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-
-
-
-
-
-
-
-
-
-
-                    </div>
-                    <CardFooter className="flex justify-between">
-                      <Button
-                          onClick={(e) => {e.preventDefault(); setStep(1)}}
-                          className="bg-gray-700 text-gray-100 hover:bg-gray-600"
-                      >
-                        Volver
-                      </Button>
-                      <Button
-                          type="submit"
-                          disabled={parents.length === 0}
-                          className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
-                      >
-                        Registrar
-                      </Button>
-                    </CardFooter>
-                  </form>
-                </>
-            )}
-          </CardContent>
-
-        </Card>
-      </div>
-  )
+            </Card>
+        </div>
+    )
 }

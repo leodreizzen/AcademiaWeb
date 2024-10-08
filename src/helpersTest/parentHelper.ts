@@ -1,6 +1,7 @@
 import { Page, expect } from "@playwright/test";
 import {faker} from '@faker-js/faker';
 import { randomDNI } from "./studentHelper";
+import exp from "constants";
 
 export async function searchParentByDni(page: Page, Dni: string) {
     await page.getByPlaceholder('DNI').click();
@@ -100,14 +101,28 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     await page.waitForTimeout(2000);
 
-    searchParentByDni(page, parentDni);
+    await page.getByPlaceholder('Buscar por DNI').click();
+    await page.getByPlaceholder('Buscar por DNI').fill(parentDni);
+    
+    await page.locator('div:nth-child(2) > .inline-flex').first().click();
+
+    await page.waitForTimeout(5000);
+
+    await page.getByRole('button', { name: 'Seleccionar' }).click();
+
+   
+
+    
+    
+    page.once('dialog', dialog => {
+      console.log(`Dialog message: ${dialog.message()}`);
+      dialog.dismiss().catch(() => {});
+    });
+
+    await page.getByRole('button', { name: 'Registrar' }).click();
 
 
-    await page.getByRole('button', { name: 'Seleccionar' }).last().click(); //como el creado es el ultimo, selecciono este para asignarle al alumno
-
-
-
-    await page.locator('button[type="submit"]').click();
+    
 
     await expect(page).toHaveURL('http://localhost:3000/student');
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
@@ -144,16 +159,28 @@ export async function createParentWithOnlyOneChild(page: Page) {
 
     await page.waitForTimeout(2000);
 
-    searchParentByDni(page, parentDni);
+    await page.getByPlaceholder('Buscar por DNI').click();
+    await page.getByPlaceholder('Buscar por DNI').fill(parentDni);
+    
+    await page.locator('div:nth-child(2) > .inline-flex').first().click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).last().click(); //como el creado es el ultimo, selecciono este para asignarle al alumno
+    await page.waitForTimeout(5000);
 
+    await page.getByRole('button', { name: 'Seleccionar' }).click();
 
+   
 
-    await page.locator('button[type="submit"]').click();
+    
+    
+    page.once('dialog', dialog => {
+      console.log(`Dialog message: ${dialog.message()}`);
+      dialog.dismiss().catch(() => {});
+    });
+
+    await page.getByRole('button', { name: 'Registrar' }).click();
 
     await expect(page).toHaveURL('http://localhost:3000/student');
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
+    await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     return parentDni;
 }

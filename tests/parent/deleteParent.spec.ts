@@ -110,13 +110,21 @@ test.describe('Testing delete parent', () => {
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
+        console.log("Parent DNI: " + parentDni);
+
         const deleteButton = page.locator('button:has-text("Borrar")');
+
+        page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('No se puede eliminar, hay estudiantes con un solo padre');
+            await dialog.accept();
+        });
 
         await deleteButton.click();
 
         await page.waitForTimeout(10000);
 
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
+
 
     });
 

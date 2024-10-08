@@ -47,7 +47,6 @@ export async function requestPasswordReset(_data: ForgotPasswordData): Promise<O
 
 async function sendResetEmail(user: User, email: string): Promise<EmailSendResult>{
     const token = await createPasswordResetToken(user);
-    // TODO Cambiar. Email va en user
     const searchParams = new URLSearchParams({token});
     searchParams.set('token', token);
     return sendResetPasswordEmail({...user, email}, getFullUrl(`/passwordreset/?${searchParams.toString()}`));

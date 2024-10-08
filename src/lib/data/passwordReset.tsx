@@ -5,9 +5,8 @@ import {TransactionPrismaClient} from "@/lib/definitions";
 
 export async function fetchUserByEmail(email: string): Promise<User | null> {
     const prisma = getPrismaClient({id: 1, role: "Superuser"})
-    //TODO CAMBIAR. EL EMAIL DEBE ESTAR EN USER
 
-    const students = await prisma.student.findMany({
+    const students = await prisma.profile.findMany({
         where: {
             email: email
         },

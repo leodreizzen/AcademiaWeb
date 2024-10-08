@@ -2,14 +2,9 @@
 
 import { z } from "zod";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import {assignmentSchema} from "@/lib/models/addAssignment";
 
-const assignmentSchema = z.object({
-  title: z.string().min(1, "El título es obligatorio"),
-  description: z.string().optional(),
-  fileUrl: z.string().url(),
-  subject: z.string(),
-  grade: z.string(),
-});
+
 
 export async function submitAssignment(formData: FormData) {
   try {
@@ -18,7 +13,6 @@ export async function submitAssignment(formData: FormData) {
     const fileUrl = formData.get("fileUrl");
     const subject = formData.get("subject");
     const grade = formData.get("grade");
-
     const validatedData = assignmentSchema.parse({
       title,
       description,

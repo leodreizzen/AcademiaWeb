@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "secrets": "tsx secrets.tsx",
-    "postinstall": "npm run secrets && zenstack generate && npx prisma generate"
+    "postinstall": "npm run secrets && zenstack generate && npx prisma generate",
+    "savetestdata": "tsx encryptTestData.ts"
   },
   "dependencies": {
     "@1password/sdk": "^0.1.1",
@@ -39,6 +40,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
+    "readline-sync": "^1.4.10",
     "route-recognizer": "^0.3.4",
     "server-only": "^0.0.1",
     "tailwind-merge": "^2.5.2",
@@ -53,6 +55,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/readline-sync": "^1.4.8",
     "@types/ws": "^8.5.12",
     "eslint": "^8",
     "eslint-config-next": "14.2.9",

@@ -2,8 +2,7 @@ import { expect, test } from "@playwright/test";
 import { Faker, es } from '@faker-js/faker'
 import { login } from '@/helpersTest/loginHelper';
 import { searchStudentByDni, searchStudentByLastName } from '@/helpersTest/studentHelper';
-import { beforeEach } from "node:test";
-import { Dialog } from "@radix-ui/react-dialog";
+import {getTestUser} from "../testdata";
 
 const faker = new Faker({ locale: [es] })
 
@@ -19,9 +18,12 @@ const randomDNI = () => {
     return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
 };
 
+const adminToLogIn = getTestUser('administrator')
 
-test('Datos validos alumno', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    test('Datos validos alumno', async ({ page }) => {
+  
+    
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')    
 
     await page.getByRole('navigation').getByRole('link', { name: 'Alumnos' }).click();
@@ -47,7 +49,7 @@ test('Datos validos alumno', async ({ page }) => {
 });
 
 test('Datos vacios nombre y dni', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -64,7 +66,7 @@ test('Datos vacios nombre y dni', async ({ page }) => {
 });
 
 test('Email invalido', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -82,7 +84,7 @@ test('Email invalido', async ({ page }) => {
 });
 
 test('Año no seleccionado', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -100,7 +102,7 @@ test('Año no seleccionado', async ({ page }) => {
 
 
 test('Asignacion de padres con padres ya registrados', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
 
 
@@ -133,7 +135,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 });
 
 test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -179,7 +181,7 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
 
 test('Asignacion de padres con un solo padre', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
 
     await page.goto('http://localhost:3000/student/add');
@@ -209,7 +211,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
 
 test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) estudiante', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -228,7 +230,7 @@ test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) 
 });
 
 test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -250,7 +252,7 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
 });
 
 test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
@@ -279,7 +281,7 @@ test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page 
 });
 
 test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')    
     await page.goto('http://localhost:3000/student/add');
 
@@ -312,7 +314,7 @@ test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ 
 test('Caso de falla DNI DUPLICADO', async ({ page }) => {
 
 
-    await login(page, '33333333', 'admin');
+    await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
 
 

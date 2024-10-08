@@ -16,7 +16,7 @@ export default async function AssignmentPage({
   const COUNT_PER_PAGE = 10;
 
   const assignments= await getAssignments(page, title, subject, grade);
-  const count = assignments[0].count;
+  const count = assignments[0]?.count || 0;
   const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
 
   return (

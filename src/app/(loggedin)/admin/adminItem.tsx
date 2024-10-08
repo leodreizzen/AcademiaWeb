@@ -11,7 +11,7 @@ interface AdminItemParams {
 
 export default function AdminItem({ administrator, onView, onEdit, onRemove }: AdminItemParams) {
     return (
-        <div className="border border-white rounded-lg p-4 flex bg-[#394150] gap-12">
+        <div className="border border-white rounded-lg p-4 flex bg-[#394150] gap-12 test-admin-item">
             <div className="flex flex-col grow">
                 <h3 className="text-xl font-bold">
                     {administrator.user.firstName} {administrator.user.lastName}

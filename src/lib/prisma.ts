@@ -37,3 +37,4 @@ export function getRawPrismaClient(): ReturnType<typeof createPrismaClient>{
     // USE ONLY FOR LOGIN
     return prisma;
 }
+

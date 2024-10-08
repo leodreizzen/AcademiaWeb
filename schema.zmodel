@@ -1,0 +1,131 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+    directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model User {
+    dni       Int           @id @allow('read',  true) @deny('update', true)
+    lastName  String
+    firstName String
+    profiles  Profile[]
+    password  String        @omit @password @allow('update', true)
+
+    resetToken PasswordResetToken?
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+
+model Profile {
+    dni Int
+    user User @relation(fields: [dni], references: [dni])
+
+    id Int @id @default(autoincrement())
+    role String
+
+    email String
+
+    @@unique([dni, role])
+    @@allow('read', true)
+    @@allow('delete', auth().role == "Administrator")
+    @@allow("all", auth().role == "Superuser")
+    @@delegate(role)
+    @@auth
+}
+
+model Superuser extends Profile {
+    @@allow('read', true)
+    @@allow('all', auth().role == "Superuser")
+}
+
+
+model Student extends Profile {
+    phoneNumber String
+    address     String
+    parents     Parent[]
+    grade       Grade    @relation(fields: [gradeName], references: [name])
+    gradeName   String
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Parent extends Profile {
+    phoneNumber String
+    address     String
+    children    Student[]
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Teacher extends Profile {
+    phoneNumber String
+    address     String
+    subjects    Subject[]
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Administrator extends Profile {
+    phoneNumber String
+    address     String
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Assignment {
+    id          Int      @id @default(autoincrement())
+    title       String
+    description String?
+    fileUrl     String
+    uploadDate  DateTime @default(now())
+    subject     Subject  @relation(fields: [subjectId], references: [id])
+    subjectId   Int
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Teacher")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Grade {
+    name     String    @id
+    subjects Subject[]
+    students Student[]
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Subject {
+    id       Int     @id @default(autoincrement())
+    name      String
+    grade     Grade  @relation(fields: [gradeName], references: [name])
+    gradeName String
+    teachers  Teacher[]
+    assignments Assignment[]
+
+    @@unique([gradeName, name])
+    @@allow('read', true)
+    @@allow('all', auth().role == "Administrator")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model PasswordResetToken{
+    token_hash String @id
+    issued_at DateTime @default(now())
+    user User @relation(fields: [dni], references: [dni], onDelete: Cascade)
+    dni Int @unique
+    used Boolean @default(false)
+
+    @@allow('all', auth().role == "Superuser")
+}

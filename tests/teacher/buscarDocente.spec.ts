@@ -1,21 +1,26 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../src/helpersTest/loginHelper';
+import { login } from '@/helpersTest/loginHelper';
+import {loginAsTestUser} from "../testutils";
+import {getTestUser} from "../testdata";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
    // await page.waitForURL('http://localhost:3000/teacher');
 })
-  
+
+const teacher1 = getTestUser("teacher")
+const teacher2 = getTestUser("teacherAdministrator")
+
 
 test.describe('Testing buscar docente', () => {
 
     test('Busqueda por DNI exitosa', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
-        const dni = '22222222';
+        const dni = teacher1.dni.toString();
         const viewportSize = await page.viewportSize();
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' })
         await docentesLink.click();
 
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -34,12 +39,12 @@ test.describe('Testing buscar docente', () => {
     });
 
     test('Busqueda por Apellido exitosa', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
-        const apellido = 'Pepita';
+        const apellido = teacher2.lastName;
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
@@ -56,12 +61,12 @@ test.describe('Testing buscar docente', () => {
     });
 
     test('Busqueda de apellido no existente', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
         const apellido = 'asdf';
         //Test para desktop
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
@@ -78,12 +83,12 @@ test.describe('Testing buscar docente', () => {
     });
 
     test('Busqueda de dni no existente', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
         const dni = '01111111';
         //Test para desktop
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -100,12 +105,12 @@ test.describe('Testing buscar docente', () => {
     });
     
     test('Busqueda unica por apellido apesar de escribir en dni ', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
-        const dni = '77777777';
+        const dni = teacher1.dni.toString();
         //Test para desktop
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -114,7 +119,7 @@ test.describe('Testing buscar docente', () => {
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
         await inputApellido.click();
        
-        const apellido = 'Pepito';
+        const apellido = teacher2.lastName;
         await inputApellido.fill(apellido);
         await expect(inputDni).toHaveValue('');
 
@@ -129,19 +134,19 @@ test.describe('Testing buscar docente', () => {
     });
 
     test('Busqueda unica por dni apesar de escribir en apellido ', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
-        const apellido = 'Pepito';
+        const apellido = teacher2.lastName;
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         const inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
         await inputApellido.click();
         await inputApellido.fill(apellido);
       
-        const dni = '77777777';
+        const dni = teacher1.dni.toString();
         const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
         await inputDni.click();
         await inputDni.fill(dni);
@@ -161,13 +166,13 @@ test.describe('Testing buscar docente', () => {
     });
 
     test('Luego de busqueda valida por dni volver a buscar otro dni ', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
-        const dni = '22222222';
+        const dni = teacher1.dni.toString();
         const viewportSize = await page.viewportSize();
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         var inputDni = page.locator('input[placeholder="Buscar por DNI"]');
@@ -179,7 +184,7 @@ test.describe('Testing buscar docente', () => {
         var expectedUrlPattern = new RegExp(`/teacher\\?dni=${dni}&lastName=`);
         await page.waitForURL(expectedUrlPattern);
 
-        const otroDni = '77777777';
+        const otroDni = teacher2.dni.toString();
         inputDni = page.locator('input[placeholder="Buscar por DNI"]');
         await inputDni.fill(otroDni);
 
@@ -196,12 +201,12 @@ test.describe('Testing buscar docente', () => {
     });
 
     test('Luego de busqueda valida por apellido volver a buscar otro apellido', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')
 
-        const apellido = 'Pepito';
+        const apellido = teacher1.lastName;
 
-        const docentesLink = page.locator('a[href="/teacher"]');
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
         await docentesLink.click();
 
         var inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
@@ -213,7 +218,7 @@ test.describe('Testing buscar docente', () => {
         var expectedUrlPattern = new RegExp(`/teacher\\?dni=&lastName=${apellido}`);
         await page.waitForURL(expectedUrlPattern);
 
-        const otroApellido = 'Delarosa';
+        const otroApellido = teacher2.lastName;
         inputApellido = page.locator('input[placeholder="Buscar por Apellido"]');
         await inputApellido.fill( otroApellido);
 

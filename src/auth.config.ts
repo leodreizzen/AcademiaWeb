@@ -1,5 +1,5 @@
 import {NextAuthConfig} from "next-auth";
-import {getPermission} from "@/url_operations";
+import {anonymousPages, getPermission} from "@/url_operations";
 import {hasPermission} from "@/lib/permissions";
 
 
@@ -13,10 +13,13 @@ export const authConfig = {
     callbacks: {
         authorized({auth, request: {nextUrl}}) {
             const isLoggedIn = !!auth?.user;
+            if(anonymousPages.includes(nextUrl.pathname))
+                return true
+
             if (!isLoggedIn) {
                 return nextUrl.pathname === '/login'
             } else{
-                if(nextUrl.pathname === '/selectrole' || nextUrl.pathname === '/403' ||nextUrl.pathname === "/login")
+                if(nextUrl.pathname === '/selectrole')
                     return true
                 if (!auth.user.role){
                     const newUrl = new URL('/selectrole', nextUrl);

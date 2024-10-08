@@ -22,7 +22,6 @@ test.describe('Testing listado admin', () => {
     test('Listado admin buscado por DNI (CASO POSITIVO)', async ({ page }) => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
-
         
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});

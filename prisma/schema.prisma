@@ -70,6 +70,7 @@ model Superuser {
 /// @@allow('all', auth().role == 'Superuser')
 model Student {
   id                    Int                    @id()
+  birthdate             DateTime               @default(now())
   phoneNumber           String
   address               String
   parents               Parent[]
@@ -91,6 +92,7 @@ model Student {
 /// @@allow('all', auth().role == 'Superuser')
 model Parent {
   id                   Int       @id()
+  birthdate            DateTime  @default(now())
   phoneNumber          String
   address              String
   children             Student[]

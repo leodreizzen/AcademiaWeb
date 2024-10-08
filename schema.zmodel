@@ -46,6 +46,7 @@ model Superuser extends Profile {
 
 
 model Student extends Profile {
+    birthdate             DateTime @default(now())
     phoneNumber           String
     address               String
     parents               Parent[]
@@ -62,6 +63,7 @@ model Student extends Profile {
 }
 
 model Parent extends Profile {
+    birthdate   DateTime  @default(now())
     phoneNumber String
     address     String
     children    Student[]

@@ -2,6 +2,17 @@ import "server-only"
 import RouteRecognizer, {Results} from "route-recognizer";
 import {Permission, Resource} from "@/lib/operation_list";
 
+export const anonymousPages: string[] = [
+    "/login",
+    "/selectrole",
+    "/403",
+    "/forgotpassword",
+    "/forgotpassword/confirmation",
+    "/passwordreset"
+]
+
+
+
 
 const recognizer = new RouteRecognizer();
 const routeList:{path: string, handler: Permission}[] = [

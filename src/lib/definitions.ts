@@ -15,3 +15,11 @@ export interface ProfileWithRole extends Profile {
 export interface ProfileWithRoleAndUser extends ProfileWithRole{
     user : User
 }
+import getPrismaClient from "./prisma";
+
+export type EnhancedPrismaClient = ReturnType<typeof getPrismaClient>;
+
+
+type ExtractFnType<T> = T extends (fn: (arg: infer A, ...args: any[]) => any, options?: any) => any ? A : never;
+
+export type TransactionPrismaClient = ExtractFnType<EnhancedPrismaClient['$transaction']>;

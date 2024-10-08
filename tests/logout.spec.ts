@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { login } from '../src/helpersTest/loginHelper';
+import {getTestUser} from "./testdata";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -8,7 +9,8 @@ test.beforeEach(async ({page}) => {
   test.describe('Testing logout', () => {
 
     test('Logout exitoso admin', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        const administrator = getTestUser("administrator")
+        await login(page, administrator.dni.toString(), administrator.password);
         await page.waitForURL('/');
 
         const viewportSize = await page.viewportSize();
@@ -38,7 +40,8 @@ test.beforeEach(async ({page}) => {
     });
     
     test('Logout exitoso alumno', async ({ page })=> {
-        await login(page, '11111111', 'alumno');
+        const student = getTestUser("student")
+        await login(page, student.dni.toString(), student.password);
         await page.waitForURL('/');
 
         const viewportSize = await page.viewportSize();
@@ -68,7 +71,8 @@ test.beforeEach(async ({page}) => {
     });
 
     test('Logout exitoso padre', async ({ page })=> {
-        await login(page, '44444444', 'padre');
+        const parent = getTestUser("parent")
+        await login(page, parent.dni.toString(), parent.password);
         await page.waitForURL('/');
 
         const viewportSize = await page.viewportSize();
@@ -98,7 +102,8 @@ test.beforeEach(async ({page}) => {
     });
 
     test('Logout exitoso profesor', async ({ page })=> {
-        await login(page, '22222222', 'profesor');
+        const teacher = getTestUser("teacher")
+        await login(page, teacher.dni.toString(), teacher.password.toString());
         await page.waitForURL('/');
 
         const viewportSize = await page.viewportSize();
@@ -130,8 +135,9 @@ test.beforeEach(async ({page}) => {
     ////////////////////////////
 
     test('Después de cerrar sesión, navegar hacia adelante mantiene al usuario en la página de inicio de sesión', async ({ page }) => {
-        
-        await login(page, '33333333', 'admin');
+
+        const administrator = getTestUser("administrator")
+        await login(page, administrator.dni.toString(), administrator.password);
         await page.waitForURL('/');
 
         const viewportSize = await page.viewportSize();

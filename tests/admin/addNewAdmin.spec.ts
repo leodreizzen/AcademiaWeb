@@ -3,6 +3,7 @@ import { login } from '@/helpersTest/loginHelper';
 import { searchAdminByDni, searchAdminByLastName } from '@/helpersTest/adminHelper';
 import { randomDNI } from '@/helpersTest/studentHelper';
 import { faker } from '@faker-js/faker';
+import {loginAsTestUser} from "../testutils";
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -10,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 
 
     test('Crear nuevo admin (CASO POSITIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -33,12 +34,12 @@ test.beforeEach(async ({ page }) => {
 
         await page.locator('button[type="submit"]').click();
 
-        await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'}); 
+        await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
 
-       
 
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
+
+        await expect(page.locator(".test-admin-item").first()).toBeVisible();
         expect(await searchAdminByDni(page, DNI)).toBe(true);
 
 
@@ -47,7 +48,7 @@ test.beforeEach(async ({ page }) => {
     });
 
     test('Crear nuevo admin sin DNI (CASO NEGATIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -70,7 +71,7 @@ test.beforeEach(async ({ page }) => {
     });
 
     test('Crear nuevo admin sin nombre (CASO NEGATIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -93,7 +94,7 @@ test.beforeEach(async ({ page }) => {
     });
 
     test('Crear nuevo admin sin apellido (CASO NEGATIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -116,7 +117,7 @@ test.beforeEach(async ({ page }) => {
     });
 
     test('Crear nuevo admin sin telefono (CASO NEGATIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -139,7 +140,7 @@ test.beforeEach(async ({ page }) => {
     });
 
     test('Crear nuevo admin sin email (CASO NEGATIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -162,7 +163,7 @@ test.beforeEach(async ({ page }) => {
     });
 
     test('Crear nuevo admin sin direccion (CASO NEGATIVO) ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });

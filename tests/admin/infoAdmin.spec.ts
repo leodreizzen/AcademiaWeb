@@ -1,17 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { login } from '@/helpersTest/loginHelper';
 import { searchAdminByDni} from '@/helpersTest/adminHelper';
+import {loginAsTestUser} from "../testutils";
+import {getTestUser} from "../testdata";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
 });
 
-const dniDefaultAdmin = '33333333';
+const dniDefaultAdmin = getTestUser('administrator').dni.toString();
 
 test.describe('Testing info admin', () => {
 
     test('info correspondiente al administrador desde rol administrador', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         const firstButton = await page.locator('button:has-text("Administradores")');  
         await expect(firstButton).toBeVisible();
@@ -25,7 +27,7 @@ test.describe('Testing info admin', () => {
     });
 
     test('Verificar detalles del primer admin', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Administradores' }).first().click();
         await page.waitForTimeout(10000);

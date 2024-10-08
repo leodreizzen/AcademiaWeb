@@ -32,6 +32,7 @@ model User {
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Superuser')
 /// @@delegate(role)
 /// @@auth
 model Profile {
@@ -39,6 +40,7 @@ model Profile {
   user                       User           @relation(fields: [dni], references: [dni])
   id                         Int            @id() @default(autoincrement())
   role                       String
+  email                      String
   delegate_aux_superuser     Superuser?
   delegate_aux_student       Student?
   delegate_aux_parent        Parent?
@@ -50,6 +52,7 @@ model Profile {
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Superuser')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
@@ -60,6 +63,7 @@ model Superuser {
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Superuser')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -68,7 +72,6 @@ model Student {
   id                   Int      @id()
   phoneNumber          String
   address              String
-  email                String
   parents              Parent[]
   grade                Grade    @relation(fields: [gradeName], references: [name])
   gradeName            String
@@ -77,6 +80,7 @@ model Student {
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Superuser')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -85,13 +89,13 @@ model Parent {
   id                   Int       @id()
   phoneNumber          String
   address              String
-  email                String
   children             Student[]
   delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Superuser')
 /// @@auth
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
@@ -100,13 +104,13 @@ model Teacher {
   id                   Int       @id()
   phoneNumber          String
   address              String
-  email                String
   subjects             Subject[]
   delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
+/// @@allow('all', auth().role == 'Superuser')
 /// @@auth
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
@@ -114,7 +118,6 @@ model Administrator {
   id                   Int     @id()
   phoneNumber          String
   address              String
-  email                String
   delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 

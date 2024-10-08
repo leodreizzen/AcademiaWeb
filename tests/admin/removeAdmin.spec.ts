@@ -3,6 +3,7 @@ import { login } from '@/helpersTest/loginHelper';
 import { searchAdminByDni } from '@/helpersTest/adminHelper';
 import { randomDNI } from '@/helpersTest/studentHelper';
 import { faker } from '@faker-js/faker';
+import {loginAsTestUser} from "../testutils";
 
 test.describe('Remove admin', () => {
 
@@ -11,7 +12,7 @@ test.describe('Remove admin', () => {
     })
 
     test('Eliminar admin, luego no se puede logear ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
@@ -39,7 +40,7 @@ test.describe('Remove admin', () => {
 
 
 
-        await expect(page.getByText('Gabriela Rodríguez HurtadoDNI: 33333333 Editar Ver Borrar')).toBeVisible();
+        await expect(page.locator(".test-admin-item").first()).toBeVisible();
         expect(await searchAdminByDni(page, DNI)).toBe(true);
 
 
@@ -65,7 +66,7 @@ test.describe('Remove admin', () => {
         await page.waitForURL('/login');
         await expect(page.locator('h3:has-text("Iniciar sesión")')).toBeVisible();
 
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();;
 
@@ -88,7 +89,6 @@ test.describe('Remove admin', () => {
         await page.click('button[type="submit"]');
 
         await expect(page.locator('body')).toContainText('El usuario no existe');
-
 
     });
 });

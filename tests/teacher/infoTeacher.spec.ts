@@ -2,17 +2,19 @@ import { test, expect } from '@playwright/test';
 import { login } from '@/helpersTest/loginHelper';
 import { searchTeacherByDni} from '@/helpersTest/teacherHelper';
 import { getFirstPersonDetails, getPersonDetails } from '@/helpersTest/infoHelper';
+import {loginAsTestUser} from "../testutils";
+import {getTestUser} from "../testdata";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
 });
   
-const dniDefaultTeacher = '22222222';
+const dniDefaultTeacher = getTestUser("teacher").dni.toString();
 
 test.describe('Testing info teacher', () => {
 
     test('info correspondiente al docente buscado desde rol administrador', async ({ page })=> {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         const firstButton = await page.locator('button:has-text("Docentes")');  
         await expect(firstButton).toBeVisible();
@@ -26,7 +28,7 @@ test.describe('Testing info teacher', () => {
     });
 
     test('Verificar detalles del primer docente', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Docentes' }).first().click();
         const { name: expectedName, dni: expectedDNI } = await getFirstPersonDetails(page);

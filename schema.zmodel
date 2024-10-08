@@ -16,7 +16,6 @@ model User {
     password  String        @omit @password @allow('update', true)
 
     resetToken PasswordResetToken?
-
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
@@ -30,9 +29,12 @@ model Profile {
     id Int @id @default(autoincrement())
     role String
 
+    email String
+
     @@unique([dni, role])
     @@allow('read', true)
     @@allow('delete', auth().role == "Administrator")
+    @@allow("all", auth().role == "Superuser")
     @@delegate(role)
     @@auth
 }
@@ -46,7 +48,6 @@ model Superuser extends Profile {
 model Student extends Profile {
     phoneNumber String
     address     String
-    email       String
     parents     Parent[]
     grade       Grade    @relation(fields: [gradeName], references: [name])
     gradeName   String
@@ -59,7 +60,6 @@ model Student extends Profile {
 model Parent extends Profile {
     phoneNumber String
     address     String
-    email       String
     children    Student[]
 
     @@allow('read', true)
@@ -70,7 +70,6 @@ model Parent extends Profile {
 model Teacher extends Profile {
     phoneNumber String
     address     String
-    email       String
     subjects    Subject[]
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
@@ -80,7 +79,6 @@ model Teacher extends Profile {
 model Administrator extends Profile {
     phoneNumber String
     address     String
-    email       String
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
 }

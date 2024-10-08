@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { Faker, es } from '@faker-js/faker'
 import { login } from '@/helpersTest/loginHelper';
+import {loginAsTestUser} from "../testutils";
+import {getTestUser} from "../testdata";
 
 const faker = new Faker({ locale: [es] })
 
@@ -10,6 +12,7 @@ const randomDNI = () => {
     return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
 };
 
+const existingTeacherDni = getTestUser("teacher").dni.toString();
 test.beforeEach(async ({page}) => {
     await page.goto('/');
 })
@@ -17,7 +20,7 @@ test.beforeEach(async ({page}) => {
 test.describe('Testing alta docente', () => {
 
 	test('Agregar docente con datos validos sin asignacion de cursos', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docentes' }).first().click();
@@ -40,7 +43,7 @@ test.describe('Testing alta docente', () => {
 
     
     test('Agregar docente con datos validos conasignacion de cursos', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
@@ -91,7 +94,7 @@ test.describe('Testing alta docente', () => {
 	});
 
     test('Agregar docente con datos validos con asignacion de cursos pero sin seleccionar ni año ni materia.', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
@@ -115,7 +118,7 @@ test.describe('Testing alta docente', () => {
 
     // CAMPOS VACIOS.
     test('Agregar docente con campo dni vacio y sin asignacion de curso', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
@@ -134,7 +137,7 @@ test.describe('Testing alta docente', () => {
 	});
 
     test('Agregar docente con campo apellido vacio y sin asignacion de curso', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
@@ -153,7 +156,7 @@ test.describe('Testing alta docente', () => {
 	});
 
     test('Agregar docente con campo nombre vacio y sin asignacion de curso', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
@@ -172,7 +175,7 @@ test.describe('Testing alta docente', () => {
 	});
 
     test('Agregar docente con campo direccion vacio y sin asignacion de curso', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
@@ -191,7 +194,7 @@ test.describe('Testing alta docente', () => {
 	});
 
     test('Agregar docente con campo numero de telefono vacio', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
@@ -209,7 +212,7 @@ test.describe('Testing alta docente', () => {
 	});
 
     test('Agregar docente con campo email vacio', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
@@ -229,7 +232,7 @@ test.describe('Testing alta docente', () => {
     /////////////////// Datos invalidos
 
     test('Email invalido', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
@@ -248,7 +251,7 @@ test.describe('Testing alta docente', () => {
     });
 
     test('Ingreso no valido de numero de telefono menor a 8 ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
@@ -267,7 +270,7 @@ test.describe('Testing alta docente', () => {
     });
 
     test('Ingreso no valido de dni menor a 7 ', async ({ page }) => {
-        await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
@@ -286,13 +289,13 @@ test.describe('Testing alta docente', () => {
     });
 
 	test('Alta de un dni ya existente ', async ({ page }) => {
-  	    await login(page, '33333333', 'admin');
+        await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
         await page.locator('button:has-text("Nuevo Docente")').click();
 
- 	    await page.locator('input[id="input-dni"]').fill('22222222');
+ 	    await page.locator('input[id="input-dni"]').fill(existingTeacherDni);
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
         await page.locator('input[id="input-name"]').fill(faker.person.firstName());
         await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 	'international' }));

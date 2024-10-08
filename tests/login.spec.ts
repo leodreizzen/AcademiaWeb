@@ -1,15 +1,22 @@
 import { test, expect } from '@playwright/test';
 import { loginAsRole } from '../src/helpersTest/loginAsRolHelper';
 import { login } from '../src/helpersTest/loginHelper';
+import {getTestUser} from "./testdata";
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
 })
 
+
+const administrator = getTestUser("administrator");
+const student = getTestUser("student");
+const teacher = getTestUser("teacher");
+const parent = getTestUser("parent");
+const parentTeacher = getTestUser("parentTeacher");
 test.describe('Testing login', () => {
 
   test('Login exitoso admin', async ({ page }) => {
-    await login(page, '33333333', 'admin');
+    await login(page, administrator.dni.toString(), administrator.password);
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -42,29 +49,29 @@ test.describe('Testing login', () => {
   });
 
   test('Login admin dni vacio', async ({ page }) => {
-    await login(page, '', 'admin');
+    await login(page, '', administrator.password);
     await expect(page.locator('text=Ingresa un DNI válido')).toBeVisible();
   });
 
   test('Login admin password vacio', async ({ page }) => {
-    await login(page, '33333333', '');
+    await login(page, administrator.dni.toString(), '');
     await expect(page.locator('text=Ingresa tu contraseña')).toBeVisible();
   });
 
   test('Login admin dni incorrecto', async ({ page }) => {
-    await login(page, '44665468', 'admin');
+    await login(page, '44665468', administrator.password);
     await expect(page.locator('text=El usuario no existe')).toBeVisible();
   });
 
   test('Login admin contraseña incorrecta', async ({ page }) => {
-    await login(page, '33333333', 'aaaa');
+    await login(page, administrator.dni.toString(), 'aaaa');
     await expect(page.locator('text=Contraseña ingresada es incorrecta')).toBeVisible();
   });
 
   //////////////////////////////////////////////////////
 
   test('Login exitoso alumno', async ({ page }) => {
-    await login(page, '11111111', 'alumno');
+    await login(page, student.dni.toString(), student.password);
     await page.waitForURL('/');
 
 
@@ -90,7 +97,7 @@ test.describe('Testing login', () => {
   });
 
   test('Login exitoso profesor', async ({ page }) => {
-    await login(page, '22222222', 'profesor');
+    await login(page, teacher.dni.toString(), teacher.password);
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -114,7 +121,7 @@ test.describe('Testing login', () => {
   });
 
   test('Login exitoso padre', async ({ page }) => {
-    await login(page, '44444444', 'padre');
+    await login(page, parent.dni.toString(), parent.password);
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -141,7 +148,7 @@ test.describe('Testing login', () => {
 
   test('Login padre con rol padre', async ({ page }) => {
 
-    await loginAsRole(page, '66666666', 'padre', 'Padre');
+    await loginAsRole(page, parentTeacher.dni.toString(), parentTeacher.password, 'Padre');
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -158,7 +165,7 @@ test.describe('Testing login', () => {
   });
 
   test('Login padre con rol profesor', async ({ page }) => {
-    await loginAsRole(page, '66666666', 'padre', 'Profesor');
+    await loginAsRole(page, parentTeacher.dni.toString(), parentTeacher.password, 'Profesor');
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -175,7 +182,7 @@ test.describe('Testing login', () => {
   });
 
   test('No es posible cambio de rol volviendo atras', async ({ page }) => {
-    await loginAsRole(page, '66666666', 'padre', 'Profesor');
+    await loginAsRole(page, parentTeacher.dni.toString(), parentTeacher.password, 'Profesor');
     await page.waitForURL('/');
 
     const viewportSize = await page.viewportSize();

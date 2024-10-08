@@ -21,8 +21,7 @@ type PrincipalProps = {
 export function ListParents({ data, count }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
-  const { push, replace } = useRouter();
-  const { replace, refresh } = useRouter();
+  const { push, replace, refresh } = useRouter();
   const pathname = usePathname();
 
   const handleSearch = () => {
@@ -98,8 +97,6 @@ export function ListParents({ data, count }: PrincipalProps) {
                     </div>
                     <div className="space-x-3 text-nowrap">
                       <Button variant="outline" size="default" onClick={() => handleEdit(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
-                    <div className="space-x-3">
-                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </Button>
                       <Button variant="outline" size="default" onClick={() => handleView(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">

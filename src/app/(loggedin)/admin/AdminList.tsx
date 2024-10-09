@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 interface AdminListProps {
     pageQuery?: number;
@@ -25,6 +26,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
     const { replace, push } = useRouter();
     const pathname = usePathname();
+    const [noResults, setNoResults] = useState(false);
 
     useEffect(() => {
         const fetchTotalAdministrators = async () => {
@@ -36,6 +38,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     useEffect(() => {
         const fetchAdministrators = async () => {
             const administratorsFromDB = await getAdmins({...searchQuery, page});
+            administratorsFromDB.length===0 ? setNoResults(true) : setNoResults(false);
             setAdministrators(administratorsFromDB);
         };
         fetchAdministrators();
@@ -105,6 +108,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                     </Button>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
+                    {noResults && <NoResultCard user={"administradores"}/>}
                     {
                         administrators.map(administrator => (
                             <AdminItem key={administrator.id} administrator={administrator} onView={handleView}

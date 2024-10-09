@@ -24,6 +24,6 @@ export default async function StudentListPage({
     const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
 
     return (
-        <ListStudents data={results} count={numberOfPages} />
+        <ListStudents data={results} count={numberOfPages} numberOfStudents={results.length} />
     );
 }

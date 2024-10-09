@@ -17,6 +17,32 @@ export async function addStudent(phoneNumber: string, address: string, email: st
             if(existingUser)
                 return {success: false, error: "Ya existe un alumno con ese dni"}
 
+            const existingUserEmail = await prisma.profile.findFirst({
+                where: {
+                    OR: [
+                        {
+                            AND: [
+                                { email: email },
+                                { role: "Administrator" }
+                            ]
+                        },
+                        {
+                            AND: [
+                                { email: email },
+                                { dni: { not: dni } }
+                            ]
+                        }
+                    ]
+                }
+            });
+            if(existingUserEmail){
+                const messageError = existingUserEmail.role == "Administrator" ? "El email de un administrador no se puede compartir entre perfiles" : "El email ya está en uso por otro usuario"
+                return {
+                    success: false,
+                    error: messageError
+                }
+            }
+
             const student = await prisma.student.create({
                 data: {
                     phoneNumber: phoneNumber,

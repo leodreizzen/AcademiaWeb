@@ -14,7 +14,7 @@ const Operation = {
     [Resource.TEACHER]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"] as const,
     [Resource.ADMINISTRATOR]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"] as const,
     [Resource.ASSIGNMENT]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"] as const,
-    [Resource.USER]: ["CHANGE_OWN_PASSWORD", "DELETE"] as const,
+    [Resource.USER]: ["CHANGE_OWN_PASSWORD", "DELETE", "SELECT_CHILD"] as const,
     [Resource.PROFILE]: ["DELETE"] as const
 } as const;
 

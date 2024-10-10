@@ -1,10 +1,23 @@
 import {NextAuthConfig} from "next-auth";
 import {anonymousPages, getPermission} from "@/url_operations";
 import {hasPermission} from "@/lib/permissions";
+import {NextURL} from "next/dist/server/web/next-url";
 
 
 if(!process.env.ROLE_CHANGE_KEY)
     throw new Error("ROLE_CHANGE_KEY not set")
+if(!process.env.SELECT_CHILD_KEY)
+    throw new Error("SELECT_CHILD_KEY not set")
+
+function redirectWithCallback(nextUrl: NextURL, path: string) {
+    const newUrl = new URL(path, nextUrl);
+    const callback = nextUrl.searchParams.get('callbackUrl');
+    if (callback)
+        newUrl.searchParams.set('callbackUrl', callback)
+    else
+        newUrl.searchParams.set('callbackUrl', nextUrl.toString())
+    return Response.redirect(newUrl)
+}
 
 export const authConfig = {
     pages: {
@@ -22,14 +35,16 @@ export const authConfig = {
                 if(nextUrl.pathname === '/selectrole')
                     return true
                 if (!auth.user.role){
-                    const newUrl = new URL('/selectrole', nextUrl);
-                    const callback = nextUrl.searchParams.get('callbackUrl');
-                    if (callback)
-                        newUrl.searchParams.set('callbackUrl', callback)
-                    else
-                        newUrl.searchParams.set('callbackUrl', nextUrl.toString())
-                    return Response.redirect(newUrl)
+                    return redirectWithCallback(nextUrl, "/selectrole");
                 }
+                if(auth.user.role == "Parent"){
+                    if(nextUrl.pathname === '/selectstudent')
+                        return true
+                    if(!auth.user.selectedChildId){
+                        return redirectWithCallback(nextUrl, "/selectstudent");
+                    }
+                }
+
                 if(nextUrl.pathname === '/')
                     return true;
 
@@ -40,7 +55,7 @@ export const authConfig = {
                     return Response.redirect(new URL('/403', nextUrl));
                 }
                 if(!hasPermission(auth.user.role, permission)) {
-                    console.log(`User with role ${auth.user.role} tried to access ${permission}`);
+                    console.log(`User with role ${auth.user.role} tried to access ${JSON.stringify(permission)}`);
                     return Response.redirect(new URL('/403', nextUrl));
                 }
             }
@@ -50,19 +65,30 @@ export const authConfig = {
         session({session, token, user}) {
             session.user.role = token.role
             session.user.dni = token.dni
+            session.user.selectedChildId = token.selectedChildId
             return session
         },
         async jwt({token, user, account, profile, trigger, session}) {
-            if(trigger === 'update' && session?.user?.role) {
-                if(!session.roleChangeKey || session.roleChangeKey !== process.env.ROLE_CHANGE_KEY) {
-                    console.error("Invalid role change key")
-                    return token
+            if(trigger === 'update') {
+                if (session?.user?.role) {
+                    if (!session.roleChangeKey || session.roleChangeKey !== process.env.ROLE_CHANGE_KEY) {
+                        console.error("Invalid role change key")
+                        return token
+                    }
+                    token.role = session.user.role
                 }
-                token.role = session.user.role
+                if (session?.user?.selectedChildId) {
+                    if (!session.selectChildKey || session.selectChildKey !== process.env.SELECT_CHILD_KEY) {
+                        console.error("Invalid selected student change key")
+                        return token
+                    }
+                    token.selectedChildId = session.user.selectedChildId
+                }
             }
             if (user) {
                 token.dni = user.dni
                 token.role = user.role
+                token.selectedChildId = user.selectedChildId
             }
             return token
         },

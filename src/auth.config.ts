@@ -40,7 +40,7 @@ export const authConfig = {
                     return Response.redirect(new URL('/403', nextUrl));
                 }
                 if(!hasPermission(auth.user.role, permission)) {
-                    console.log(`User with role ${auth.user.role} tried to access ${permission}`);
+                    console.log(`User with role ${auth.user.role} tried to access ${JSON.stringify(permission)}`);
                     return Response.redirect(new URL('/403', nextUrl));
                 }
             }

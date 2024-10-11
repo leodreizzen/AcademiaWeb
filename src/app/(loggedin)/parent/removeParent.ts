@@ -1,6 +1,8 @@
 'use server';
 
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import { Student } from "@prisma/client";
+import { StudentWithUser } from "../student/data";
 
 
 export async function removeParent(id: number): Promise<string | null> {
@@ -26,7 +28,7 @@ export async function removeParent(id: number): Promise<string | null> {
                 parents: true
             }
         });
-        if (students.some(x => x.parents.length === 1)) {
+        if (students.some((x: any) => x.parents.length === 1)) {
             return "No se puede eliminar, hay estudiantes con un solo padre";
         }
         await prisma.parent.delete({
@@ -34,6 +36,21 @@ export async function removeParent(id: number): Promise<string | null> {
                 id
             }
         });
+        const user = await prisma.user.findUnique({
+            where: {
+                dni: parent!.dni
+            },
+            include: {
+                profiles: true
+            }
+        });
+        if (user?.profiles.length === 0) {
+            await prisma.user.delete({
+                where: {
+                    dni: parent!.dni
+                }
+            });
+        }
         return null;
     } catch (error: any) {
         console.error("Error fetching parent:", error);

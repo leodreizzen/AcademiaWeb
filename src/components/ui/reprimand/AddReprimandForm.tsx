@@ -28,7 +28,7 @@ const customStyles: ClassNamesConfig<any, any> = {
     singleValue: () =>
         '!text-white',
     multiValue: () =>
-        '!bg-blue-400 !rounded-xl',
+        '!bg-amber-800 !rounded-xl',
     multiValueLabel: () =>
         '!text-white',
     multiValueRemove: () =>

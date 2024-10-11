@@ -60,13 +60,13 @@ export default function NavBar({firstName, lastName, role}: {
                                 AcademiaWeb
                             </Link>
                         </div>
-                        <div className="hidden sm:block ml-10">
+                        <div className="hidden lg:block ml-10">
                             <div className="flex items-baseline space-x-4">
                                 <NavItems/>
                             </div>
                         </div>
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden lg:block">
                         <div className="ml-4 flex items-center sm:ml-6">
                             <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
                                 <DropdownMenuTrigger asChild>
@@ -97,7 +97,7 @@ export default function NavBar({firstName, lastName, role}: {
                             </DropdownMenu>
                         </div>
                     </div>
-                    <div className="sm:hidden">
+                    <div className="lg:hidden">
                         <Sheet open={sheetOpen} onOpenChange={setSheetOpen} >
                             <SheetTrigger asChild>
                                 <Button variant="ghost" className="p-1 hover:bg-gray-700 text-gray-300" data-testid="abrir-menu">

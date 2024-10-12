@@ -73,7 +73,6 @@ async function createUsers(prisma: zPrismaClient) {
             if(!person.parentDnis)
                 throw new Error("Parent dnis not found")
             /* Its assumed parents are created before students */
-
             const parents = await prisma.parent.findMany({
                 where: {
                     dni: {
@@ -84,7 +83,7 @@ async function createUsers(prisma: zPrismaClient) {
             await prisma.student.create({
                 data: {
                     parents: {
-                        connect: parents
+                        connect: parents.map(parent => ({id: parent.id}))
                     },
                     user: {
                         connect: {

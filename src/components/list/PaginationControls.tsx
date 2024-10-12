@@ -1,4 +1,4 @@
-
+// PaginationControls.tsx
 'use client'
 
 import {usePathname, useRouter, useSearchParams} from 'next/navigation'
@@ -9,7 +9,7 @@ function PaginationControls({ cantPages }: { cantPages: number }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const page = parseInt(searchParams.get('page') ?? '1', 10); // Parseamos la página a número
+    const page = parseInt(searchParams.get('page') ?? '1', 10);
 
 
     return (

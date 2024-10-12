@@ -18,7 +18,7 @@ const adminPrivileges: PermissionList[] = [
 
 const teacherPrivileges: PermissionList[] = [
     ...userPrivileges,
-    {resource: Resource.ASSIGNMENT, operations: ["READ", "LIST", "CREATE", "DELETE"]},
+    {resource: Resource.ASSIGNMENT, operations: ["READ", "LIST", "CREATE", "UPDATE", "DELETE"]},
 ];
 
 const parentPrivileges: PermissionList[] = [

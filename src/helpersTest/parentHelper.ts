@@ -39,8 +39,8 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 export async function createParentWithoutChildren(page: Page) {
     await page.goto('http://localhost:3000/student/add');
 
-    var dni = await randomDNI();
-    var parentDni = await randomDNI();
+    const dni = await randomDNI();
+    const parentDni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -73,8 +73,8 @@ export async function createChildrenWithTwoParents(page: Page) {
     await page.waitForURL('/')
     await page.goto('http://localhost:3000/student/add');
 
-    var dni = await randomDNI();
-    var parentDni = await randomDNI();
+    const dni = await randomDNI();
+    const parentDni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -132,7 +132,7 @@ export async function createChildrenWithTwoParents(page: Page) {
 export async function createParentWithOnlyOneChild(page: Page) {
     await page.goto('http://localhost:3000/student/add');
 
-    var dni = await randomDNI();
+    const dni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -146,7 +146,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
-    var parentDni = await randomDNI();
+    const parentDni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));

@@ -5,7 +5,7 @@ import {getTestUser} from "../testdata";
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
-   // await page.waitForURL('http://localhost:3000/teacher');
+   // await page.waitForURL('/teacher');
 })
 
 const teacher1 = getTestUser("teacher")

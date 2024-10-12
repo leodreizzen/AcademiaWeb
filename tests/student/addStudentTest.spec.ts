@@ -51,7 +51,7 @@ const adminToLogIn = getTestUser('administrator')
 test('Datos vacios nombre y dni', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill("");
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -68,7 +68,7 @@ test('Datos vacios nombre y dni', async ({ page }) => {
 test('Email invalido', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -79,14 +79,14 @@ test('Email invalido', async ({ page }) => {
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
 
 
-    await expect(page).toHaveURL('http://localhost:3000/student/add');
+    await expect(page).toHaveURL('/student/add');
     await expect(page.locator('text="Registrar Alumno"')).toBeVisible();
 });
 
 test('Año no seleccionado', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -106,7 +106,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
     await page.waitForURL('/')
 
 
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     var dni = randomDNI();
 
@@ -126,7 +126,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student/add');
+    await expect(page).toHaveURL('/student/add');
 
     await expect(page.getByText("Nuevo Alumno")).toBeVisible();
 
@@ -137,7 +137,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     var dni = randomDNI();
 
@@ -173,7 +173,7 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student');
+    await expect(page).toHaveURL('/student');
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
@@ -184,7 +184,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
 
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     var dni = randomDNI();
 
@@ -202,7 +202,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student');
+    await expect(page).toHaveURL('/student');
 
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
@@ -213,7 +213,7 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) estudiante', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());
     await page.locator('input[id="input-phoneNumber"]').fill("291522");
@@ -232,7 +232,7 @@ test('Chequeo de alertas por numero de telefono incorrecto (menor de 8 digitos) 
 test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill("448818");
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -254,7 +254,7 @@ test('Chequeo de alertas por dni menor de 8 digitos estudiante', async ({ page }
 test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -283,7 +283,7 @@ test('Chequeo de alertas por dni menor de 8 digitos responsable', async ({ page 
 test('Chequeo de alertas por telefono menor de 8 digitos responsable', async ({ page }) => {
     await login(page, adminToLogIn.dni.toString(), adminToLogIn.password);
     await page.waitForURL('/')    
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -318,7 +318,7 @@ test('Caso de falla DNI DUPLICADO', async ({ page }) => {
     await page.waitForURL('/')
 
 
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     var dni = '11111111'
 

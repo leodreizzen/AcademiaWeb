@@ -125,7 +125,7 @@ test.describe('Testing borrar alumno', () => {
         await deleteButton.click();
         await page.waitForTimeout(10000);
 
-        await page.getByRole('link', { name: 'Padres' }).first().click();
+        await page.getByRole('link', { name: 'Responsables' }).first().click();
         await page.waitForTimeout(10000);
         const result = await searchParentByDni(page, dniPadre);
         expect(result).toBeTruthy();

@@ -9,11 +9,11 @@ datasource db {
 }
 
 model User {
-    dni       Int           @id @allow('read',  true) @deny('update', true)
-    lastName  String
-    firstName String
-    profiles  Profile[]
-    password  String        @omit @password @allow('update', true)
+    dni        Int                 @id @allow('read', true) @deny('update', true)
+    lastName   String
+    firstName  String
+    profiles   Profile[]
+    password   String              @omit @password @allow('update', true)
 
     resetToken PasswordResetToken?
     @@allow('read', true)
@@ -23,11 +23,11 @@ model User {
 
 
 model Profile {
-    dni Int
-    user User @relation(fields: [dni], references: [dni])
+    dni   Int
+    user  User   @relation(fields: [dni], references: [dni])
 
-    id Int @id @default(autoincrement())
-    role String
+    id    Int    @id @default(autoincrement())
+    role  String
 
     email String
 
@@ -46,11 +46,16 @@ model Superuser extends Profile {
 
 
 model Student extends Profile {
-    phoneNumber String
-    address     String
-    parents     Parent[]
-    grade       Grade    @relation(fields: [gradeName], references: [name])
-    gradeName   String
+    birthdate             DateTime @default(now())
+    phoneNumber           String
+    address               String
+    parents               Parent[]
+    grade                 Grade                  @relation(fields: [gradeName], references: [name])
+    gradeName             String
+    reprimands            Reprimand[]
+    examMarks             ExamMark[]
+    assignmentSubmissions AssignmentSubmission[]
+    reportCards           ReportCard[]
 
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
@@ -58,6 +63,7 @@ model Student extends Profile {
 }
 
 model Parent extends Profile {
+    birthdate   DateTime  @default(now())
     phoneNumber String
     address     String
     children    Student[]
@@ -71,6 +77,8 @@ model Teacher extends Profile {
     phoneNumber String
     address     String
     subjects    Subject[]
+    reprimands  Reprimand[]
+
     @@allow('read', true)
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
@@ -84,16 +92,32 @@ model Administrator extends Profile {
 }
 
 model Assignment {
-    id          Int      @id @default(autoincrement())
+    id          Int                    @id @default(autoincrement())
     title       String
     description String?
     fileUrl     String
-    uploadDate  DateTime @default(now())
-    subject     Subject  @relation(fields: [subjectId], references: [id])
+    uploadDate  DateTime               @default(now())
+    subject     Subject                @relation(fields: [subjectId], references: [id])
     subjectId   Int
+    submissions AssignmentSubmission[]
 
     @@allow('read', true)
     @@allow('all', auth().role == "Teacher")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model AssignmentSubmission {
+    id           Int        @id @default(autoincrement())
+    uploadDate   DateTime   @default(now())
+    fileUrl      String
+    student      Student    @relation(fields: [studentId], references: [id])
+    studentId    Int
+    assignment   Assignment @relation(fields: [assignmentId], references: [id])
+    assignmentId Int
+
+    @@unique([studentId, assignmentId])
+    @@allow('all', auth().role == "Student")
+    @@allow('read', true)
     @@allow('all', auth().role == "Superuser")
 }
 
@@ -107,12 +131,15 @@ model Grade {
 }
 
 model Subject {
-    id       Int     @id @default(autoincrement())
-    name      String
-    grade     Grade  @relation(fields: [gradeName], references: [name])
-    gradeName String
-    teachers  Teacher[]
-    assignments Assignment[]
+    id                      Int                      @id @default(autoincrement())
+    name                    String
+    grade                   Grade                    @relation(fields: [gradeName], references: [name])
+    gradeName               String
+    teachers                Teacher[]
+    assignments             Assignment[]
+    exams                   Exam[]
+    semesterReportCardMarks SemesterReportCardMark[]
+    finalReportCardMarks    FinalReportCardMark[]
 
     @@unique([gradeName, name])
     @@allow('read', true)
@@ -120,12 +147,101 @@ model Subject {
     @@allow('all', auth().role == "Superuser")
 }
 
-model PasswordResetToken{
-    token_hash String @id
-    issued_at DateTime @default(now())
-    user User @relation(fields: [dni], references: [dni], onDelete: Cascade)
-    dni Int @unique
-    used Boolean @default(false)
+model PasswordResetToken {
+    token_hash String   @id
+    issued_at  DateTime @default(now())
+    user       User     @relation(fields: [dni], references: [dni], onDelete: Cascade)
+    dni        Int      @unique
+    used       Boolean  @default(false)
 
     @@allow('all', auth().role == "Superuser")
+}
+
+model Reprimand {
+    id        Int       @id @default(autoincrement())
+    students  Student[]
+    message   String
+    Teacher   Teacher   @relation(fields: [teacherId], references: [id])
+    teacherId Int
+    dateTime  DateTime  @default(now())
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Teacher")
+    @@allow('all', auth().role == "Superuser")
+}
+
+model Exam {
+    id        Int        @id @default(autoincrement())
+    subject   Subject    @relation(fields: [subjectId], references: [id])
+    subjectId Int
+    date      DateTime
+    marks     ExamMark[]
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Teacher")
+    @@allow('all', auth().role == "Superuser")
+}
+
+
+model ExamMark {
+    Exam      Exam    @relation(fields: [examId], references: [id])
+    examId    Int
+    student   Student @relation(fields: [studentId], references: [id])
+    studentId Int
+    mark      Int
+
+    @@id([examId, studentId])
+
+    @@allow('read', true)
+    @@allow('all', auth().role == "Teacher")
+    @@allow('all', auth().role == "Superuser")
+}
+
+
+model ReportCard {
+    id                     Int                      @id @default(autoincrement())
+    year                   Int
+    student                Student                  @relation(fields: [studentId], references: [id])
+
+    studentId              Int
+    firstSemesterMarks     SemesterReportCardMark[] @relation("first_semester_marks")
+    secondSemesterMarks    SemesterReportCardMark[] @relation("second_semester_marks")
+
+    firstSemesterReleased  Boolean                  @default(false)
+    secondSemesterReleased Boolean                  @default(false)
+    finalMarks             FinalReportCardMark[]
+
+    @@unique([year, studentId])
+    @@allow('read', true)
+    @@allow('all', auth().role == "Superuser")
+    @@allow('all', auth().role == "Teacher")
+}
+
+model SemesterReportCardMark {
+    id                         Int         @id @default(autoincrement())
+    reportCardFirstSemester    ReportCard? @relation("first_semester_marks", fields: [reportCardFirstSemesterId], references: [id])
+    reportCardSecondSemester   ReportCard? @relation("second_semester_marks", fields: [reportCardSecondSemesterId], references: [id])
+    reportCardFirstSemesterId  Int?
+    reportCardSecondSemesterId Int?
+    subject                    Subject     @relation(fields: [subjectId], references: [id])
+    subjectId                  Int
+
+    mark                       Int
+
+    @@unique([reportCardFirstSemesterId, reportCardSecondSemesterId, subjectId])
+    @@allow('read', true)
+    @@allow('all', auth().role == "Teacher")
+}
+
+model FinalReportCardMark {
+    reportCard   ReportCard @relation(fields: [reportCardId], references: [id])
+    reportCardId Int
+    subject      Subject    @relation(fields: [subjectId], references: [id])
+    subjectId    Int
+
+    mark         String
+
+    @@allow('read', true)
+    @@id([reportCardId, subjectId])
+    @@allow('all', auth().role == "Teacher")
 }

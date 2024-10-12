@@ -12,7 +12,7 @@ export type HomeButton = {
 const studentsButton: HomeButton = { name: "Alumnos", Icon: GraduationCap, href: "/student" }
 const teachersButton: HomeButton = { name: "Docentes", Icon: Users, href: "/teacher" }
 const adminsButton: HomeButton = { name: "Administradores", Icon: UserCog, href: "/admin" }
-const parentsButton: HomeButton = { name: "Padres", Icon: Users2, href: "/parent" }
+const parentsButton: HomeButton = { name: "Responsables", Icon: Users2, href: "/parent" }
 const assignmentsButton: HomeButton = { name: "Trabajos Prácticos", Icon: BookOpen, href: "/assignment" }
 
 

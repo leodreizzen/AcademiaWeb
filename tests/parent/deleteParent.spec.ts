@@ -1,7 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {login} from '@/helpersTest/loginHelper';
 import {searchParentByDni} from '@/helpersTest/parentHelper';
-import {getFirstPersonDetails, getPersonDetails} from '@/helpersTest/infoHelper';
 import { createParentWithOnlyOneChild,createChildrenWithTwoParents,createParentWithoutChildren } from '@/helpersTest/parentHelper';
 
 import {loginAsTestUser} from "../testutils";
@@ -23,7 +21,7 @@ test.describe('Testing delete parent', () => {
 
         await page.goto('/');
         await page.waitForURL('/');
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
 
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
@@ -65,7 +63,7 @@ test.describe('Testing delete parent', () => {
         await page.goto('/');
         await page.waitForURL('/');
 
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
@@ -106,7 +104,7 @@ test.describe('Testing delete parent', () => {
         await page.goto('/');
         await page.waitForURL('/');
 
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 

@@ -9,16 +9,18 @@ import PaginationControls from "@/components/list/PaginationControls";
 import {ParentWithUser} from "@/app/(loggedin)/parent/data";
 import {usePathname, useRouter} from "next/navigation";
 import { removeParent } from '@/app/(loggedin)/parent/removeParent';
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 type PrincipalProps = {
   data: ParentWithUser[];
   count: number;
+  numberOfParents: number;
 };
 
 
 
 
-export function ListParents({ data, count }: PrincipalProps) {
+export function ListParents({ data, count, numberOfParents }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
   const { push, replace, refresh } = useRouter();
@@ -63,7 +65,7 @@ export function ListParents({ data, count }: PrincipalProps) {
   return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
         <div className="w-full max-w-xl bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-3xl font-bold mb-6 text-white text-center">Listado de Padres</h2>
+          <h2 className="text-3xl font-bold mb-6 text-white text-center">Listado de Responsables</h2>
           <div className="space-y-4">
             <div className="flex space-x-3">
               <Input
@@ -88,6 +90,7 @@ export function ListParents({ data, count }: PrincipalProps) {
             </div>
           </div>
           <div className="mt-6 space-y-4 max-h-[40vh] overflow-y-auto">
+            {numberOfParents === 0 && <NoResultCard user={"responsables"}/>}
             {data.map(parent => (
                 <Card key={parent.id} className="bg-gray-700">
                   <CardContent className="flex items-center justify-between p-3">

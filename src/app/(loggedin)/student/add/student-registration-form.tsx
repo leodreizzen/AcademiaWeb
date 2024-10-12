@@ -243,7 +243,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
 
                                     {
                                         noParents &&
-                                        <NoResultCard/>
+                                        <NoResultCard user="responsables"/>
                                     }
 
                                     {parents.map((parent) => (

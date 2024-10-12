@@ -23,6 +23,6 @@ export default async function TeacherListPage({
     const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
 
     return (
-        <ListTeachers data={results} count={numberOfPages} />
+        <ListTeachers data={results} count={numberOfPages} numberOfTeachers={results.length} />
     );
 }

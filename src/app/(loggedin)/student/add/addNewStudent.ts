@@ -4,7 +4,7 @@ import {ActionResult, ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
-export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number): Promise<ActionResult>  {
+export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult>  {
     const prisma = await getCurrentProfilePrismaClient();
     let result: ActionResult;
     try {
@@ -45,6 +45,7 @@ export async function addStudent(phoneNumber: string, address: string, email: st
 
             const student = await prisma.student.create({
                 data: {
+                    birthdate : birthDay,
                     phoneNumber: phoneNumber,
                     email: email,
                     grade: {

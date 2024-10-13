@@ -98,8 +98,8 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
             setIsDialogOpen(false)
             resetField("dni")
             resetField("phoneNumber")
-            resetField("name")
-            resetField("surname")
+            resetField("firstName")
+            resetField("lastName")
             resetField("address")
             resetField("email")
 
@@ -167,7 +167,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                         <FieldForm label="Direccion" type="string" registerRes={register("address")} errors={formState.errors}/>
                                         <FieldForm label="Correo electrónico" type="string" registerRes={register("email")} errors={formState.errors}/>
                                         <FieldCalendar control={control1} label={"Fecha de nacimiento"} registerRes={register("birthDate")} errors={formState.errors}/>
-                                        <div className="space-y-2">
+                                        <div className="space-y-2 flex flex-col">
                                             <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
                                             <Select
                                                 name="anio"
@@ -178,11 +178,11 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                                     className="bg-grey-700 text-gray-100 border-gray-600 focus:border-gray-500">
                                                     <SelectValue placeholder="Elija un año"/>
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="bg-gray-700">
                                                     {grades.map((grade) => (
                                                         <SelectItem
                                                             key={grade}
-                                                            className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
+                                                            className="bg-gray-700 text-gray-100 focus:border-gray-500"
                                                             value={grade}
                                                         >
                                                             {grade}
@@ -285,8 +285,8 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                             <div className="space-y-4">
                                                 <FieldForm label="DNI" type="number" registerRes={register2("dni")} errors={formState2.errors}/>
                                                 <FieldForm label="Telefono" type="number" registerRes={register2("phoneNumber")} errors={formState2.errors}/>
-                                                <FieldForm label="Nombre" type="string" registerRes={register2("name")} errors={formState2.errors}/>
-                                                <FieldForm label="Apellido" type="string" registerRes={register2("surname")} errors={formState2.errors}/>
+                                                <FieldForm label="Nombre" type="string" registerRes={register2("firstName")} errors={formState2.errors}/>
+                                                <FieldForm label="Apellido" type="string" registerRes={register2("lastName")} errors={formState2.errors}/>
                                                 <FieldForm label="Direccion" type="string" registerRes={register2("address")} errors={formState2.errors}/>
                                                 <FieldForm label="Correo electrónico" type="string" registerRes={register2("email")} errors={formState2.errors}/>
                                                 <FieldCalendar control={control} label={"Fecha de nacimiento"} registerRes={register2("birthDate")} errors={formState2.errors}/>

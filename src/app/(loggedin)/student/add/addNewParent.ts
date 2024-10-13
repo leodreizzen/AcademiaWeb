@@ -5,7 +5,7 @@ import {ActionResult} from "@/app/(loggedin)/student/add/types";
 
 
 
-export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number): Promise<ActionResult> {
+export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult> {
     const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.$transaction(async (prisma) => {
@@ -53,6 +53,7 @@ export async function addParent(phoneNumber: string, address: string, email: str
 
             const parent = await prisma.parent.create({
                 data: {
+                    birthdate : birthDay,
                     phoneNumber: phoneNumber,
                     email: email,
                     address: address,

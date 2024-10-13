@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import clsx from "clsx";
 import {FieldErrors, FieldName, FieldValues, UseFormRegisterReturn, Controller, Control} from "react-hook-form";
@@ -7,10 +8,14 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {CalendarIcon} from "lucide-react";
-import {Calendar} from "@nextui-org/calendar";
-import {ParentData, StudentDataWithoutGrade} from "@/lib/models/studentParent";
+import {format} from "date-fns"
+import { es } from 'date-fns/locale';
 
-import {parseDate} from "@internationalized/date";
+import {ParentData, StudentDataWithoutGrade} from "@/lib/models/studentParent";
+import {DateCalendar, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, {Dayjs} from "dayjs";
+
 interface FormFieldProps<T extends FieldValues> {
     label: string;
     required?: boolean;
@@ -41,17 +46,13 @@ export function FieldCalendar<T extends FieldValues>({label, className, control,
                                 )}
                             >
                                 <CalendarIcon className="mr-2 h-4 w-4" />
-                                {field.value ? <span>{field.value.toString()}</span> : <span>Elija una fecha</span>}
+                                {field.value ? format(field.value, "PPP", {locale: es}) : <span>Elija una fecha</span>}
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0 bg-gray-800" align="start">
-                            <Calendar
-                                value={field.value}
-                                onChange={(date) => {
-                                    field.onChange(date.toDate('America/Argentina/Buenos_Aires'))
-                                }}
-                                showMonthAndYearPickers
-                            />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateCalendar value={dayjs(field.value)} onChange={(date: Dayjs) => field.onChange(date.toDate())} className="text-white"/>
+                            </LocalizationProvider>
                         </PopoverContent>
                     </Popover>
                 )}
@@ -62,29 +63,23 @@ export function FieldCalendar<T extends FieldValues>({label, className, control,
 
 }
 
-
-
-
 /*
-*             <Label htmlFor={inputId} className="text-gray-300 mb-1">{label}</Label>
-            <Input type={type} className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-blue-500 focus:border-blue-500" autoComplete={autoComplete}
-                   required={required} value={value} {...registerRes} id={inputId} autoFocus={autoFocus} />
-*
-*
+*                             <Calendar
+                                value={field.value}
+                                onChange={(date) => {
+                                    field.onChange(date.toDate('America/Argentina/Buenos_Aires'))
+                                }}
+                                showMonthAndYearPickers
+                            />
 *
 * */
 
-
-/*
+/*    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={['DateCalendar']}>
+        <DemoItem label="Controlled calendar">
+          <DateCalendar value={value} onChange={(newValue) => setValue(newValue)} />
+        </DemoItem>
+      </DemoContainer>
+    </LocalizationProvider>
 *
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-* */
+* **/

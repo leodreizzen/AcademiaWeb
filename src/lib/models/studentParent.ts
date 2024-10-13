@@ -1,6 +1,6 @@
 import {z} from "zod";
 import {maxDigits, minDigits} from "@/lib/utils";
-import {CalendarDate} from "@nextui-org/calendar";
+
 
 const dniMessage = "Ingrese un dni válido para el estudiante";
 const dniSchema = z.coerce.number({message: dniMessage}).min(minDigits(7), {message: dniMessage}).max(maxDigits(9), {message: dniMessage});
@@ -28,9 +28,9 @@ export const StudentSchemaWithoutGrade = z.object({
     birthDate: z.date().refine((date) => {
         // Calculamos la edad
         const age = calculateAge(date);
-        // Validamos que sea mayor de 5
-        return age >= 5;
-    }, 'El estudiante debe ser mayor de 5 años')
+        // Validamos que sea mayor de 4
+        return age >= 4;
+    }, 'El estudiante debe ser mayor de 4 años')
 });
 export const StudentSchema = StudentSchemaWithoutGrade.extend({
     gradeName: z.string().min(1, {message: "Ingrese un año válido para el estudiante"}),

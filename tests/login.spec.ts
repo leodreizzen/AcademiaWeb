@@ -25,12 +25,12 @@ test.describe('Testing login', () => {
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })).toBeVisible();
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Docentes' })).toBeVisible();
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Administradores' })).toBeVisible();
-      await expect(page.getByRole('navigation').getByRole('link', { name: 'Padres' })).toBeVisible();
+      await expect(page.getByRole('navigation').getByRole('link', { name: 'Responsables' })).toBeVisible();
       
 
       await expect(page.getByRole('button', { name: 'Alumnos' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Docentes' })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Padres' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Responsables' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Administradores' })).toBeVisible();
     } else {
       // Test para mobile

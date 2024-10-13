@@ -52,6 +52,8 @@ test.describe('Testing buscar estudiante', () => {
     
             const result = await searchStudentByLastName(page, lastName);
             expect(result).toBeFalsy();
+
+            expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
         });
 
         test('Busqueda de DNI no existente', async ({ page })=> {
@@ -65,6 +67,8 @@ test.describe('Testing buscar estudiante', () => {
     
             const result = await searchStudentByDni(page, dni);
             expect(result).toBeFalsy();
+
+            expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
         });
 
         

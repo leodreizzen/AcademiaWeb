@@ -4,23 +4,26 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Edit, Eye, Plus } from 'lucide-react'
+import { Search, Edit, Eye, Plus, Trash2 } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls"
 import { StudentWithUser } from "@/app/(loggedin)/student/data"
 import { usePathname, useRouter } from "next/navigation"
+import {NoResultCard} from "@/components/list/NoResultCard";
+import { removeStudent } from '@/app/(loggedin)/student/removeStudents';
 
 type PrincipalProps = {
   data: StudentWithUser[];
   count: number;
+  numberOfStudents: number;
 };
 
 
 
 
-export function ListStudents({ data, count }: PrincipalProps) {
+export function ListStudents({ data, count, numberOfStudents }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
-  const { replace, push } = useRouter();
+  const { replace, push, refresh } = useRouter();
   const pathname = usePathname();
 
   const handleSearch = () => {
@@ -48,6 +51,13 @@ export function ListStudents({ data, count }: PrincipalProps) {
 
   const handleView = (id: number) => {
     push(`/student/${id}`)
+  }
+
+  const handleRemove = async (id: number) => {
+    const doRemove = await removeStudent(id);
+    if (doRemove) {
+      refresh();
+    }
   }
 
   const handleCreate = () => {
@@ -85,6 +95,7 @@ export function ListStudents({ data, count }: PrincipalProps) {
             </div>
           </div>
           <div className="mt-6 space-y-4 max-h-[40vh] overflow-y-auto">
+            {numberOfStudents===0 && <NoResultCard user={"alumnos"}/>}
             {data.map(student => (
                 <Card key={student.id} className="bg-gray-700">
                   <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 space-y-3 sm:space-y-0">
@@ -98,6 +109,9 @@ export function ListStudents({ data, count }: PrincipalProps) {
                       </Button>
                       <Button variant="outline" size="sm" onClick={() => handleView(student.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Eye className="mr-2 h-4 w-4" /> Ver
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleRemove(student.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
+                        <Trash2 className="mr-2 h-4 w-4" /> Borrar
                       </Button>
                     </div>
                   </CardContent>

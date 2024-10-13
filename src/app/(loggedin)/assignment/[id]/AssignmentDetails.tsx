@@ -24,19 +24,25 @@ interface AssignmentDetailsClientProps {
   assignment: AssignmentType;
 }
 
-export default function AssignmentDetailsClient({
-  assignment,
+export default function AssignmentDetailsPage({
+  assignment: assignment,
 }: AssignmentDetailsClientProps) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const router = useRouter();
 
   const handleViewFile = () => {
     if (assignment.fileUrl) {
       setLoading(true);
-      router.push(assignment.fileUrl); // Redirige al archivo de Cloudinary
+      setFileUrl(assignment.fileUrl);
+      setLoading(false);
     } else {
       console.error("File URL not found");
     }
+  };
+
+  const handleCloseIframe = () => {
+    setFileUrl(null);
   };
 
   return (
@@ -78,6 +84,27 @@ export default function AssignmentDetailsClient({
           </button>
         </div>
       </div>
+
+      {fileUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="relative w-full max-w-4xl h-full">
+            <button
+              onClick={handleCloseIframe}
+              className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 hover:bg-red-500"
+              aria-label="Cerrar"
+            >
+              X
+            </button>
+            <iframe
+              src={fileUrl}
+              width="100%"
+              height="100%"
+              className="border rounded-lg"
+              title="Archivo de Trabajo Práctico"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

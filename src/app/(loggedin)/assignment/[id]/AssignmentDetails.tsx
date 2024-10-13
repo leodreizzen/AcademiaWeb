@@ -42,24 +42,36 @@ export default function AssignmentDetailsClient({
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">{assignment.title}</h1>
-      <p className="text-lg mb-4">{assignment.description}</p>
-      <div className="mb-4">
-        <p>
-          <strong>Grado:</strong> {assignment.grade?.name || "Sin Grado"}
-        </p>
-        <p>
-          <strong>Materia:</strong> {assignment.subject?.name || "Sin Materia"}
-        </p>
+    <div className="min-h-full bg-gray-900 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-2xl bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+            {assignment.title}
+          </h1>
+          <p className="text-lg text-gray-400 mb-4">{assignment.description}</p>
+        </div>
+        <div className="mb-6">
+          <p className="text-lg text-white">
+            <strong>Grado:</strong>{" "}
+            <span className="text-gray-300">
+              {assignment.grade?.name || "Sin Grado"}
+            </span>
+          </p>
+          <p className="text-lg text-white mt-2">
+            <strong>Materia:</strong>{" "}
+            <span className="text-gray-300">
+              {assignment.subject?.name || "Sin Materia"}
+            </span>
+          </p>
+        </div>
+        <button
+          onClick={handleViewFile}
+          className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 px-4 rounded-lg transition-colors disabled:bg-gray-700"
+          disabled={loading}
+        >
+          {loading ? "Cargando..." : "Ver archivo"}
+        </button>
       </div>
-      <button
-        onClick={handleViewFile}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
-        disabled={loading}
-      >
-        {loading ? "Cargando..." : "Ver archivo"}
-      </button>
     </div>
   );
 }

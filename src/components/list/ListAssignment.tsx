@@ -140,7 +140,7 @@ export default function TPListPage({
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">
+    <div className="min-h-full bg-gray-900 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-2xl bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">

@@ -19,6 +19,7 @@ import {FieldForm} from "@/components/ui/FieldForm";
 import {ParentAPIResponse} from "@/app/api/internal/parent/types";
 import {Search} from "lucide-react";
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {FieldCalendar} from "@/components/ui/FieldCalendar";
 
 
 type PrincipalProps = {
@@ -29,8 +30,8 @@ type PrincipalProps = {
 
 
 export function StudentRegistrationFormComponent({data, count}: PrincipalProps) {
-    const {register, handleSubmit: handleSubmit1, formState, getValues} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
-    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
+    const {register, handleSubmit: handleSubmit1, formState, getValues, control: control1} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
+    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField, control} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
     const [grade, setGrade] = useState("");
     const isValid = formState.isValid && grade !== "";
     const isValid2 = formState2.isValid
@@ -165,6 +166,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                         <FieldForm label="Apellido" type="string" registerRes={register("lastName")} errors={formState.errors}/>
                                         <FieldForm label="Direccion" type="string" registerRes={register("address")} errors={formState.errors}/>
                                         <FieldForm label="Correo electrónico" type="string" registerRes={register("email")} errors={formState.errors}/>
+                                        <FieldCalendar control={control1} label={"Fecha de nacimiento"} registerRes={register("birthDate")} errors={formState.errors}/>
                                         <div className="space-y-2">
                                             <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
                                             <Select
@@ -287,6 +289,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                                 <FieldForm label="Apellido" type="string" registerRes={register2("surname")} errors={formState2.errors}/>
                                                 <FieldForm label="Direccion" type="string" registerRes={register2("address")} errors={formState2.errors}/>
                                                 <FieldForm label="Correo electrónico" type="string" registerRes={register2("email")} errors={formState2.errors}/>
+                                                <FieldCalendar control={control} label={"Fecha de nacimiento"} registerRes={register2("birthDate")} errors={formState2.errors}/>
                                                 <Button
                                                     onClick={handleSubmit2(handleCreateNewParent)}
                                                     disabled={!isValid2}

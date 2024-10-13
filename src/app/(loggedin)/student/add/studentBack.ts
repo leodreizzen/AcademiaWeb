@@ -21,7 +21,7 @@ export async function addStudentToDataBase(formData: StudentData, parents: Paren
         return {success: false, error: errorMessage}
     }
 
-    const {firstName, lastName, email, dni, phoneNumber, address, gradeName} = validateFields.data;
+    const {firstName, lastName, email, dni, phoneNumber, address, gradeName, birthDate} = validateFields.data;
     return await addStudent(phoneNumber, address, email, parents, gradeName, firstName, lastName, dni);
 }
 
@@ -35,6 +35,6 @@ export async function addParentToDataBase(formData: ParentData) : Promise<Action
         return {success: false, error: errorMessage}
 
     }
-    const {phoneNumber, address, email, name, surname, dni} = validateFields.data;
-    return await addParent(phoneNumber, address, email, name, surname, dni);
+    const {phoneNumber, address, email, firstName, lastName, dni, birthDate} = validateFields.data;
+    return await addParent(phoneNumber, address, email, firstName, lastName, dni);
 }

@@ -5,9 +5,9 @@ import {ReactNode} from "react";
 
 export default function ThemeWrapper({children}:{children: ReactNode}){
     const theme = createTheme({
-        colorSchemes: {
-            dark: true,
-        },
+        palette:{
+            mode: "dark"
+        }
     });
 
     return(

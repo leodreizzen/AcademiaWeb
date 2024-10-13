@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-// Definir la interfaz para los props
 interface Subject {
   id: number;
   name: string;
@@ -64,13 +62,21 @@ export default function AssignmentDetailsClient({
             </span>
           </p>
         </div>
-        <button
-          onClick={handleViewFile}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 px-4 rounded-lg transition-colors disabled:bg-gray-700"
-          disabled={loading}
-        >
-          {loading ? "Cargando..." : "Ver archivo"}
-        </button>
+        <div className="flex justify-between space-x-4">
+          <button
+            onClick={() => router.back()}
+            className="w-full bg-gray-600 hover:bg-gray-500 text-white py-3 px-4 rounded-lg transition-colors"
+          >
+            Volver
+          </button>
+          <button
+            onClick={handleViewFile}
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 px-4 rounded-lg transition-colors disabled:bg-gray-700"
+            disabled={loading}
+          >
+            {loading ? "Cargando..." : "Ver archivo"}
+          </button>
+        </div>
       </div>
     </div>
   );

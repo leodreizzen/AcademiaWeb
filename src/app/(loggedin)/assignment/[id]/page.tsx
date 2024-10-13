@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
@@ -10,13 +10,9 @@ export default async function AssignmentDetailsPage({
 }: {
   params: { id: string };
 }) {
-  // Verifica permisos
   await assertPermission({ resource: Resource.ASSIGNMENT, operation: "READ" });
-
-  // Obtén el cliente de Prisma
   const prisma = await getCurrentProfilePrismaClient();
 
-  // Obtén los detalles del Assignment
   const assignmentData = await prisma.assignment.findUnique({
     where: { id: Number(params.id) },
     include: {
@@ -32,7 +28,6 @@ export default async function AssignmentDetailsPage({
     return <div>No se encontró el trabajo práctico.</div>;
   }
 
-  // Prepara los datos para enviarlos al componente del cliente
   const assignment = {
     id: assignmentData.id,
     title: assignmentData.title,
@@ -42,6 +37,5 @@ export default async function AssignmentDetailsPage({
     subject: assignmentData.subject,
   };
 
-  // Renderiza el componente del cliente con los datos obtenidos
   return <AssignmentDetailsClient assignment={assignment} />;
 }

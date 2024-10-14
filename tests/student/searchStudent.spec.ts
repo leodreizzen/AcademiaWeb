@@ -71,6 +71,21 @@ test.describe('Testing buscar estudiante', () => {
             expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
         });
 
+        test('Busqueda de DNI con todo 0', async ({ page })=> {
+            await login(page, admin.dni.toString(), admin.password);
+            await page.waitForURL('/')
+    
+            const dni = '000000000';
+    
+            const studentsLink = page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })
+            await studentsLink.click();
+    
+            const result = await searchStudentByDni(page, dni);
+            expect(result).toBeFalsy();
+
+            expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        });
+
         
     
     });

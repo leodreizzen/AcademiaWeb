@@ -1,8 +1,7 @@
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
 import ListReprimands from "@/components/list/ListReprimands";
-import {getReprimands} from "@/app/(loggedin)/reprimand/getReprimands";
-import {countReprimands} from "@/app/(loggedin)/reprimand/fetchReprimands";
+import {countReprimands, fetchReprimands} from "@/app/(loggedin)/reprimand/fetchReprimands";
 import {z} from "zod";
 import {format} from "date-fns";
 const paramsModel = z.object({
@@ -24,8 +23,8 @@ export default async function ReprimandListPage({
     const COUNT_PER_PAGE = 5;
 
 
-    const results = await getReprimands(page??1, initDate, endDate);
-    const count = await countReprimands();
+    const results = await fetchReprimands({page: page ?? 1, init: initDate, end: endDate});
+    const count = await countReprimands(initDate, endDate);
 
 
     const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);

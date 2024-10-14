@@ -4,7 +4,7 @@ import {fetchStudents} from "@/app/(loggedin)/student/fetchStudents";
 
 export async function getStudents(page: number, dni?: number, lastName?: string) {
     // Si se proporcionan `dni` o `lastName`, filtrar la búsqueda
-    if (dni || (lastName && lastName)) {
+    if (dni !== undefined || (lastName && lastName)) {
         return await fetchStudentsFiltered({dni, lastName}, page );
     } else {
         // Si no hay filtros, devolver los estudiantes por página

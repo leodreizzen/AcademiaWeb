@@ -3,7 +3,7 @@ import {fetchParentsFiltered} from "@/app/(loggedin)/parent/fetchParentsFiltered
 
 export async function getParents(page: number, dni?: number, lastName?: string) {
     // Si se proporcionan `dni` o `lastName`, filtrar la búsqueda
-    if (dni || (lastName && lastName)) {
+    if (dni != undefined || (lastName && lastName)) {
         return await fetchParentsFiltered({dni: Number(dni), lastName}, page );
     } else {
         // Si no hay filtros, devolver los estudiantes por página

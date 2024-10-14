@@ -29,7 +29,8 @@ export function SanctionNotificationEmail(props: SanctionNotificationEmailProps)
       : {
         recipient: {firstName: 'Pablo', lastName: 'González'},
         student: {firstName: 'Juan', lastName: 'Pérez'},
-        sanctionReason: 'Falta de asistencia. Comportamiento inapropiado en clase.',
+        sanctionReason: 'Falta de asistencia. Comportamiento inapropiado en clase.\n Solicitamos a los padres que tomen medidas urgentes para corregir el accionar del alumno, que está generando preocupaciones.\n' +
+            '\n.',
         detailsLink: 'https://example.com'
       };
   const sanctionReasonArray = sanctionReason.split('.').filter(paragraph => paragraph.trim() !== '')
@@ -161,7 +162,8 @@ const reasonTitle = {
 const reasonText = {
   ...text,
   marginBottom: '3px',
-  lineHeight: '10px'
+  marginTop: "10px",
+  lineHeight: '16px'
 };
 
 const buttonContainer = {

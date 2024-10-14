@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache";
 import { ADMINS_PER_PAGE } from "./adminConstants";
 import { AdminQuery } from "./types";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
@@ -84,6 +85,7 @@ export async function getAdmin(id: number) {
             id: id
         },
         select: {
+            id: true,
             dni: true,
             phoneNumber: true,
             address: true,
@@ -96,4 +98,33 @@ export async function getAdmin(id: number) {
             }
         }
     });
+}
+
+export async function editAdmin(phoneNumber: string, address: string, email: string, name: string, lastname: string, id: number): Promise<boolean>  {
+    const prisma = await getCurrentProfilePrismaClient();
+    try {
+        return await prisma.$transaction(async (prisma) => {
+            await prisma.administrator.update({
+                data: {
+                    phoneNumber: phoneNumber,
+                    email: email,
+                    address: address,
+                    user: {
+                        update: {
+                            firstName: name,
+                            lastName: lastname
+                        }
+                    }
+                },
+                where: {
+                    id: id
+                }
+            });
+            revalidatePath("/admin");
+            return true;
+        } );
+    } catch (error) {
+        console.error("Error adding admin:", error);
+        return false;
+    }
 }

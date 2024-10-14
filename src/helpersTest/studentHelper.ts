@@ -1,4 +1,5 @@
-import { Page } from "@playwright/test";
+import { Page, expect } from "@playwright/test";
+import {  faker } from "@faker-js/faker/locale/es";
 
 
 export async function randomDNI() {
@@ -36,4 +37,46 @@ export async function searchStudentByLastName(page: Page, LastName: string) {
     else {
         return false;
     }
+}
+
+
+function randomYear() {
+    const MAX = 2019
+    const MIN = 2006
+    return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
+}
+
+function randomDay() {
+    const MAX = 28
+    const MIN = 1
+    return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
+}
+
+export async function newBirthDate(page: Page) {
+    const year = randomYear();
+    const month = faker.date.month({context:true, }).toString();
+    const day = randomDay();
+
+    console.log(month);
+    await page.waitForTimeout(500);
+    await page.locator('#dob').click();
+    await page.waitForTimeout(500);
+    
+    while (await page.getByRole('dialog').isVisible() === false) {
+        await page.locator('#dob').click();
+        await page.waitForTimeout(500);
+    }
+
+
+    await page.getByRole('dialog').focus();
+    await page.waitForTimeout(1000);
+
+    while (await page.isVisible(`text=${month}`) === false) {
+        await page.getByTestId('ArrowLeftIcon').click();
+    }
+
+    await page.getByTestId('ArrowDropDownIcon').click();
+    await page.getByRole('radio', { exact:true, name: year }).click();
+    await page.getByRole('gridcell', { exact: true, name: day }).click();
+
 }

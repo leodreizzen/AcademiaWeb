@@ -31,10 +31,22 @@ export default function AssignmentDetailsPage({
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleViewFile = () => {
+  const handleViewFile = async () => {
     if (assignment.fileUrl) {
       setLoading(true);
-      setFileUrl(assignment.fileUrl);
+      try {
+        const response = await fetch(assignment.fileUrl, { method: "HEAD" });
+        const contentType = response.headers.get("Content-Type");
+
+        if (contentType === "application/pdf") {
+          // Si es un PDF, lo mostramos en el iframe
+          setFileUrl(assignment.fileUrl);
+        } else{
+          window.open(assignment.fileUrl, "_blank");
+        }
+      } catch (error) {
+        console.error("Error al obtener el tipo de archivo:", error);
+      }
       setLoading(false);
     } else {
       console.error("File URL not found");

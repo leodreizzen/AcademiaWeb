@@ -41,7 +41,7 @@ test.describe('Testing listado admin', () => {
         await expect(page.locator(".test-admin-item").first()).toBeVisible();
 
         await expect(await searchAdminByDni(page, '123456789')).toBeFalsy();
-        expect (await page.isVisible(`text=${'No se encontraron administradores  con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        expect (await page.isVisible(`text=${'No se encontraron administradores con esos filtros'}`,{timeout:1000})).toBeTruthy();
         
         
     });

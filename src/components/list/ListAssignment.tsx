@@ -12,6 +12,7 @@ import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
 import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectValue } from "@radix-ui/react-select";
+import { NoResultCard } from "./NoResultCard";
 
 type TPListPageProps = {
   data: AssignmentType[];
@@ -275,18 +276,13 @@ export default function TPListPage({
               </Card>
             ))
           ) : (
-            <p className="text-center text-white text-lg">
-              No hay trabajos prácticos subidos aún.
-            </p>
+            <NoResultCard user={"trabajos prácticos"} />
           )}
         </div>
 
         <div className="mt-6">
           <PaginationControls cantPages={count} />
         </div>
-        <p className="text-center text-white text-sm mt-2">
-          Total de trabajos prácticos: {totalAssignments}
-        </p>
       </div>
     </div>
   );

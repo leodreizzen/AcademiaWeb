@@ -2,6 +2,7 @@ import {ReactElement, ReactNode} from "react";
 import {Resend} from "resend";
 import {saveTestingEmail} from "@/lib/testing/testUtils";
 import {isTesting} from "../../../next.config.mjs";
+import { v4 as uuid } from 'uuid';
 
 if(!process.env.RESEND_API_KEY)
     throw new Error("RESEND_API_KEY is not defined")
@@ -33,7 +34,10 @@ export default async function sendEmail({fromName, fromAccount, to, subject, rea
         subject: subject,
         react: react,
         cc: cc,
-        bcc: bcc
+        bcc: bcc,
+        headers: {
+            'X-Entity-Ref-ID': uuid(),
+        },
     });
     if (error) {
         return {success: false, error: error.message}

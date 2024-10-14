@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import fileDownload from "js-file-download";
+
 interface Subject {
   id: number;
   name: string;
@@ -37,12 +39,42 @@ export default function AssignmentDetailsPage({
       try {
         const response = await fetch(assignment.fileUrl, { method: "HEAD" });
         const contentType = response.headers.get("Content-Type");
+        const downloadFile = async (
+          fileUrl: string,
+          title: string,
+          extension: string
+        ) => {
+          const response = await fetch(fileUrl);
+          if (!response.ok) {
+            throw new Error("Error al descargar el archivo");
+          }
 
+          const blob = await response.blob();
+          fileDownload(blob, `${title}.${extension}`);
+        };
         if (contentType === "application/pdf") {
           // Si es un PDF, lo mostramos en el iframe
           setFileUrl(assignment.fileUrl);
-        } else{
-          window.open(assignment.fileUrl, "_blank");
+        } else if (
+          contentType ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          // Si es un Docx, lo descargamos
+          await downloadFile(assignment.fileUrl, assignment.title, "docx");
+        } else if (
+          contentType ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ) {
+          // Si es un Xlsx, lo descargamos
+          await downloadFile(assignment.fileUrl, assignment.title, "xlsx");
+        } else if (
+          contentType ===
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        ) {
+          // Si es un Ppsx, lo descargamos
+          await downloadFile(assignment.fileUrl, assignment.title, "ppsx");
+        } else {
+          console.error("Tipo de archivo no soportado:", contentType);
         }
       } catch (error) {
         console.error("Error al obtener el tipo de archivo:", error);

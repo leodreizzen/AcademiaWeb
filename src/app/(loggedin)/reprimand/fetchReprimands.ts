@@ -1,6 +1,5 @@
 'use server';
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
-import {auth} from "@/auth";
 import {fetchCurrentUser} from "@/lib/data/users";
 import {fetchSelectedChild} from "@/lib/data/children";
 
@@ -19,6 +18,9 @@ export async function fetchReprimands({page, init, end}:{page: number, init?: Da
                     id = selectedChild.id;
                 else
                     return [];
+            }
+            else if(profile.role == "Teacher"){
+                id = undefined;
             }
             else{
                 console.error("Error fetching reprimands: User is not a student or parent");

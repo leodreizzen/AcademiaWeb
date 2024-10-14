@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { loginAsRole } from '../src/helpersTest/loginAsRolHelper';
 import { login } from '../src/helpersTest/loginHelper';
-import {getTestUser} from "./testdata";
+import {getTestUser, getTestUserChildren} from "./testdata";
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
@@ -12,7 +12,7 @@ const administrator = getTestUser("administrator");
 const student = getTestUser("student");
 const teacher = getTestUser("teacher");
 const parent = getTestUser("parent");
-const parentTeacher = getTestUser("parentTeacher");
+const parentTeacherAdmin = getTestUser("parentTeacherAdministrator");
 test.describe('Testing login', () => {
 
   test('Login exitoso admin', async ({ page }) => {
@@ -25,12 +25,12 @@ test.describe('Testing login', () => {
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })).toBeVisible();
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Docentes' })).toBeVisible();
       await expect(page.getByRole('navigation').getByRole('link', { name: 'Administradores' })).toBeVisible();
-      await expect(page.getByRole('navigation').getByRole('link', { name: 'Padres' })).toBeVisible();
+      await expect(page.getByRole('navigation').getByRole('link', { name: 'Responsables' })).toBeVisible();
       
 
       await expect(page.getByRole('button', { name: 'Alumnos' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Docentes' })).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Padres' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Responsables' })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Administradores' })).toBeVisible();
     } else {
       // Test para mobile
@@ -148,7 +148,9 @@ test.describe('Testing login', () => {
 
   test('Login padre con rol padre', async ({ page }) => {
 
-    await loginAsRole(page, parentTeacher.dni.toString(), parentTeacher.password, 'Padre');
+    const parentTeacherAdminChildren =  getTestUserChildren("parentTeacherAdministrator");
+    const firstChildFullName = parentTeacherAdminChildren[0].firstName + " " + parentTeacherAdminChildren[0].lastName;
+    await loginAsRole(page, parentTeacherAdmin.dni.toString(), parentTeacherAdmin.password, 'Padre', firstChildFullName);
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -165,7 +167,7 @@ test.describe('Testing login', () => {
   });
 
   test('Login padre con rol profesor', async ({ page }) => {
-    await loginAsRole(page, parentTeacher.dni.toString(), parentTeacher.password, 'Profesor');
+    await loginAsRole(page, parentTeacherAdmin.dni.toString(), parentTeacherAdmin.password, 'Profesor');
     await page.waitForURL('/');
     const viewportSize = await page.viewportSize();
 
@@ -182,7 +184,7 @@ test.describe('Testing login', () => {
   });
 
   test('No es posible cambio de rol volviendo atras', async ({ page }) => {
-    await loginAsRole(page, parentTeacher.dni.toString(), parentTeacher.password, 'Profesor');
+    await loginAsRole(page, parentTeacherAdmin.dni.toString(), parentTeacherAdmin.password, 'Profesor');
     await page.waitForURL('/');
 
     const viewportSize = await page.viewportSize();

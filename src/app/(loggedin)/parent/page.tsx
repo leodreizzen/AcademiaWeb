@@ -28,6 +28,6 @@ export default async function ParentListPage({
     const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
 
     return (
-        <ListParents data={results} count={numberOfPages} />
+        <ListParents data={results} count={numberOfPages} numberOfParents={results.length}/>
     );
 }

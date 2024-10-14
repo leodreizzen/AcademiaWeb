@@ -54,7 +54,31 @@ export const PersonListSchema = z.array(PersonSchema).refine((list) => {
         }
         return true;
     }
-    , {message: "There are repeated DNI or emails in the list"});
+    , {message: "There are repeated DNI or emails in the list"})
+    .refine((list) => {
+        for (let i = 0; i < list.length; i++) {
+            const person = list[i];
+            if (person.roles.includes("student")) {
+                const parents = person.parentDnis as number[];
+                for (const parentDni of parents) {
+                    const index = list.findIndex((p) => p.dni === parentDni);
+                    if (index === -1) {
+                        console.error(`Parent with DNI ${parentDni} not found`);
+                        return false;
+                    }
+                    if (index > i) {
+                        console.error(`Parent with DNI ${parentDni} must be created before student with DNI ${person.dni}`);
+                        return false;
+                    }
+                    if (!list[index].roles.includes("parent")) {
+                        console.error(`Person with DNI ${parentDni} is not a parent but is listed as a parent of student with DNI ${person.dni}`);
+                        return false;
+                    }
+                }
+            }
+        }
+        return true
+    }, {message: "Error validating parentDni of students"});
 
 export type PersonList = z.infer<typeof PersonListSchema>;
 

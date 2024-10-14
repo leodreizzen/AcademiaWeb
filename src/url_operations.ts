@@ -8,7 +8,8 @@ export const anonymousPages: string[] = [
     "/403",
     "/forgotpassword",
     "/forgotpassword/confirmation",
-    "/passwordreset"
+    "/passwordreset",
+    "/loginredirect"
 ]
 
 
@@ -35,6 +36,7 @@ const routeList:{path: string, handler: Permission}[] = [
     {path: "/teacher/:id", handler: {resource: Resource.TEACHER, operation: "READ"}},
     {path: "/teacher/:id/edit", handler: {resource: Resource.TEACHER, operation: "UPDATE"}},
     {path: "/teacher/add", handler: {resource: Resource.TEACHER, operation: "CREATE"}},
+    {path: "/selectstudent", handler: {resource: Resource.USER, operation: "SELECT_CHILD"}},
     {path: "/exam-mark", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
     {path: "/exam-mark/subject/:id", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
     {path: "/exam-mark/add", handler: {resource: Resource.EXAM_MARK, operation: "CREATE"}},

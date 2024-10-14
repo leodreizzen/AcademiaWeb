@@ -16,7 +16,7 @@ test.describe('Testing info padre', () => {
     test('info correspondiente a un padre desde rol administrador', async ({page}) => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
         const result = await searchParentByDni(page, dniDefaultParent);
         expect(result).toBeTruthy();
 
@@ -32,7 +32,7 @@ test.describe('Testing info padre', () => {
 
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
         await page.waitForTimeout(1000);
         const {name: expectedName, dni: expectedDNI} = await getFirstPersonDetails(page);
         await page.locator('.rounded-xl button:has-text("Ver")').first().click();

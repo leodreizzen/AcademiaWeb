@@ -5,6 +5,8 @@ import Credentials from 'next-auth/providers/credentials';
 import {LoginModel} from "@/lib/models/login";
 import {checkLogin, fetchUserProfiles, LoginError} from "@/lib/data/users";
 import {ProfileRole} from "@/lib/definitions";
+import {fetchChildrenByParentDni} from "@/lib/data/children";
+import getPrismaClient from "@/lib/prisma";
 
 export const { auth, signIn, signOut , unstable_update} = NextAuth({
     ...authConfig,
@@ -28,7 +30,18 @@ export const { auth, signIn, signOut , unstable_update} = NextAuth({
             }
             const profiles = await fetchUserProfiles(parsedCredentials.data.dni);
             if(profiles.length === 1){
-                return {dni: parsedCredentials.data.dni, role: profiles[0].role as ProfileRole}
+                let selectedChildId = undefined;
+                if(profiles[0].role == "Parent"){
+                    const children = await fetchChildrenByParentDni(parsedCredentials.data.dni, getPrismaClient({id: 1, role: "Superuser"}));
+                    if(children.length === 1){
+                        selectedChildId = children[0].id
+                    }
+                }
+                return {
+                    dni: parsedCredentials.data.dni,
+                    role: profiles[0].role as ProfileRole,
+                    selectedChildId: selectedChildId
+                }
             }
             else
                 return {dni: parsedCredentials.data.dni, role: undefined}

@@ -4,7 +4,7 @@ import {ActionResult, ParentWithUser} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
-export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number): Promise<ActionResult>  {
+export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult>  {
     const prisma = await getCurrentProfilePrismaClient();
     let result: ActionResult;
     try {
@@ -17,8 +17,35 @@ export async function addStudent(phoneNumber: string, address: string, email: st
             if(existingUser)
                 return {success: false, error: "Ya existe un alumno con ese dni"}
 
+            const existingUserEmail = await prisma.profile.findFirst({
+                where: {
+                    OR: [
+                        {
+                            AND: [
+                                { email: email },
+                                { role: "Administrator" }
+                            ]
+                        },
+                        {
+                            AND: [
+                                { email: email },
+                                { dni: { not: dni } }
+                            ]
+                        }
+                    ]
+                }
+            });
+            if(existingUserEmail){
+                const messageError = existingUserEmail.role == "Administrator" ? "El email de un administrador no se puede compartir entre perfiles" : "El email ya está en uso por otro usuario"
+                return {
+                    success: false,
+                    error: messageError
+                }
+            }
+
             const student = await prisma.student.create({
                 data: {
+                    birthdate : birthDay,
                     phoneNumber: phoneNumber,
                     email: email,
                     grade: {

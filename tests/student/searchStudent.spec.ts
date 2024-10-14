@@ -60,7 +60,7 @@ test.describe('Testing buscar estudiante', () => {
             await login(page, admin.dni.toString(), admin.password);
             await page.waitForURL('/')
     
-            const dni = '9999999999';
+            const dni = '989898989';
     
             const studentsLink = page.getByRole('navigation').getByRole('link', { name: 'Alumnos' })
             await studentsLink.click();

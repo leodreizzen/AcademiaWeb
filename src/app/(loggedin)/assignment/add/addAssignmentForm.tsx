@@ -66,7 +66,6 @@ export default function AddAssignmentForm() {
   const handleGradeChange = (e: string) => {
     const gradeId = Number(e);
     setSelectedGradeId(gradeId);
-    const grade = grades.find((g) => g.id === gradeId);
     setSelectedSubjectId(null);
   };
 

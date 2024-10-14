@@ -101,7 +101,7 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                     <div className="flex justify-between items-center">
                                         <div className="text-white">
                                             <p className="font-semibold">Fecha: {sancion.dateTime.toLocaleDateString()}</p>
-                                            <p>Docente: {sancion.Teacher.user.firstName} {sancion.Teacher.user.lastName}</p>
+                                            <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>
                                         </div>
                                         <Button
                                             onClick={() => toggleDetalle(sancion.id)}

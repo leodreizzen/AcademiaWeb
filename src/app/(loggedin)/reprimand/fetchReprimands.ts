@@ -50,7 +50,7 @@ export async function fetchReprimands({page, init, end}:{page: number, init?: Da
                         ...dateFilter,
                     },
                     include: {
-                        Teacher: {
+                        teacher: {
                             include: {
                                 user: true
                             }

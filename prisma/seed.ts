@@ -92,7 +92,7 @@ async function createUsers(prisma: zPrismaClient) {
                     },
                     grade: {
                         connect: {
-                            name: grades[Math.floor(Math.random() * grades.length)]
+                            name: person.grade
                         }
                     },
                     address: person.address,
@@ -103,6 +103,8 @@ async function createUsers(prisma: zPrismaClient) {
         }
 
         if (person.roles.includes("teacher")) {
+            if(!person.subjects)
+                throw new Error("Subjects not found")
             await prisma.teacher.create({
                 data: {
                     user: {
@@ -112,7 +114,15 @@ async function createUsers(prisma: zPrismaClient) {
                     },
                     address: person.address,
                     phoneNumber: person.phoneNumber,
-                    email: person.email
+                    email: person.email,
+                    subjects: {
+                        connect: person.subjects.map(([grade, subject]) => ({
+                            gradeName_name: {
+                                gradeName: grade,
+                                name: subject
+                            }
+                        }))
+                    }
                 }
             })
         }

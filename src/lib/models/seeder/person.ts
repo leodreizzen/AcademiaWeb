@@ -4,6 +4,8 @@ import {maxDigits, minDigits} from "@/lib/utils";
 const dniMessage = "Los DNI tienen que tener de 7 a 9 dígitos, y ser solo números.";
 const dniSchema = z.coerce.number({message: dniMessage}).min(minDigits(7), {message: dniMessage}).max(maxDigits(9), {message: dniMessage});
 
+const grades = ["1º año", "2º año", "3º año", "4º año", "5º año", "6° año"]
+
 export const PersonSchema = z.object({
     roles: z.array(z.enum(["parent", "teacher", "student", "administrator"])),
     phoneNumber: z.string({message: "Invalid phone number"}),
@@ -14,7 +16,9 @@ export const PersonSchema = z.object({
     dni: dniSchema,
     password: z.string({message:"Invalid password"}),
     alias: z.string().optional(),
-    parentDnis: z.array(dniSchema).optional()
+    parentDnis: z.array(dniSchema).optional(),
+    grade: z.string().optional(),
+    subjects: z.array(z.tuple([z.string(), z.string()])).optional()
 }).refine((value) => {
     if (value.roles.includes("student"))
         return value.parentDnis !== undefined && value.parentDnis.length > 0;
@@ -26,7 +30,19 @@ export const PersonSchema = z.object({
             return true;
         else
             return value.parentDnis === undefined || value.parentDnis.length === 0;
-    }, {message: "Only students can have parents"});
+    }, {message: "Only students can have parents"})
+    .refine((value) => {
+        if (value.roles.includes("student"))
+            return value.grade !== undefined && grades.includes(value.grade);
+        else
+            return true
+    }, {message: "Students must have a grade"})
+    .refine((value) => {
+        if (value.roles.includes("teacher"))
+            return value.subjects !== undefined && value.subjects.length > 0;
+        else
+            return true
+    }, {message: "Teachers must have at least one subject they teach."});
 
 
 export const PersonListSchema = z.array(PersonSchema).refine((list) => {

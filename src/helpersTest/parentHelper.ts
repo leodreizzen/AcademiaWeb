@@ -1,5 +1,5 @@
 import { Page, expect } from "@playwright/test";
-import {faker} from '@faker-js/faker';
+import {  faker } from "@faker-js/faker/locale/es";
 import { newBirthDate, randomDNI } from "./studentHelper";
 import exp from "constants";
 
@@ -204,7 +204,7 @@ function randomDay() {
 
 export async function newBirthDateOverEighteen(page: Page) {
     const year = randomYearOverEighteen();
-    const month = faker.date.month().toString();
+    const month = faker.date.month({context:true}).toString();
     const day = randomDay();
 
     await page.waitForTimeout(500);
@@ -221,11 +221,11 @@ export async function newBirthDateOverEighteen(page: Page) {
     await page.waitForTimeout(1000);
 
     while (await page.isVisible(`text=${month}`) === false) {
-        await page.getByLabel('Previous month').click();
+        await page.getByTestId('ArrowLeftIcon').click();
     }
 
-    await page.getByLabel('calendar view is open, switch').click();
-    await page.getByRole('radio', { name: year }).click();
+    await page.getByTestId('ArrowDropDownIcon').click();
+    await page.getByRole('radio', { exact:true, name: year }).click();
     await page.getByRole('gridcell', { exact: true, name: day }).click();
 
 

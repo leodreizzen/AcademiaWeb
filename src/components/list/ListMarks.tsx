@@ -27,6 +27,8 @@ function NotasDialog({ subject }: { subject: SubjectWithExams }) {
                             <span className="text-gray-300">{exam.marks[0].mark}</span>
                         </div>
                     ))}
+                    {subject.exams.length === 0 && (
+                        <p className="text-gray-200">No hay exámenes registrados</p>)}
                 </div>
             </DialogContent>
         </Dialog>

@@ -1,6 +1,6 @@
 import { Page, expect } from "@playwright/test";
 import {faker} from '@faker-js/faker';
-import { randomDNI } from "./studentHelper";
+import { newBirthDate, randomDNI } from "./studentHelper";
 import exp from "constants";
 
 export async function searchParentByDni(page: Page, Dni: string) {
@@ -49,7 +49,7 @@ export async function createParentWithoutChildren(page: Page) {
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
-
+    await newBirthDate(page);
     await page.locator('button[type="submit"]').click();
 
     await page.getByRole('button', { name: 'Seleccionar' }).first().click();
@@ -58,10 +58,11 @@ export async function createParentWithoutChildren(page: Page) {
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="input-name"]').fill(faker.person.firstName());
-    await page.locator('input[id="input-surname"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
+    await newBirthDateOverEighteen(page);
 
     await page.getByRole('button', { name: 'Agregar' }).click();
 
@@ -83,6 +84,7 @@ export async function createChildrenWithTwoParents(page: Page) {
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+    await newBirthDate(page);
 
     await page.locator('button[type="submit"]').click();
 
@@ -92,11 +94,11 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="input-name"]').fill(faker.person.firstName());
-    await page.locator('input[id="input-surname"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
-
+    await newBirthDateOverEighteen(page);
     await page.getByRole('button', { name: 'Agregar' }).click();
 
     await page.waitForTimeout(2000);
@@ -141,6 +143,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
     await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+    await newBirthDate(page);
 
     await page.locator('button[type="submit"]').click();
 
@@ -150,10 +153,11 @@ export async function createParentWithOnlyOneChild(page: Page) {
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
-    await page.locator('input[id="input-name"]').fill(faker.person.firstName());
-    await page.locator('input[id="input-surname"]').last().fill(faker.person.lastName());
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
+    await newBirthDateOverEighteen(page);
 
     await page.getByRole('button', { name: 'Agregar' }).click();
 
@@ -183,4 +187,46 @@ export async function createParentWithOnlyOneChild(page: Page) {
     await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     return parentDni;
+}
+
+
+function randomYearOverEighteen() {
+    const MAX = 2005
+    const MIN = 1980
+    return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
+}
+
+function randomDay() {
+    const MAX = 28
+    const MIN = 1
+    return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
+}
+
+export async function newBirthDateOverEighteen(page: Page) {
+    const year = randomYearOverEighteen();
+    const month = faker.date.month().toString();
+    const day = randomDay();
+
+    await page.waitForTimeout(500);
+    await page.locator('#dob').click();
+    await page.waitForTimeout(500);
+    
+    while (await page.getByRole('dialog').nth(1).isVisible() === false) {
+        await page.locator('#dob').click();
+        await page.waitForTimeout(500);
+    }
+
+
+    await page.getByRole('dialog').nth(1).focus();
+    await page.waitForTimeout(1000);
+
+    while (await page.isVisible(`text=${month}`) === false) {
+        await page.getByLabel('Previous month').click();
+    }
+
+    await page.getByLabel('calendar view is open, switch').click();
+    await page.getByRole('radio', { name: year }).click();
+    await page.getByRole('gridcell', { exact: true, name: day }).click();
+
+
 }

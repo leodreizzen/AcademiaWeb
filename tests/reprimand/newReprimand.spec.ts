@@ -175,7 +175,6 @@ test.describe('Testing new reprimand', () => {
         await page.getByText('5º año').click();
         if ( browserName === 'webkit') {
             await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
-            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).fill('');
         
         }
         else {    
@@ -227,7 +226,6 @@ test.describe('Testing new reprimand', () => {
         await page.getByText('5º año').click();
         if ( browserName === 'webkit') {
             await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
-            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).fill('');
         
         }
         else {    

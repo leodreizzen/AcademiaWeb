@@ -1,13 +1,14 @@
-import { test, expect, request, APIRequest, APIResponse } from '@playwright/test';
+import { test, expect, request, APIRequest, APIResponse, Browser } from '@playwright/test';
 import { loginAsTestUser } from '../testutils';
 import { login } from '@/helpersTest/loginHelper';
 import { getTestUser } from '../testdata';
 import { time } from 'console';
 import { TestEmailsAPIResponse } from '@/app/api/internal/test-emails/types';
 import exp from 'constants';
+import { browser } from 'process';
 
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page,browserName }) => {
     await page.goto('/');
 })
 
@@ -15,9 +16,8 @@ const teacher = getTestUser("teacher");
 const date = new Date();
 const todayDate = date.getDate().toString().padStart(2, '0') + (date.getMonth() + 1).toString().padStart(2, '0') + date.getFullYear().toString();
 const futureDate = '01092099'
-
 test.describe('Testing new reprimand', () => {
-    test('Nueva amonestacion individual', async ({ page }) => {
+    test('Nueva amonestacion individual', async ({ page,browserName }) => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         await page.waitForURL('/');
@@ -26,7 +26,13 @@ test.describe('Testing new reprimand', () => {
         await page.getByText('Seleccionar el año').click();
         await page.getByText('1º año').click();
         await page.waitForTimeout(5000);
+        if ( browserName === 'webkit') {
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
+        }
+        else {    
+
         await page.locator('#input-students').click();
+        }
         await page.getByRole('option', { name: 'Axel Berge (14141414)' }).click();
         await page.waitForTimeout(2000);
 
@@ -74,7 +80,7 @@ test.describe('Testing new reprimand', () => {
 
     });
 
-    test('Nueva amonestacion grupal', async ({ page }) => {
+    test('Nueva amonestacion grupal', async ({ page,browserName }) => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
@@ -83,7 +89,13 @@ test.describe('Testing new reprimand', () => {
         await page.getByRole('button', { name: 'Agregar Amonestación' }).click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
+        if ( browserName === 'webkit') {
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
+        }
+        else {    
+
         await page.locator('#input-students').click();
+        }
         await page.getByText('Seleccionar todos').click();
         await page.waitForTimeout(2000);
 
@@ -126,7 +138,7 @@ test.describe('Testing new reprimand', () => {
 
     });
 
-    test('Amonestacion vacia (Caso Negativo)', async ({ page }) => {
+    test('Amonestacion vacia (Caso Negativo)', async ({ page,browserName }) => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
@@ -135,7 +147,13 @@ test.describe('Testing new reprimand', () => {
         await page.getByRole('button', { name: 'Agregar Amonestación' }).click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
+        if ( browserName === 'webkit') {
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
+        }
+        else {    
+
         await page.locator('#input-students').click();
+        }
         
         await page.locator('button[type="submit"]').click();
         await page.waitForTimeout(5000);
@@ -146,7 +164,7 @@ test.describe('Testing new reprimand', () => {
 
     });
 
-    test('Amonestacion sin texto (Caso Negativo)', async ({ page }) => {
+    test('Amonestacion sin texto (Caso Negativo)', async ({ page,browserName }) => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
@@ -155,8 +173,17 @@ test.describe('Testing new reprimand', () => {
         await page.getByRole('button', { name: 'Agregar Amonestación' }).click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
+        if ( browserName === 'webkit') {
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).fill('');
+        
+        }
+        else {    
+
         await page.locator('#input-students').click();
         await page.locator('#input-students').fill('');
+            
+    }
         await page.waitForTimeout(5000);
 
         await page.getByText('Seleccionar todos').click();
@@ -169,7 +196,7 @@ test.describe('Testing new reprimand', () => {
 
     });
 
-    test('Amonestacion sin curso y año pero con mensaje (Caso Negativo)', async ({ page }) => {
+    test('Amonestacion sin curso y año pero con mensaje (Caso Negativo)', async ({ page,browserName }) => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         await page.waitForURL('/');
@@ -189,7 +216,7 @@ test.describe('Testing new reprimand', () => {
 
     });
 
-    test('Amonestacion sin alumnos (Caso Negativo)', async ({ page }) => {
+    test('Amonestacion sin alumnos (Caso Negativo)', async ({ page,browserName }) => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
@@ -198,9 +225,17 @@ test.describe('Testing new reprimand', () => {
         await page.getByRole('button', { name: 'Agregar Amonestación' }).click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
+        if ( browserName === 'webkit') {
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).click();
+            await page.locator('div').filter({ hasText: /^Buscar alumnos$/ }).nth(2).fill('');
+        
+        }
+        else {    
+
         await page.locator('#input-students').click();
         await page.locator('#input-students').fill('');
-        
+            
+    }
        
         const message = "No pasa"
         await page.locator('textarea').fill(message);
@@ -215,7 +250,7 @@ test.describe('Testing new reprimand', () => {
 
 
 /**
- *  test('Busqueda donde no haya amonestaciones', async ({ page }) => {
+ *  test('Busqueda donde no haya amonestaciones', async ({ page,browserName }) => {
 
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());

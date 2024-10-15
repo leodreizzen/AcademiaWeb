@@ -25,11 +25,11 @@ test.describe('Testing new reprimand', () => {
         await page.getByRole('button', { name: 'Agregar Amonestación' }).click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('1º año').click();
-        await page.locator('div:nth-child(2) > .text-white > .\\!bg-gray-700 > .select__value-container > .\\!text-white').click();
-        await page.locator('#react-select-5-input').fill('Axel');
         await page.waitForTimeout(5000);
+        await page.locator('div:nth-child(2) > .text-white > .\\!bg-gray-700 > .select__value-container > .\\!text-white').click();
+        await page.getByRole('option', { name: 'Axel Berge (14141414)' }).click();
+        await page.waitForTimeout(2000);
 
-        await page.getByText('Axel Berge').click();
 
         await expect(page.getByText('A. Berge')).toBeVisible();
         const message = "Le pego a un compañero (Caso de prueba)"
@@ -84,10 +84,8 @@ test.describe('Testing new reprimand', () => {
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
         await page.locator('div:nth-child(2) > .text-white > .\\!bg-gray-700 > .select__value-container > .\\!text-white').click();
-        await page.locator('#react-select-5-input').fill('');
-        await page.waitForTimeout(5000);
-
         await page.getByText('Seleccionar todos').click();
+        await page.waitForTimeout(2000);
 
         const message = "Le pego a un compañero (Caso de prueba)"
         await page.locator('textarea').fill(message);
@@ -113,7 +111,7 @@ test.describe('Testing new reprimand', () => {
          */
         
         await page.getByText('Ver Detalle').first().click();
-
+        
         await expect(page.getByText(message)).toBeVisible();
 
         const mails: TestEmailsAPIResponse = await (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
@@ -140,7 +138,7 @@ test.describe('Testing new reprimand', () => {
         await page.locator('div:nth-child(2) > .text-white > .\\!bg-gray-700 > .select__value-container > .\\!text-white').click();
         
         await page.locator('button[type="submit"]').click();
-        
+        await page.waitForTimeout(5000);
         expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
         expect(page.getByText('Escribe un mensaje')).toBeVisible();
 
@@ -164,8 +162,7 @@ test.describe('Testing new reprimand', () => {
         await page.getByText('Seleccionar todos').click();
         
         await page.locator('button[type="submit"]').click();
-        
-        
+        await page.waitForTimeout(5000);
         expect(page.getByText('Escribe un mensaje')).toBeVisible();
 
 
@@ -185,7 +182,7 @@ test.describe('Testing new reprimand', () => {
         await page.locator('textarea').fill(message);
         
         await page.locator('button[type="submit"]').click();
-        
+        await page.waitForTimeout(5000);
         expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
         expect(page.getByText('Selecciona un curso')).toBeVisible();
 
@@ -209,6 +206,8 @@ test.describe('Testing new reprimand', () => {
         const message = "No pasa"
         await page.locator('textarea').fill(message);
         await page.locator('button[type="submit"]').click();
+        await page.waitForTimeout(5000);
+
         expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
 
 

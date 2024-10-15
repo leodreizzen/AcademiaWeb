@@ -39,7 +39,7 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('button[type="submit"]').click();
         await page.getByRole('button', { name: 'Seleccionar' }).first().click();
         await page.locator('button[type="submit"]').click();
-        await page.waitForTimeout(1000);
+        await page.waitForURL('/student');
         await expect(page).toHaveURL('/student');
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
@@ -73,7 +73,7 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('button[type="submit"]').click();
         await page.getByRole('button', { name: 'Seleccionar' }).first().click();
         await page.locator('button[type="submit"]').click();
-        await page.waitForTimeout(1000);
+        await page.waitForURL('/student');
         await expect(page).toHaveURL('/student');
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
@@ -119,7 +119,8 @@ test.describe('Testing borrar alumno', () => {
         const { name: nombrePadre, dni: dniPadre } = await getFirstPersonDetails(page);
         await page.getByRole('button', { name: 'Seleccionar' }).first().click();
         await page.locator('button[type="submit"]').click();
-        await page.waitForTimeout(1000);
+
+        await page.waitForURL('/student');
 
         await expect(page).toHaveURL('/student');
 

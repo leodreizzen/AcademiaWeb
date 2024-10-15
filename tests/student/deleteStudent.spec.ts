@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { Faker, es } from '@faker-js/faker'
-import { searchStudentByDni } from '@/helpersTest/studentHelper';
+import { newBirthDate, searchStudentByDni } from '@/helpersTest/studentHelper';
 import { getFirstPersonDetails } from '@/helpersTest/infoHelper';
 import {loginAsTestUser} from "../testutils";
 import {searchParentByDni} from '@/helpersTest/parentHelper';
+
 
 const faker = new Faker({ locale: [es] })
 
@@ -34,6 +35,7 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
         await page.locator('input[id="input-email"]').fill(faker.internet.email());
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+        await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
         await page.getByRole('button', { name: 'Seleccionar' }).first().click();
         await page.locator('button[type="submit"]').click();
@@ -67,6 +69,7 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
         await page.locator('input[id="input-email"]').fill(faker.internet.email());
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+        await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
         await page.getByRole('button', { name: 'Seleccionar' }).first().click();
         await page.locator('button[type="submit"]').click();
@@ -110,6 +113,7 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
         await page.locator('input[id="input-email"]').fill(faker.internet.email());
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+        await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
 
         const { name: nombrePadre, dni: dniPadre } = await getFirstPersonDetails(page);

@@ -151,8 +151,6 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await page.waitForTimeout(1000);
 
-    console.log(newPhoneNumber);
-    console.log(newPhoneNumber.replace("+", ''));
     await expect(page.getByText(newName)).toBeVisible();
     await expect(page.getByText(newLastName)).toBeVisible();
     await expect(page.getByText(newPhoneNumber.replace("+", ''))).toBeVisible();

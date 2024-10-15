@@ -160,6 +160,7 @@ export default function AddReprimandForm({grades}: { grades: Grade[] }) {
                                 <Select<StudentOptionType,true>
                                     classNames={customStyles}
                                     {...field}
+                                    inputId="input-students"
                                     onChange={e => {
                                         if(e?.find(option => option.value === -1)){
                                             field.onChange(students.map(student => student.id))

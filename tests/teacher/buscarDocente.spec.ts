@@ -234,4 +234,29 @@ test.describe('Testing buscar docente', () => {
         const resultApellido = page.locator(`text=${otroApellido}`);
         await expect(resultApellido).toBeVisible();
     });
+
+
+    test('Busqueda de docente con dni todo 0', async ({ page })=> {
+        await loginAsTestUser(page, 'administrator');
+        await page.waitForURL('/')
+
+        const dni = '00000000';
+        //Test para desktop
+        const docentesLink = page.getByRole('navigation').getByRole('link', { name: 'Docentes' });
+        await docentesLink.click();
+
+        const inputDni = page.locator('input[placeholder="Buscar por DNI"]');
+        await inputDni.fill(dni);
+
+        const searchButton = page.locator('svg.lucide-search');
+        await searchButton.click();
+
+        const expectedUrlPattern = new RegExp(`/teacher\\?dni=${dni}&lastName=`);
+        await page.waitForURL(expectedUrlPattern);
+    
+        const resultDni = page.locator(`text=DNI: ${dni}`);
+        await expect(resultDni).not.toBeVisible();
+        expect (await page.isVisible(`text=${'No se encontraron docentes con esos filtros'}`,{timeout:1000})).toBeTruthy();
+    });
+
 });

@@ -37,7 +37,7 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 
 
 export async function createParentWithoutChildren(page: Page) {
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();
@@ -72,7 +72,7 @@ export async function createParentWithoutChildren(page: Page) {
 
 export async function createChildrenWithTwoParents(page: Page) {
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();
@@ -126,13 +126,13 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     
 
-    await expect(page).toHaveURL('http://localhost:3000/student');
+    await expect(page).toHaveURL('/student');
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     return parentDni;
 }
 
 export async function createParentWithOnlyOneChild(page: Page) {
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     const dni = await randomDNI();
 
@@ -183,7 +183,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
 
     await page.getByRole('button', { name: 'Registrar' }).click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student');
+    await expect(page).toHaveURL('/student');
     await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     return parentDni;

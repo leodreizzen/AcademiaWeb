@@ -1,6 +1,7 @@
 "use server"
 
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import {revalidatePath} from "next/cache";
 
 export async function removeStudent(id: number) {
     const prisma = await getCurrentProfilePrismaClient();
@@ -30,6 +31,7 @@ export async function removeStudent(id: number) {
                 }
             });
         }
+        revalidatePath("/student");
         return true;
     } catch (error) {
         console.error("Error fetching administrators:", error);

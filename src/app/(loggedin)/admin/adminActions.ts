@@ -71,6 +71,7 @@ export async function removeAdmin(id: number) {
                 }
             });
         }
+        revalidatePath("/admin");
         return true;
     } catch (error) {
         console.error("Error fetching administrators:", error);

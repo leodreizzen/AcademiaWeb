@@ -10,7 +10,10 @@
     "secrets": "tsx secrets.tsx",
     "postinstall": "npm run secrets && zenstack generate && npx prisma generate",
     "email": "email dev",
-    "savetestdata": "tsx encryptTestData.ts"
+    "savetestdata": "tsx encryptTestData.ts",
+    "testdev": "cross-env TESTING=true npm run dev -- -p 4000",
+    "teststart": "cross-env TESTING=true npm run start -- -p 4000",
+    "testbuild": "cross-env TESTING=true npm run build"
   },
   "dependencies": {
     "@1password/sdk": "^0.1.1",
@@ -52,6 +55,7 @@
     "react-dom": "^18",
     "react-email": "^3.0.1",
     "react-hook-form": "^7.53.0",
+    "react-select": "^5.8.1",
     "readline-sync": "^1.4.10",
     "resend": "^4.0.0",
     "route-recognizer": "^0.3.4",
@@ -69,7 +73,9 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/readline-sync": "^1.4.8",
+    "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.12",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "14.2.9",
     "postcss": "^8",

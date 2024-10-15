@@ -30,6 +30,7 @@ export async function submitAssignment(formData: FormData) {
 
     return { success: true };
   } catch (error) {
+    console.error(error);
     if (error instanceof z.ZodError) {
       return { success: false, errors: error.flatten() };
     }

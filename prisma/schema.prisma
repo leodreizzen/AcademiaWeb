@@ -65,6 +65,7 @@ model Superuser {
 /// @@allow('delete', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 /// @@auth
+/// @@allow('update', auth().role == 'Teacher')
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
@@ -199,7 +200,7 @@ model Reprimand {
   id        Int       @id() @default(autoincrement())
   students  Student[]
   message   String
-  Teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
   teacherId Int
   dateTime  DateTime  @default(now())
 }

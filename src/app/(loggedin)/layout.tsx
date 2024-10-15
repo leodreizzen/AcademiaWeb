@@ -18,7 +18,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         roleParams = {role: user.role}
 
     return (
-        <div className="min-h-screen flex flex-col h-screen overflow-clip">
+        <div className="min-h-screen flex flex-col h-screen overflow-auto">
             <NavBar firstName={user.user.firstName} lastName={user.user.lastName} {...roleParams}/>
             <main className="flex-grow w-full mx-auto overflow-auto">
                 {children}

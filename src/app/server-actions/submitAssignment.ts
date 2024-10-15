@@ -2,9 +2,7 @@
 
 import { z } from "zod";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
-import {assignmentSchema} from "@/lib/models/addAssignment";
-
-
+import { assignmentSchema } from "@/lib/models/addAssignment";
 
 export async function submitAssignment(formData: FormData) {
   try {

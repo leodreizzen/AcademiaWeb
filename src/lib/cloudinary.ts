@@ -19,6 +19,7 @@ export async function generateSignature(): Promise<SignatureData> {
   const paramsToSign = {
     timestamp,
     upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || '',
+    use_filename: 'true',
   };
 
   const signature = cloudinary.v2.utils.api_sign_request(

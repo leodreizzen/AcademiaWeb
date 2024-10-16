@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Edit, Eye, Plus } from "lucide-react";
+import { Search, Edit, Eye, Plus, Trash2 } from "lucide-react";
 import PaginationControls from "@/components/list/PaginationControls";
 import { AssignmentType } from "@/types/assignment";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -29,10 +29,7 @@ interface Grade {
   subjects: Subject[];
 }
 
-export default function TPListPage({
-  data = [],
-  count,
-}: TPListPageProps) {
+export default function TPListPage({ data = [], count }: TPListPageProps) {
   const [title, setTitle] = useState("");
   const [grades, setGrades] = useState<Grade[]>([]);
   const [selectedGradeName, setSelectedGradeName] = useState<string | null>(
@@ -269,9 +266,9 @@ export default function TPListPage({
                       variant="outline"
                       size="sm"
                       onClick={() => handleDelete(assignment.id)}
-                      className="bg-red-600 text-white hover:bg-red-500 border-red-500 flex-grow sm:flex-grow-0"
+                      className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
                     >
-                      Eliminar
+                      <Trash2 className="mr-2 h-4 w-4" /> Borrar
                     </Button>
                   </div>
                 </CardContent>

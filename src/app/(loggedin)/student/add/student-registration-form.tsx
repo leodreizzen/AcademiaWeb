@@ -7,8 +7,7 @@ import {Label} from "@/components/ui/label"
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
-import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentBack";
+import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentParentBack";
 import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
 import PaginationControlsWithEndpoint from "@/app/(loggedin)/student/add/paginationControlsWithEndpoint";
 import {useRouter} from "next/navigation";
@@ -20,6 +19,7 @@ import {ParentAPIResponse} from "@/app/api/internal/parent/types";
 import {Search} from "lucide-react";
 import {NoResultCard} from "@/components/list/NoResultCard";
 import {FieldCalendar} from "@/components/ui/FieldCalendar";
+import {ParentWithUser} from "@/lib/definitions/parent";
 
 
 type PrincipalProps = {

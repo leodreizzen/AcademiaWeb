@@ -53,7 +53,7 @@ export default async function StudentInfoPage({params}: {params: {id: string}}) 
                         </div>
                         <div>
                             <Label className="text-sm font-medium text-gray-400">Año</Label>
-                            <p className="text-lg">{student.grade.name}</p>
+                            <p className="text-lg">{student.gradeName}</p>
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>

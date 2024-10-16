@@ -23,7 +23,6 @@ export default async function AssignmentPage({
     <TPListPage
       data={assignments}
       count={numberOfPages}
-      totalAssignments={count}
     />
   );
 }

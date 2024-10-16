@@ -17,7 +17,6 @@ import { NoResultCard } from "./NoResultCard";
 type TPListPageProps = {
   data: AssignmentType[];
   count: number;
-  totalAssignments: number;
 };
 
 interface Subject {
@@ -33,7 +32,6 @@ interface Grade {
 export default function TPListPage({
   data = [],
   count,
-  totalAssignments,
 }: TPListPageProps) {
   const [title, setTitle] = useState("");
   const [grades, setGrades] = useState<Grade[]>([]);

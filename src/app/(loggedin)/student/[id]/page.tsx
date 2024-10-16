@@ -66,7 +66,7 @@ export default async function StudentInfoPage({params}: {params: {id: string}}) 
                     </div>
                     <div>
                         <Label className="text-sm font-medium text-gray-400 mb-2 block">Responsables</Label>
-                        <div className="space-y-3">
+                        <div className="flex flex-col space-y-3">
                             {student.parents.map((parent, index) => (
                                 <Link href={`/parent/${parent.id}`} key={index}>
                                 <div key={index} className="bg-gray-700 p-3 rounded-lg">

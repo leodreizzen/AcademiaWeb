@@ -23,6 +23,9 @@ export async function addStudentToDataBase(formData: StudentData, parents: Paren
         const errorMessage = "Por favor, corrija los siguientes errores: " + Object.values(validateFields.error.flatten().fieldErrors);
         return {success: false, error: errorMessage}
     }
+    if(parents.length === 0){
+        return {success: false, error: "Por favor, seleccione al menos un responsable"}
+    }
 
     const {firstName, lastName, email, dni, phoneNumber, address, gradeName, birthDate} = validateFields.data;
     return await addStudent(phoneNumber, address, email, parents, gradeName, firstName, lastName, dni, birthDate);
@@ -61,6 +64,9 @@ export async function updateStudentInDataBase(id: number, formData: StudentData,
         const errorMessage= "Por favor, corrija los siguientes errores: " + Object.values(validateFields.error.flatten().fieldErrors);
         return {success: false, error: errorMessage}
 
+    }
+    if(parents.length === 0){
+        return {success: false, error: "Por favor, seleccione al menos un responsable"}
     }
     const {phoneNumber, address, email, firstName, lastName, dni, birthDate, gradeName} = validateFields.data;
     return await updateStudent(id,phoneNumber, address, email, parents, gradeName, firstName, lastName, dni, birthDate);

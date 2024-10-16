@@ -52,7 +52,7 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
                     },
 
                     parents: {
-                        connect: parents.map((parent) => ({ id: parent.id })), // Update parent IDs if needed
+                        set: parents.map((parent) => ({ id: parent.id })), // Update parent IDs if needed
                     },
                     user: {
                         update: {

@@ -20,16 +20,17 @@ import {Search} from "lucide-react";
 import {NoResultCard} from "@/components/list/NoResultCard";
 import {FieldCalendar} from "@/components/ui/FieldCalendar";
 import {ParentWithUser} from "@/lib/definitions/parent";
+import {ParentCountAPIResponse} from "@/app/api/internal/parent/count/types";
 
 
 type PrincipalProps = {
     data: ParentWithUser[];
-    count: number;
+    numberPages: number;
 };
 
 
 
-export function StudentRegistrationFormComponent({data, count}: PrincipalProps) {
+export function StudentRegistrationFormComponent({data, numberPages}: PrincipalProps) {
     const {register, handleSubmit: handleSubmit1, formState, getValues, control: control1} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
     const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField, control} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
     const [grade, setGrade] = useState("");
@@ -43,7 +44,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [parents, setParents] = useState<ParentWithUser[]>(data)
     const [selectedParents, setSelectedParents] = useState<ParentWithUser[]>([])
-
+    const [count, setCount] = useState(numberPages)
     const [grades, setGrades] = useState<string[]>([]);
     const router = useRouter();
 
@@ -67,6 +68,19 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
 
     }
 
+    async function pageCountParents(dni: string, lastName: string){
+        const searchParams = new URLSearchParams();
+        searchParams.set("dni", dni);
+        searchParams.set("lastName", lastName);
+        const res = await fetch(`/api/internal/parent/count?${searchParams.toString()}`);
+        if (res.ok) {
+            const respuestaJson = await res.json() as ParentCountAPIResponse;
+            return respuestaJson.pages;
+        } else {
+            throw new Error("Fallo al buscar los responsables");
+        }
+    }
+
 
     const continueNextStep = () => {
         if (step === 1 && isValid) {
@@ -79,7 +93,6 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
         e.preventDefault();
         if (step === 2 && selectedParents.length > 0) {
             const resul = await addStudentToDataBase({...getValues(), gradeName: grade}, selectedParents)
-            console.log("BUENAS", resul)
             if (!resul.success) {
                 alert(resul.error)
             } else {
@@ -113,8 +126,14 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
     }
 
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
         setPage(1);
+        try {
+            const pages = await pageCountParents(searchDNI, searchLastName);
+            setCount(pages);
+        } catch (error) {
+            alert((error as Error).message)
+        }
         fetchParents(1, searchDNI, searchLastName);
     }
 

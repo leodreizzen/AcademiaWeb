@@ -1,0 +1,1 @@
+export const PARENTS_PER_PAGE = 10;

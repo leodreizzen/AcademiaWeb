@@ -49,15 +49,28 @@ export const PersonSchema = z.object({
             }
         }
     })
-
-
-    .refine((value) => {
-        if (value.roles.includes("teacher"))
-            return value.subjects !== undefined && value.subjects.length > 0;
-        else
-            return true
-    }, {message: "Teachers must have at least one subject they teach."});
-
+    .superRefine((value, ctx) => {
+        if (value.roles.includes("teacher")) {
+            if (value.subjects === undefined) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: `Teacher must have at least one subject.`,
+                });
+                return z.NEVER;
+            }
+            const subjects = new Set<string>();
+            for (const [subject, grade] of value.subjects) {
+                if (subjects.has(subject)) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: `Teacher has repeated subject ${subject}`,
+                    });
+                    return z.NEVER;
+                }
+                subjects.add(subject);
+            }
+        }
+    });
 
 export const PersonListSchema = z.array(z.any()).transform((arr, ctx) => {
     const resList: z.infer<typeof PersonSchema>[] = [];
@@ -75,7 +88,7 @@ export const PersonListSchema = z.array(z.any()).transform((arr, ctx) => {
     }
     return resList;
 }).superRefine((list, ctx) => {
-    if((list as {status?: string})["status"] == "aborted")
+    if ((list as { status?: string })["status"] == "aborted")
         return z.NEVER;
     const dniSet = new Set<number>();
     const emailSet = new Set<string>();
@@ -108,7 +121,7 @@ export const PersonListSchema = z.array(z.any()).transform((arr, ctx) => {
             aliasSet.add(person.alias);
         }
     }
-}). superRefine((list, ctx) => {
+}).superRefine((list, ctx) => {
     for (let i = 0; i < list.length; i++) {
         const person = list[i];
         if (person.roles.includes("student")) {

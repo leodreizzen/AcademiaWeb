@@ -79,7 +79,7 @@ export default function AddAssignmentForm() {
       .replace(/[\u0300-\u036f]/g, "") // Remueve los diacríticos
       .replace(/\s+/g, "_"); // Reemplaza espacios por guiones bajos
     const cleanFile = new File([file], cleanFileName, { type: file.type });
-    
+
     const formData = new FormData();
     formData.append("file", cleanFile);
     formData.append(
@@ -104,7 +104,6 @@ export default function AddAssignmentForm() {
       setUploading(false);
       return responseData.secure_url;
     } catch (error) {
-      console.error("Upload failed:", error);
       setUploading(false);
       return null;
     }
@@ -140,7 +139,11 @@ export default function AddAssignmentForm() {
             const fieldErrors = response.errors.fieldErrors;
             const errorMessages = Object.keys(fieldErrors).reduce(
               (acc, key) => {
-                return { ...acc, [key]: fieldErrors[key] };
+                const errorMessage = fieldErrors[key];
+                if (key === "fileUrl") {
+                  key = "file";
+                }
+                return { ...acc, [key]: errorMessage };
               },
               {}
             );

@@ -69,6 +69,10 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
         push(`/admin/${id}/edit`);
     };
     const handleRemove = async (id: number) => {
+        const mustRemove = confirm("¿Esta seguro que quiere eliminar el administrador?");
+        if (!mustRemove) {
+            return;
+        }
         const isRemove = await removeAdmin(id);
         if (isRemove) {
             setAdministrators(administrators.filter(admin => admin.id !== id));

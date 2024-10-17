@@ -13,8 +13,8 @@ export async function getAdmins({ page, dni, lastName }: AdminQuery) {
             skip: (page - 1) * ADMINS_PER_PAGE,
             take: ADMINS_PER_PAGE,
             where: {
-                ...(dni !== undefined && { dni: dni }),
-                ...(lastName && {
+                ...(dni != undefined && { dni: dni }),
+                ...(lastName != undefined && {
                     user: {
                         lastName: {
                           contains: lastName,

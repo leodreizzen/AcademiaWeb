@@ -8,16 +8,18 @@ import { Search, Edit, Eye, Plus } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls"
 import { TeacherWithUser } from "@/app/(loggedin)/teacher/data"
 import { usePathname, useRouter } from "next/navigation"
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 type PrincipalProps = {
     data: TeacherWithUser[];
     count: number;
+    numberOfTeachers: number;
 };
 
 
 
 
-export function ListTeachers({ data, count }: PrincipalProps) {
+export function ListTeachers({ data, count, numberOfTeachers }: PrincipalProps) {
     const [dni, setDni] = useState("")
     const [lastName, setLastName] = useState("")
     const { replace, push } = useRouter();
@@ -87,6 +89,7 @@ export function ListTeachers({ data, count }: PrincipalProps) {
                     </div>
                 </div>
                 <div className="mt-6 space-y-4 max-h-[40vh] overflow-y-auto">
+                    {numberOfTeachers === 0 && <NoResultCard user="docentes" />}
                     {data.map(teacher => (
                         <Card key={teacher.id} className="bg-gray-700">
                             <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 space-y-3 sm:space-y-0">

@@ -23,7 +23,7 @@ export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastN
                     user: true
                 }
             })
-        } else if(dni){
+        } else if(dni !== undefined){
             return await prisma.parent.findMany({
                 where: {
                     user: {

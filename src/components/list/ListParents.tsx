@@ -4,23 +4,26 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Edit, Eye } from 'lucide-react'
+import { Search, Edit, Eye, Trash2 } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls";
 import {ParentWithUser} from "@/app/(loggedin)/parent/data";
 import {usePathname, useRouter} from "next/navigation";
+import { removeParent } from '@/app/(loggedin)/parent/removeParent';
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 type PrincipalProps = {
   data: ParentWithUser[];
   count: number;
+  numberOfParents: number;
 };
 
 
 
 
-export function ListParents({ data, count }: PrincipalProps) {
+export function ListParents({ data, count, numberOfParents }: PrincipalProps) {
   const [dni, setDni] = useState("")
   const [lastName, setLastName] = useState("")
-  const { push, replace } = useRouter();
+  const { push, replace, refresh } = useRouter();
   const pathname = usePathname();
 
   const handleSearch = () => {
@@ -50,10 +53,19 @@ export function ListParents({ data, count }: PrincipalProps) {
     push(`/parent/${id}`)
   }
 
+  const handleRemove = async (id: number) => {
+    const error = await removeParent(id);
+    if (error == null) {
+      refresh();
+    } else {
+      alert(error);
+    }
+  };
+
   return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
         <div className="w-full max-w-xl bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-3xl font-bold mb-6 text-white text-center">Listado de Padres</h2>
+          <h2 className="text-3xl font-bold mb-6 text-white text-center">Listado de Responsables</h2>
           <div className="space-y-4">
             <div className="flex space-x-3">
               <Input
@@ -78,6 +90,7 @@ export function ListParents({ data, count }: PrincipalProps) {
             </div>
           </div>
           <div className="mt-6 space-y-4 max-h-[40vh] overflow-y-auto">
+            {numberOfParents === 0 && <NoResultCard user={"responsables"}/>}
             {data.map(parent => (
                 <Card key={parent.id} className="bg-gray-700">
                   <CardContent className="flex items-center justify-between p-3">
@@ -85,12 +98,15 @@ export function ListParents({ data, count }: PrincipalProps) {
                       <p className="font-semibold text-white text-xl">{parent.user.firstName} {parent.user.lastName}</p>
                       <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
                     </div>
-                    <div className="space-x-3">
-                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
+                    <div className="space-x-3 text-nowrap">
+                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </Button>
                       <Button variant="outline" size="default" onClick={() => handleView(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Eye className="mr-2 h-4 w-4" /> Ver
+                      </Button>
+                      <Button variant="outline" size="default" onClick={() => handleRemove(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
+                        <Trash2 className="mr-2 h-4 w-4" /> Borrar
                       </Button>
                     </div>
                   </CardContent>

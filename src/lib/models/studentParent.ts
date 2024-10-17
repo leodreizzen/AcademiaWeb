@@ -19,12 +19,21 @@ function calculateAge(date: Date) {
 }
 
 export const StudentSchemaWithoutGrade = z.object({
-    firstName: z.string().min(1, {message: "Ingrese un nombre válido para el estudiante"}),
-    lastName: z.string().min(1, {message: "Ingrese un apellido válido para el estudiante"}),
+    firstName: z
+        .string()
+        .min(1, { message: "Ingrese un nombre válido para el estudiante" })
+        .regex(/\S+\s*\S*/, { message: "El nombre debe contener al menos un carácter no espacio" }),
+    lastName: z
+        .string()
+        .min(1, { message: "Ingrese un apellido válido para el estudiante" })
+        .regex(/\S+\s*\S*/, { message: "El apellido debe contener al menos un carácter no espacio" }),
     email: z.string().email({message: "Ingrese un email válido para el estudiante"}),
     dni: dniSchema,
     phoneNumber: z.string().min(8, {message: "Ingrese un número de teléfono válido para el estudiante"}),
-    address: z.string().min(1, {message: "Ingrese una dirección válida para el estudiante"}),
+    address: z
+        .string()
+        .min(1, { message: "Ingrese una dirección válida para el estudiante" })
+        .regex(/\S+\s*\S*/, { message: "La dirección debe contener al menos un carácter no espacio" }),
     birthDate: z.date().refine((date) => {
         // Calculamos la edad
         const age = calculateAge(date);
@@ -39,9 +48,18 @@ export const StudentSchema = StudentSchemaWithoutGrade.extend({
 const dniMessageParent = "Ingrese un dni válido para el responsable";
 export const ParentSchema = z.object({
     phoneNumber: z.string().min(8, {message: "Ingrese un número de teléfono válido para el responsable"}),
-    address: z.string().min(1, {message: "Ingrese una dirección válida para el responsable"}),
-    firstName: z.string().min(1, {message: "Ingrese un nombre válido para el responsable"}),
-    lastName: z.string().min(1, {message: "Ingrese un apellido válido para el responsable"}),
+    address: z
+        .string()
+        .min(1, { message: "Ingrese una dirección válida para el responsable" })
+        .regex(/\S+\s*\S*/, { message: "La dirección debe contener al menos un carácter no espacio" }),
+    firstName: z
+        .string()
+        .min(1, { message: "Ingrese un nombre válido para el responsable" })
+        .regex(/\S+\s*\S*/, { message: "El nombre debe contener al menos un carácter no espacio" }),
+    lastName: z
+        .string()
+        .min(1, { message: "Ingrese un apellido válido para el responsable" })
+        .regex(/\S+\s*\S*/, { message: "El apellido debe contener al menos un carácter no espacio" }),
     dni: z.coerce.number({message: dniMessageParent}).min(minDigits(7), {message: dniMessageParent}).max(maxDigits(9), {message: dniMessageParent}),
     email: z.string().email({message: "Ingrese un email válido para el responsable"}),
     birthDate: z.date().refine((date) => {

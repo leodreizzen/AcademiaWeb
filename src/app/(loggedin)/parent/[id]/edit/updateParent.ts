@@ -1,28 +1,12 @@
-'use server';
+"use server"
 import {revalidatePath} from "next/cache";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 
-
-
-export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult> {
+export async function updateParent(id: number, phoneNumber: string, address: string, email: string, firstName: string, lastName: string, dni: number, birthDay : Date): Promise<ActionResult> {
     const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.$transaction(async (prisma) => {
-            const existingProfile = await prisma.profile.findFirst({
-                where: {
-                    dni: dni
-                }
-            })
-            if(existingProfile){
-                if(existingProfile.role == "Student" || existingProfile.role == "Parent"){
-                    return {
-                        success: false,
-                        error: `Ya existe un ${existingProfile.role == "Student"? "alumno" : "responsable"} con ese dni`
-                    }
-                }
-            }
-
             const existingUserEmail = await prisma.profile.findFirst({
                 where: {
                     OR: [
@@ -51,40 +35,36 @@ export async function addParent(phoneNumber: string, address: string, email: str
 
 
 
-            const parent = await prisma.parent.create({
+            const updatedParent = await prisma.parent.update({
+                where: {
+                    id: id
+                },
                 data: {
-                    birthdate : birthDay,
+                    birthdate: birthDay,
                     phoneNumber: phoneNumber,
                     email: email,
                     address: address,
                     user: {
-                        connectOrCreate: {
-                            where: {
-                                dni: dni
-                            },
-                            create: {
-                                firstName: name,
-                                lastName: surname,
-                                dni: dni,
-                                password: dni.toString()
-                            }
+                        update: {
+                            firstName: firstName,
+                            lastName: lastName,
                         }
                     }
-                },
+                }
             });
             revalidatePath("/student/add")
             revalidatePath("/parent")
-            console.log(`Parent created with ID: ${parent.id}`);
+            revalidatePath(`/parent/edit/${updatedParent.id}`)
+            console.log(`Parent editing with ID: ${updatedParent.id}`);
             return {
                 success: true
             };
         });
     } catch (error) {
-        console.error("Error adding parent:", error);
+        console.error("Error editing parent:", error);
         return{
             success: false,
-            error: "Error al agregar el responsable"
+            error: "Error al modificar el responsable"
         };
     }
 }
-

@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { AdministatorUser, AdminQuery } from "./types";
 import { getAdmins, getTotalAdmins, removeAdmin } from "./adminActions";
-import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {ADMINS_PER_PAGE} from "@/lib/data/pagination";
 
 interface AdminListProps {
     pageQuery?: number;

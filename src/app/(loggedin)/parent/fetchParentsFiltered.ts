@@ -1,50 +1,49 @@
 'use server';
 
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {PARENTS_PER_PAGE} from "@/lib/data/pagination";
 
-
-export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number) {
+export async function fetchParentsFiltered({dni, lastName, exclude}: {dni?: number, lastName?: string, exclude?: number[]}, page: number) {
     const prisma = await getCurrentProfilePrismaClient()
     try {
-        if (lastName) {
-            const NUMBER_OF_PRODUCTS = 10;
-            return await prisma.parent.findMany({
-                skip: (page - 1) * NUMBER_OF_PRODUCTS,
-                take: NUMBER_OF_PRODUCTS,
-                where: {
-                    user: {
-                        lastName: {
-                            contains: lastName,
-                            mode: 'insensitive',
-                        },
-                    },
-                },
-                include : {
-                    user: true
+        const filters = [];
+        if(dni !== undefined)
+            filters.push({
+                user: {
+                    dni: dni
                 }
             })
-        } else if(dni !== undefined){
-            return await prisma.parent.findMany({
-                where: {
-                    user: {
-                        dni: Number(dni)
+
+        if(lastName !== undefined)
+            filters.push({
+                user: {
+                    lastName: {
+                        contains: lastName,
+                        mode: 'insensitive',
+                    } as const
+                }
+            })
+        if(exclude !== undefined)
+            filters.push({
+                user: {
+                    dni: {
+                        not: {
+                            in: exclude
+                        }
                     }
+                }
+            })
+
+        return await prisma.parent.findMany({
+                skip: (page - 1) * PARENTS_PER_PAGE,
+                take: PARENTS_PER_PAGE,
+                where: {
+                    AND: filters
                 },
                 include : {
                     user: true
                 }
             })
-        }
-        else{
-            const NUMBER_OF_PRODUCTS = 10;
-            return await prisma.parent.findMany({
-                skip: (page - 1) * NUMBER_OF_PRODUCTS,
-                take: NUMBER_OF_PRODUCTS,
-                include: {
-                    user: true
-                }
-            });
-        }
     }
     catch(error)
     {
@@ -53,3 +52,47 @@ export async function fetchParentsFiltered({dni, lastName}: {dni?: number, lastN
     }
 }
 
+
+export async function countParentsFiltered({dni, lastName, exclude}: {dni?: number, lastName?: string, exclude?: number[]}) {
+    const prisma = await getCurrentProfilePrismaClient()
+    try {
+        const filters = [];
+        if (dni !== undefined)
+            filters.push({
+                user: {
+                    dni: dni
+                }
+            })
+
+        if (lastName !== undefined)
+            filters.push({
+                user: {
+                    lastName: {
+                        contains: lastName,
+                        mode: 'insensitive',
+                    } as const
+                }
+            })
+        if (exclude !== undefined)
+            filters.push({
+                user: {
+                    dni: {
+                        not: {
+                            in: exclude
+                        }
+                    }
+                }
+            })
+
+        return await prisma.parent.count({
+            where: {
+                AND: filters
+            }
+        })
+    }
+    catch(error)
+    {
+        console.error("Error fetching parents:", error);
+        throw error;
+    }
+}

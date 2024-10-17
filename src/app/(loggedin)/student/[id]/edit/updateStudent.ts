@@ -5,19 +5,11 @@ import {revalidatePath} from "next/cache";
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {ParentWithUser} from "@/lib/definitions/parent";
 
-export async function addStudent(phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult>  {
+export async function updateStudent(id: number, phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult>  {
     const prisma = await getCurrentProfilePrismaClient();
     let result: ActionResult;
     try {
         result = await prisma.$transaction(async (prisma) => {
-            const existingUser = await prisma.user.findUnique({
-                where: {
-                    dni: dni
-                }
-            })
-            if(existingUser)
-                return {success: false, error: "Ya existe un alumno con ese dni"}
-
             const existingUserEmail = await prisma.profile.findFirst({
                 where: {
                     OR: [
@@ -44,48 +36,44 @@ export async function addStudent(phoneNumber: string, address: string, email: st
                 }
             }
 
-            const student = await prisma.student.create({
+            const updatedStudent = await prisma.student.update({
+                where: {
+                    id: id
+                },
                 data: {
-                    birthdate : birthDay,
+                    birthdate: birthDay,
                     phoneNumber: phoneNumber,
                     email: email,
+                    address: address,
                     grade: {
                         connect: {
                             name: gradeName
                         }
                     },
-                    address: address,
+
                     parents: {
-                        connect: parents.map((parent) => ({id: parent.id})),
+                        set: parents.map((parent) => ({ id: parent.id })), // Update parent IDs if needed
                     },
                     user: {
-                        create: {
+                        update: {
                             firstName: name,
                             lastName: surname,
-                            dni: dni,
-                            password: dni.toString()
                         }
                     }
                 }
             });
 
-            console.log(`Student created with ID: ${student.id}`);
+            console.log(`Student updated with ID: ${updatedStudent.id}`);
             revalidatePath("/student");
+            revalidatePath(`/student/edit/${updatedStudent.id}`);
+            revalidatePath(`/student/${updatedStudent.id}`);
             return {success: true}
 
         } );
     } catch (error) {
-        console.error("Error adding student:", error);
-        return {success: false, error: "Error al agregar el alumno"}
+        console.error("Error updating student:", error);
+        return {success: false, error: "Error al modificar el alumno"}
     }
 
     return result;
 }
-
-
-
-
-
-
-
-

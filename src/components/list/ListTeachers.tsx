@@ -50,7 +50,6 @@ export function ListTeachers({ data, count, numberOfTeachers }: PrincipalProps) 
     }
 
     const handleView = (id: number) => {
-        console.log(id)
         push(`/teacher/${id}`)
     }
 

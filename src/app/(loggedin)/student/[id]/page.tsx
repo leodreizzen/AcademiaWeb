@@ -53,7 +53,7 @@ export default async function StudentInfoPage({params}: {params: {id: string}}) 
                         </div>
                         <div>
                             <Label className="text-sm font-medium text-gray-400">Año</Label>
-                            <p className="text-lg">{student.grade.name}</p>
+                            <p className="text-lg">{student.gradeName}</p>
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>
@@ -66,7 +66,7 @@ export default async function StudentInfoPage({params}: {params: {id: string}}) 
                     </div>
                     <div>
                         <Label className="text-sm font-medium text-gray-400 mb-2 block">Responsables</Label>
-                        <div className="space-y-3">
+                        <div className="flex flex-col space-y-3">
                             {student.parents.map((parent, index) => (
                                 <Link href={`/parent/${parent.id}`} key={index}>
                                 <div key={index} className="bg-gray-700 p-3 rounded-lg">

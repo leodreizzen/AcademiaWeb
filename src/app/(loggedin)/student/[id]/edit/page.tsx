@@ -13,7 +13,8 @@ import {notFound} from "next/navigation";
 export default async function EditStudentPage({params}: {params: {id: string}}) {
     await assertPermission({resource: Resource.STUDENT, operation: "UPDATE"});
 
-    const student = await fetchStudentById(params.id);
+    const idNumber = Number(params.id);
+    const student = !isNaN(idNumber) ? await fetchStudentById(idNumber) : null;
 
 
     if (!student) {

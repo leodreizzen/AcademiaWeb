@@ -60,15 +60,21 @@ export default function EditStudent({student, id, grades, numberPages, firstPare
             setParentsChanged(true)
     }
 
-    const handleSelectedParent = (e: React.MouseEvent, parent: ParentWithUser) => {
+    const handleSelectedParent = async (e: React.MouseEvent, parent: ParentWithUser) => {
         e.preventDefault()
         if (selectedParents.some(p => p.id === parent.id)) {
             const newSelectedParents = selectedParents.filter(p => p.id !== parent.id);
             setSelectedParents(newSelectedParents);
+            try {
+                const pages = await pageCountParents(lastQuery.dni, lastQuery.lastName);
+                setPageCount(pages);
+            } catch (error) {
+                alert((error as Error).message)
+            }
             fetchParents(lastQuery.page, lastQuery.dni, lastQuery.lastName, newSelectedParents.map(parent => parent.user.dni));
         } else if (selectedParents.length < 2)
             setSelectedParents([...selectedParents, parent])
-        }
+    }
 
 
     const changeStep = () => {

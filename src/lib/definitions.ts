@@ -23,3 +23,7 @@ export type EnhancedPrismaClient = ReturnType<typeof getPrismaClient>;
 type ExtractFnType<T> = T extends (fn: (arg: infer A, ...args: any[]) => any, options?: any) => any ? A : never;
 
 export type TransactionPrismaClient = ExtractFnType<EnhancedPrismaClient['$transaction']>;
+
+export type FieldNullable<T, K extends keyof T> = Omit<T, K> & {
+    [P in K]: T[P] | null;
+};

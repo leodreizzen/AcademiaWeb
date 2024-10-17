@@ -15,8 +15,8 @@ export default async function ParentListPage({
     searchParams: { [key: string]: string | undefined }
 }) {
     await assertPermission({resource: Resource.PARENT, operation: "LIST"});
-    const dni = searchParams?.dni || '';
-    const lastName = searchParams?.lastName || '';
+    const dni = (searchParams.dni && searchParams.dni.length > 0) ? Number(searchParams.dni) : undefined;
+    const lastName = (searchParams.lastName && searchParams.lastName.length > 0) ? searchParams.lastName : undefined;
     const page = Number(searchParams?.page) || 1;
     const COUNT_PER_PAGE = 10;
 

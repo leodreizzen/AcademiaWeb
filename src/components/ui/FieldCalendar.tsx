@@ -12,8 +12,7 @@ import {format} from "date-fns"
 import { es } from 'date-fns/locale';
 
 import {ParentData, StudentDataWithoutGrade} from "@/lib/models/studentParent";
-import {DateCalendar, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DateCalendar} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 
 interface FormFieldProps<T extends FieldValues> {
@@ -50,9 +49,7 @@ export function FieldCalendar<T extends FieldValues>({label, className, control,
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0 bg-gray-800" align="start">
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateCalendar value={dayjs(field.value)} onChange={(date: Dayjs) => field.onChange(date.toDate())} className="text-white"/>
-                            </LocalizationProvider>
+                            <DateCalendar value={dayjs(field.value)} onChange={(date: Dayjs) => field.onChange(date.toDate())} className="text-white"/>
                         </PopoverContent>
                     </Popover>
                 )}
@@ -62,24 +59,3 @@ export function FieldCalendar<T extends FieldValues>({label, className, control,
     )
 
 }
-
-/*
-*                             <Calendar
-                                value={field.value}
-                                onChange={(date) => {
-                                    field.onChange(date.toDate('America/Argentina/Buenos_Aires'))
-                                }}
-                                showMonthAndYearPickers
-                            />
-*
-* */
-
-/*    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['DateCalendar']}>
-        <DemoItem label="Controlled calendar">
-          <DateCalendar value={value} onChange={(newValue) => setValue(newValue)} />
-        </DemoItem>
-      </DemoContainer>
-    </LocalizationProvider>
-*
-* **/

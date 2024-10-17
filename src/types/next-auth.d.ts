@@ -8,10 +8,12 @@ declare module 'next-auth' {
     interface User{
         dni: number
         role: ProfileRole | undefined
+        selectedChildId?: number
     }
     interface Session {
         user: User
         roleChangeKey?: string
+        selectChildKey?: string
     }
 }
 
@@ -19,5 +21,6 @@ declare module 'next-auth/jwt' {
     interface JWT {
         role: ProfileRole | undefined,
         dni: number
+        selectedChildId?: number
     }
 }

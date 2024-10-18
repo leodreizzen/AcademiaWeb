@@ -45,6 +45,11 @@ test.describe('Testing borrar alumno', () => {
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
 
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
+
         const viewButton = page.locator('button:has-text("Borrar")');
         await viewButton.click();
         await page.waitForTimeout(10000);
@@ -78,6 +83,11 @@ test.describe('Testing borrar alumno', () => {
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
+
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
 
         const deleteButton = page.locator('button:has-text("Borrar")');
         await deleteButton.click();
@@ -134,6 +144,11 @@ test.describe('Testing borrar alumno', () => {
         await page.waitForTimeout(10000);
         const result = await searchParentByDni(page, dniPadre);
         expect(result).toBeTruthy();
+
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
 
         const viewButton = page.locator('button:has-text("Ver")');
         await viewButton.click();

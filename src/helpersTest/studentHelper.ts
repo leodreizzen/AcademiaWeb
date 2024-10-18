@@ -156,6 +156,8 @@ export async function removeStudentAndParent(page:Page, dniStudent:string , dniP
 
     await page.getByRole('button', { name: 'Borrar' }).click();
 
+    await page.waitForTimeout(1000);
+
     await page.goto('/parent');
 
     await page.waitForURL('/parent');

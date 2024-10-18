@@ -292,7 +292,7 @@ export default function AddAssignmentForm() {
   );
 }
 
-export async function uploadFile(file: File): Promise<string | null> {
+async function uploadFile(file: File): Promise<string | null> {
   const { apiKey, signature, timestamp } = await generateSignature();
 
   const originalFileName = file.name;

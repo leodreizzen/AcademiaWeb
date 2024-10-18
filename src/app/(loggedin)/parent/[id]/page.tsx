@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import {fetchParentById} from "@/lib/actions/info-parent";
 import Link from "next/link";
+import {format} from "date-fns";
 
 export default async function ParentInfoPage({params}: {params: {id: string}}) {
 
@@ -47,6 +48,10 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
                         <div>
                             <Label className="text-sm font-medium text-gray-400">Teléfono</Label>
                             <p className="text-lg">{parent.phoneNumber}</p>
+                        </div>
+                        <div className="md:col-span-2">
+                            <Label className="text-sm font-medium text-gray-400">Fecha de nacimiento</Label>
+                            <p className="text-lg">{format(parent.birthdate, "dd/mm/yyyy")}</p>
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>

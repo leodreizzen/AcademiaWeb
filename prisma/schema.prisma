@@ -4,30 +4,30 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
-    directUrl = env("DIRECT_DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model User {
-    /// @allow('read', true)
-    /// @deny('update', true)
-    dni Int @id()
-    lastName String
-    firstName String
-    profiles Profile[]
-    /// @omit
-    /// @password
-    /// @allow('update', true)
-    password String
-    resetToken PasswordResetToken?
+  /// @allow('read', true)
+  /// @deny('update', true)
+  dni        Int                 @id()
+  lastName   String
+  firstName  String
+  profiles   Profile[]
+  /// @omit
+  /// @password
+  /// @allow('update', true)
+  password   String
+  resetToken PasswordResetToken?
 }
 
 /// @@allow('read', true)
@@ -36,18 +36,18 @@ model User {
 /// @@delegate(role)
 /// @@auth
 model Profile {
-    dni Int
-    user User @relation(fields: [dni], references: [dni])
-    id Int @id() @default(autoincrement())
-    role String
-    email String
-    delegate_aux_superuser Superuser?
-    delegate_aux_student Student?
-    delegate_aux_parent Parent?
-    delegate_aux_teacher Teacher?
-    delegate_aux_administrator Administrator?
+  dni                        Int
+  user                       User           @relation(fields: [dni], references: [dni])
+  id                         Int            @id() @default(autoincrement())
+  role                       String
+  email                      String
+  delegate_aux_superuser     Superuser?
+  delegate_aux_student       Student?
+  delegate_aux_parent        Parent?
+  delegate_aux_teacher       Teacher?
+  delegate_aux_administrator Administrator?
 
-    @@unique([dni, role])
+  @@unique([dni, role])
 }
 
 /// @@allow('read', true)
@@ -57,30 +57,31 @@ model Profile {
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
 model Superuser {
-    id Int @id()
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int     @id()
+  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
 /// @@allow('delete', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 /// @@auth
+/// @@allow('update', auth().role == 'Teacher')
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Student {
-    id Int @id()
-    birthdate DateTime @default(now())
-    phoneNumber String
-    address String
-    parents Parent[]
-    grade Grade @relation(fields: [gradeName], references: [name])
-    gradeName String
-    reprimands Reprimand[]
-    examMarks ExamMark[]
-    assignmentSubmissions AssignmentSubmission[]
-    reportCards ReportCard[]
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                    Int                    @id()
+  birthdate             DateTime               @default(now())
+  phoneNumber           String
+  address               String
+  parents               Parent[]
+  grade                 Grade                  @relation(fields: [gradeName], references: [name])
+  gradeName             String
+  reprimands            Reprimand[]
+  examMarks             ExamMark[]
+  assignmentSubmissions AssignmentSubmission[]
+  reportCards           ReportCard[]
+  delegate_aux_profile  Profile                @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
@@ -91,12 +92,12 @@ model Student {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Parent {
-    id Int @id()
-    birthdate DateTime @default(now())
-    phoneNumber String
-    address String
-    children Student[]
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int       @id()
+  birthdate            DateTime  @default(now())
+  phoneNumber          String
+  address              String
+  children             Student[]
+  delegate_aux_profile Profile   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
@@ -107,12 +108,12 @@ model Parent {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Teacher {
-    id Int @id()
-    phoneNumber String
-    address String
-    subjects Subject[]
-    reprimands Reprimand[]
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int         @id()
+  phoneNumber          String
+  address              String
+  subjects             Subject[]
+  reprimands           Reprimand[]
+  delegate_aux_profile Profile     @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
@@ -122,152 +123,152 @@ model Teacher {
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Administrator {
-    id Int @id()
-    phoneNumber String
-    address String
-    delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int     @id()
+  phoneNumber          String
+  address              String
+  delegate_aux_profile Profile @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 /// @@allow('all', auth().role == 'Superuser')
 model Assignment {
-    id Int @id() @default(autoincrement())
-    title String
-    description String?
-    fileUrl String
-    uploadDate DateTime @default(now())
-    subject Subject @relation(fields: [subjectId], references: [id])
-    subjectId Int
-    submissions AssignmentSubmission[]
+  id          Int                    @id() @default(autoincrement())
+  title       String
+  description String?
+  fileUrl     String
+  uploadDate  DateTime               @default(now())
+  subject     Subject                @relation(fields: [subjectId], references: [id])
+  subjectId   Int
+  submissions AssignmentSubmission[]
 }
 
 /// @@allow('all', auth().role == 'Student')
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
 model AssignmentSubmission {
-    id Int @id() @default(autoincrement())
-    uploadDate DateTime @default(now())
-    fileUrl String
-    student Student @relation(fields: [studentId], references: [id])
-    studentId Int
-    assignment Assignment @relation(fields: [assignmentId], references: [id])
-    assignmentId Int
+  id           Int        @id() @default(autoincrement())
+  uploadDate   DateTime   @default(now())
+  fileUrl      String
+  student      Student    @relation(fields: [studentId], references: [id])
+  studentId    Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
 
-    @@unique([studentId, assignmentId])
+  @@unique([studentId, assignmentId])
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Grade {
-    name String @id()
-    subjects Subject[]
-    students Student[]
+  name     String    @id()
+  subjects Subject[]
+  students Student[]
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Administrator')
 /// @@allow('all', auth().role == 'Superuser')
 model Subject {
-    id Int @id() @default(autoincrement())
-    name String
-    grade Grade @relation(fields: [gradeName], references: [name])
-    gradeName String
-    teachers Teacher[]
-    assignments Assignment[]
-    exams Exam[]
-    semesterReportCardMarks SemesterReportCardMark[]
-    finalReportCardMarks FinalReportCardMark[]
+  id                      Int                      @id() @default(autoincrement())
+  name                    String
+  grade                   Grade                    @relation(fields: [gradeName], references: [name])
+  gradeName               String
+  teachers                Teacher[]
+  assignments             Assignment[]
+  exams                   Exam[]
+  semesterReportCardMarks SemesterReportCardMark[]
+  finalReportCardMarks    FinalReportCardMark[]
 
-    @@unique([gradeName, name])
+  @@unique([gradeName, name])
 }
 
 /// @@allow('all', auth().role == 'Superuser')
 model PasswordResetToken {
-    token_hash String @id()
-    issued_at DateTime @default(now())
-    user User @relation(fields: [dni], references: [dni], onDelete: Cascade)
-    dni Int @unique()
-    used Boolean @default(false)
+  token_hash String   @id()
+  issued_at  DateTime @default(now())
+  user       User     @relation(fields: [dni], references: [dni], onDelete: Cascade)
+  dni        Int      @unique()
+  used       Boolean  @default(false)
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 /// @@allow('all', auth().role == 'Superuser')
 model Reprimand {
-    id Int @id() @default(autoincrement())
-    students Student[]
-    message String
-    Teacher Teacher @relation(fields: [teacherId], references: [id])
-    teacherId Int
-    dateTime DateTime @default(now())
+  id        Int       @id() @default(autoincrement())
+  students  Student[]
+  message   String
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  teacherId Int
+  dateTime  DateTime  @default(now())
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 /// @@allow('all', auth().role == 'Superuser')
 model Exam {
-    id Int @id() @default(autoincrement())
-    subject Subject @relation(fields: [subjectId], references: [id])
-    subjectId Int
-    date DateTime
-    marks ExamMark[]
+  id        Int        @id() @default(autoincrement())
+  subject   Subject    @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  date      DateTime
+  marks     ExamMark[]
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 /// @@allow('all', auth().role == 'Superuser')
 model ExamMark {
-    Exam Exam @relation(fields: [examId], references: [id])
-    examId Int
-    student Student @relation(fields: [studentId], references: [id])
-    studentId Int
-    mark Int
+  Exam      Exam    @relation(fields: [examId], references: [id])
+  examId    Int
+  student   Student @relation(fields: [studentId], references: [id])
+  studentId Int
+  mark      Int
 
-    @@id([examId, studentId])
+  @@id([examId, studentId])
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Superuser')
 /// @@allow('all', auth().role == 'Teacher')
 model ReportCard {
-    id Int @id() @default(autoincrement())
-    year Int
-    student Student @relation(fields: [studentId], references: [id])
-    studentId Int
-    firstSemesterMarks SemesterReportCardMark[] @relation("first_semester_marks")
-    secondSemesterMarks SemesterReportCardMark[] @relation("second_semester_marks")
-    firstSemesterReleased Boolean @default(false)
-    secondSemesterReleased Boolean @default(false)
-    finalMarks FinalReportCardMark[]
+  id                     Int                      @id() @default(autoincrement())
+  year                   Int
+  student                Student                  @relation(fields: [studentId], references: [id])
+  studentId              Int
+  firstSemesterMarks     SemesterReportCardMark[] @relation("first_semester_marks")
+  secondSemesterMarks    SemesterReportCardMark[] @relation("second_semester_marks")
+  firstSemesterReleased  Boolean                  @default(false)
+  secondSemesterReleased Boolean                  @default(false)
+  finalMarks             FinalReportCardMark[]
 
-    @@unique([year, studentId])
+  @@unique([year, studentId])
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 model SemesterReportCardMark {
-    id Int @id() @default(autoincrement())
-    reportCardFirstSemester ReportCard? @relation("first_semester_marks", fields: [reportCardFirstSemesterId], references: [id])
-    reportCardSecondSemester ReportCard? @relation("second_semester_marks", fields: [reportCardSecondSemesterId], references: [id])
-    reportCardFirstSemesterId Int?
-    reportCardSecondSemesterId Int?
-    subject Subject @relation(fields: [subjectId], references: [id])
-    subjectId Int
-    mark Int
+  id                         Int         @id() @default(autoincrement())
+  reportCardFirstSemester    ReportCard? @relation("first_semester_marks", fields: [reportCardFirstSemesterId], references: [id])
+  reportCardSecondSemester   ReportCard? @relation("second_semester_marks", fields: [reportCardSecondSemesterId], references: [id])
+  reportCardFirstSemesterId  Int?
+  reportCardSecondSemesterId Int?
+  subject                    Subject     @relation(fields: [subjectId], references: [id])
+  subjectId                  Int
+  mark                       Int
 
-    @@unique([reportCardFirstSemesterId, reportCardSecondSemesterId, subjectId])
+  @@unique([reportCardFirstSemesterId, reportCardSecondSemesterId, subjectId])
 }
 
 /// @@allow('read', true)
 /// @@allow('all', auth().role == 'Teacher')
 model FinalReportCardMark {
-    reportCard ReportCard @relation(fields: [reportCardId], references: [id])
-    reportCardId Int
-    subject Subject @relation(fields: [subjectId], references: [id])
-    subjectId Int
-    mark String
+  reportCard   ReportCard @relation(fields: [reportCardId], references: [id])
+  reportCardId Int
+  subject      Subject    @relation(fields: [subjectId], references: [id])
+  subjectId    Int
+  mark         String
 
-    @@id([reportCardId, subjectId])
+  @@id([reportCardId, subjectId])
 }

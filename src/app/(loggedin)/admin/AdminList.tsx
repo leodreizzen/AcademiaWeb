@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { AdministatorUser, AdminQuery } from "./types";
 import { getAdmins, getTotalAdmins, removeAdmin } from "./adminActions";
-import { ADMINS_PER_PAGE } from "./adminConstants";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {ADMINS_PER_PAGE} from "@/lib/data/pagination";
 
 interface AdminListProps {
     pageQuery?: number;
@@ -20,10 +20,10 @@ interface AdminListProps {
 export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminListProps) {
     const [page, setPage] = useState(pageQuery ?? 1);
     const [dni, setDni] = useState<string | undefined>(dniQuery ?? undefined);
-    const [lastName, setLastName] = useState<string | undefined>(dniQuery != null ? undefined : (lastNameQuery ?? undefined));
+    const [lastName, setLastName] = useState<string | undefined>(dniQuery != null ? undefined : ((lastNameQuery && lastNameQuery.length > 0) ? lastNameQuery : undefined));
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
-    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: (dni == undefined || dni.length == 0) ? undefined : parseInt(dni), lastName });
     const { replace, push } = useRouter();
     const pathname = usePathname();
     const [noResults, setNoResults] = useState(false);
@@ -45,7 +45,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     }, [searchQuery, page]);
 
     const searchAdministrator = () => {
-        setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+        setSearchQuery({ page, dni: (dni == undefined || dni.length == 0) ? undefined : parseInt(dni), lastName: (lastName && lastName.length > 0)? lastName : undefined });
         const params = new URLSearchParams({
             dni: dni ?? '',
             lastName: lastName ?? ''

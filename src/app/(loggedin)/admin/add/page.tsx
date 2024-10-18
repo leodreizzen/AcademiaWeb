@@ -1,7 +1,3 @@
-/*
-* Imports necesarios
-* */
-
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
 import {AdminRegistrationFormComponent} from "@/app/(loggedin)/admin/add/admin-registration-form";

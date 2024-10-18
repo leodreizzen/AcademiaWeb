@@ -83,6 +83,11 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
 
     await page.waitForTimeout(1000);
 
+    await page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('Alumno eliminado correctamente');
+        await dialog.dismiss();
+    });
+
     await page.getByRole('button', { name: 'Borrar' }).click();
 
 });
@@ -137,6 +142,11 @@ test('Modificar alumno con datos invalidos', async ({ page }) => {
     await searchStudentByDni(page, dni);
 
     await page.waitForTimeout(1000);
+
+    await page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('Alumno eliminado correctamente');
+        await dialog.dismiss();
+    });
 
     await page.getByRole('button', { name: 'Borrar' }).click();
 

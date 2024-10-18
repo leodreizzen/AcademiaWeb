@@ -164,7 +164,7 @@ model Reprimand {
     id        Int       @id @default(autoincrement())
     students  Student[]
     message   String
-    Teacher   Teacher   @relation(fields: [teacherId], references: [id])
+    teacher   Teacher   @relation(fields: [teacherId], references: [id])
     teacherId Int
     dateTime  DateTime  @default(now())
 

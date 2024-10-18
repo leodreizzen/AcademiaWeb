@@ -39,3 +39,36 @@ export async function fetchExamMarksForStudent(studentId: number) {
 
     return student
 }
+
+export async function fetchExamMarksForTeacher(teacherId: number) {
+    const prisma = await getCurrentProfilePrismaClient();
+    const teacher = await prisma.teacher.findUnique({
+        where: {id: teacherId},
+        include: {
+            subjects: {
+                include: {
+                    exams: {
+                        include: {
+                            marks: {
+                                include: {
+                                    student: {
+                                        include: {
+                                            user: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    grade: true
+                }
+            },
+        }
+    });
+
+    if (!teacher) {
+        throw new Error("Teacher not found");
+    }
+
+    return teacher
+}

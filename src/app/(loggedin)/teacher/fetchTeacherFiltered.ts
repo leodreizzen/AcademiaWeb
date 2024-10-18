@@ -6,7 +6,7 @@ import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 export async function fetchTeachersFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number) {
     const prisma = await getCurrentProfilePrismaClient()
     try {
-        if (dni) {
+        if (dni !== undefined) {
             const NUMBER_OF_TEACHERS = 10;
             return await prisma.teacher.findMany({
                 skip: (page - 1) * NUMBER_OF_TEACHERS,

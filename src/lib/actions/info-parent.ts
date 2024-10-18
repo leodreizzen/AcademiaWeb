@@ -1,6 +1,7 @@
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {ParentWithUserAndChildren} from "@/lib/definitions/parent";
 
-export async function fetchParentById(id: string) {
+export async function fetchParentById(id: string): Promise<ParentWithUserAndChildren | null> {
     const prisma = await getCurrentProfilePrismaClient()
     return prisma.parent.findUnique({
         where: {
@@ -12,25 +13,23 @@ export async function fetchParentById(id: string) {
             phoneNumber: true,
             email: true,
             address: true,
+            birthdate: true,
+            role: true,
             children: {
                 select: {
+                    birthdate: true,
+                    phoneNumber: true,
+                    address: true,
+                    gradeName: true,
                     id: true,
                     dni: true,
                     grade: true,
-                    user: {
-                        select: {
-                            firstName: true,
-                            lastName: true
-                        }
-                    }
+                    user: true,
+                    role: true,
+                    email: true
                 }
             },
-            user: {
-                select: {
-                    firstName: true,
-                    lastName: true
-                }
-            }
+            user: true
         }
     })
 }

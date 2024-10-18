@@ -9,7 +9,7 @@ function createPrismaClient(){
     return new PrismaClient(
         {
             transactionOptions: {
-                maxWait: 10000,
+                maxWait: 12000,
                 timeout: 10000
             }
         }

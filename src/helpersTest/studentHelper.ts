@@ -134,7 +134,7 @@ export async function createStudentWithOneParent(page: Page) {
 
 }
 
-export async function removeStudent(page: Page, dni: String) {
+export async function removeStudent(page: Page, dni: string) {
     await searchStudentByDni(page, dni.toString());
 
     await page.once('dialog', async dialog => {
@@ -145,7 +145,7 @@ export async function removeStudent(page: Page, dni: String) {
     await page.getByRole('button', { name: 'Borrar' }).click();
 }
 
-export async function removeStudentAndParent(page:Page, dniStudent:String , dniParent:String){
+export async function removeStudentAndParent(page:Page, dniStudent:string , dniParent:string){
 
     await searchStudentByDni(page, dniStudent.toString());
 

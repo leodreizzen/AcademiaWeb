@@ -57,7 +57,6 @@ export async function newBirthDate(page: Page) {
     const month = faker.date.month({context:true, }).toString();
     const day = randomDay();
 
-    console.log(month);
     await page.waitForTimeout(500);
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
@@ -77,6 +76,59 @@ export async function newBirthDate(page: Page) {
 
     await page.getByTestId('ArrowDropDownIcon').click();
     await page.getByRole('radio', { exact:true, name: year }).click();
-    await page.getByRole('gridcell', { exact: true, name: day }).click();
+    await page.getByRole('gridcell', { exact: true, name: day }).first().click();
+
+    return `${day}/${month}/${year}`;
+
+}
+
+export async function newBirthDateCustom(page: Page, year: string, month: string, day: string) {
+    
+    await page.waitForTimeout(500);
+    await page.locator('#dob').click();
+    await page.waitForTimeout(500);
+    
+    while (await page.getByRole('dialog').isVisible() === false) {
+        await page.locator('#dob').click();
+        await page.waitForTimeout(500);
+    }
+
+
+    await page.getByRole('dialog').focus();
+    await page.waitForTimeout(1000);
+
+    while (await page.isVisible(`text=${month}`) === false) {
+        await page.getByTestId('ArrowLeftIcon').click();
+    }
+
+    await page.getByTestId('ArrowDropDownIcon').click();
+    await page.getByRole('radio', { exact:true, name: year }).click();
+    await page.getByRole('gridcell', { exact: true, name: day }).first().click();
+
+    return `${day}/${month}/${year}`;
+
+}
+
+export async function createStudentWithOneParent(page: Page) {
+    const dni = await randomDNI();
+
+    await page.locator('input[id="input-dni"]').fill(dni);
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
+    await newBirthDate(page);
+    await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+
+    await page.locator('button[type="submit"]').click();
+
+    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page).toHaveURL('/student');
+
+    return dni;
 
 }

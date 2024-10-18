@@ -138,7 +138,7 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('/student/add');
+    await expect(page).toHaveURL('/student');
 
     await expect(page.getByText("Nuevo Alumno")).toBeVisible();
 

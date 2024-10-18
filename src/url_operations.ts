@@ -41,6 +41,7 @@ const routeList:{path: string, handler: Permission}[] = [
     {path: "/reportcard", handler: {resource: Resource.REPORT_CARD, operation: "LIST"}},
     {path: "/reportcard/:id", handler: {resource: Resource.REPORT_CARD, operation: "READ"}},
     {path: "/reportcard/:id/edit", handler: {resource: Resource.REPORT_CARD, operation: "UPDATE"}},
+    {path: "/reportcard/:id/add", handler: {resource: Resource.REPORT_CARD, operation: "CREATE"}},
     {path: "/reprimand", handler: {resource: Resource.REPRIMAND, operation: "LIST"}},
     {path: "/reprimand/:id", handler: {resource: Resource.REPRIMAND, operation: "READ"}},
     {path: "/reprimand/add", handler: {resource: Resource.REPRIMAND, operation: "CREATE"}},

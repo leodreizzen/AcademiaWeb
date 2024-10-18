@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker/locale/es_MX";
 import { Page } from "@playwright/test";
 
 
@@ -36,4 +37,29 @@ export async function searchStudentByLastName(page: Page, LastName: string) {
     else {
         return false;
     }
+}
+
+export async function createStudentWithDefaultParents(page: Page) {
+    const dni = await randomDNI();
+
+    await page.locator('input[id="input-dni"]').fill(dni);
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
+    await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
+    await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
+    await page.locator('input[id="input-email"]').fill(faker.internet.email());
+    await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+
+    await page.locator('button[type="submit"]').click();
+
+    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
+
+    await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL('/student');
+
+    return dni;
+
 }

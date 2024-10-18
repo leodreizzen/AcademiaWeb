@@ -27,6 +27,13 @@ interface Grade {
   subjects: Subject[];
 }
 
+interface FormErrors {
+  title?: string;
+  gradeName?: string;
+  subjectId?: string;
+  description?: string;
+}
+
 export default function EditAssignmentForm({
   assignment,
 }: {
@@ -39,6 +46,7 @@ export default function EditAssignmentForm({
   const [grades, setGrades] = useState<Grade[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const router = useRouter();
 
   useEffect(() => {
@@ -79,12 +87,28 @@ export default function EditAssignmentForm({
   const handleGradeChange = (gradeName: string) => {
     setSelectedGradeName(gradeName);
     setSelectedSubjectId(null);
+    setFormErrors((prev) => ({ ...prev, gradeName: undefined, subjectId: undefined }));
+  };
+
+  const validateForm = (): boolean => {
+    const errors: FormErrors = {};
+    if (!title.trim()) errors.title = "El título es requerido";
+    if (!selectedGradeName) errors.gradeName = "Debes seleccionar un curso";
+    if (!selectedSubjectId) errors.subjectId = "Debes seleccionar una materia";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
+
     if (assignment && selectedGradeName && selectedSubjectId) {
       try {
         await updateAssignment(assignment.id, {
@@ -116,10 +140,18 @@ export default function EditAssignmentForm({
             name="title"
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="bg-gray-700 text-white border-gray-600 rounded-md w-full"
-            required
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setFormErrors((prev) => ({ ...prev, title: undefined }));
+            }}
+            placeholder={assignment.title}
+            className={`bg-gray-700 text-white border-gray-600 rounded-md w-full ${
+              formErrors.title ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+            }`}
           />
+          {formErrors.title && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-y-2">
@@ -131,7 +163,9 @@ export default function EditAssignmentForm({
             value={selectedGradeName || ""}
             onValueChange={handleGradeChange}
           >
-            <SelectTrigger className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500">
+            <SelectTrigger className={`bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500 ${
+              formErrors.gradeName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+            }`}>
               <SelectValue placeholder="Selecciona un curso" />
             </SelectTrigger>
             <SelectContent className="bg-gray-700">
@@ -146,6 +180,9 @@ export default function EditAssignmentForm({
               ))}
             </SelectContent>
           </Select>
+          {formErrors.gradeName && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.gradeName}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-y-2">
@@ -155,9 +192,14 @@ export default function EditAssignmentForm({
           <Select
             name="subject"
             value={selectedSubjectId?.toString() || ""}
-            onValueChange={(e) => setSelectedSubjectId(Number(e))}
+            onValueChange={(e) => {
+              setSelectedSubjectId(Number(e));
+              setFormErrors((prev) => ({ ...prev, subjectId: undefined }));
+            }}
           >
-            <SelectTrigger className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500">
+            <SelectTrigger className={`bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500 ${
+              formErrors.subjectId ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+            }`}>
               <SelectValue placeholder="Selecciona una materia" />
             </SelectTrigger>
             <SelectContent className="bg-gray-700">
@@ -174,6 +216,9 @@ export default function EditAssignmentForm({
                 ))}
             </SelectContent>
           </Select>
+          {formErrors.subjectId && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.subjectId}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-y-2">

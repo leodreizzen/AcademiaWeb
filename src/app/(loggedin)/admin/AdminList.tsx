@@ -9,6 +9,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {NoResultCard} from "@/components/list/NoResultCard";
 
 interface AdminListProps {
     pageQuery?: number;
@@ -19,12 +20,13 @@ interface AdminListProps {
 export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminListProps) {
     const [page, setPage] = useState(pageQuery ?? 1);
     const [dni, setDni] = useState<string | undefined>(dniQuery ?? undefined);
-    const [lastName, setLastName] = useState<string | undefined>(dniQuery != null ? undefined : (lastNameQuery ?? undefined));
+    const [lastName, setLastName] = useState<string | undefined>(dniQuery != null ? undefined : ((lastNameQuery && lastNameQuery.length > 0) ? lastNameQuery : undefined));
     const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
     const [totalPages, setTotalPages] = useState(0);
-    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: (dni == undefined || dni.length == 0) ? undefined : parseInt(dni), lastName });
     const { replace, push } = useRouter();
     const pathname = usePathname();
+    const [noResults, setNoResults] = useState(false);
 
     useEffect(() => {
         const fetchTotalAdministrators = async () => {
@@ -36,13 +38,14 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
     useEffect(() => {
         const fetchAdministrators = async () => {
             const administratorsFromDB = await getAdmins({...searchQuery, page});
+            administratorsFromDB.length===0 ? setNoResults(true) : setNoResults(false);
             setAdministrators(administratorsFromDB);
         };
         fetchAdministrators();
     }, [searchQuery, page]);
 
     const searchAdministrator = () => {
-        setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+        setSearchQuery({ page, dni: (dni == undefined || dni.length == 0) ? undefined : parseInt(dni), lastName: (lastName && lastName.length > 0)? lastName : undefined });
         const params = new URLSearchParams({
             dni: dni ?? '',
             lastName: lastName ?? ''
@@ -105,6 +108,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                     </Button>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
+                    {noResults && <NoResultCard user={"administradores"}/>}
                     {
                         administrators.map(administrator => (
                             <AdminItem key={administrator.id} administrator={administrator} onView={handleView}

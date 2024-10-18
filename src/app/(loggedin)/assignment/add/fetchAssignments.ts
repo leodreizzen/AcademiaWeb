@@ -54,6 +54,7 @@ export async function updateAssignment(assignmentId: number, data: any) {
       data: {
         title: data.title,
         description: data.description,
+        subjectId: data.subjectId,
       },
     });
   } catch (error) {

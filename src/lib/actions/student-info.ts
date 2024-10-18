@@ -2,11 +2,11 @@
 import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 
 
-export default async function fetchStudentById(id: string) {
+export default async function fetchStudentById(id: number) {
     const prisma = await getCurrentProfilePrismaClient()
     return prisma.student.findUnique({
         where: {
-            id: parseInt(id)
+            id: id
         },
         select: {
             dni: true,

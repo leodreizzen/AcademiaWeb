@@ -1,0 +1,1 @@
+export type ReprimandStudentApiResponse = {id: number, dni: number, firstName: string, lastName: string}[]

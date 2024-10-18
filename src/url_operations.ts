@@ -8,7 +8,8 @@ export const anonymousPages: string[] = [
     "/403",
     "/forgotpassword",
     "/forgotpassword/confirmation",
-    "/passwordreset"
+    "/passwordreset",
+    "/loginredirect"
 ]
 
 
@@ -35,6 +36,17 @@ const routeList:{path: string, handler: Permission}[] = [
     {path: "/teacher/:id", handler: {resource: Resource.TEACHER, operation: "READ"}},
     {path: "/teacher/:id/edit", handler: {resource: Resource.TEACHER, operation: "UPDATE"}},
     {path: "/teacher/add", handler: {resource: Resource.TEACHER, operation: "CREATE"}},
+    {path: "/selectstudent", handler: {resource: Resource.USER, operation: "SELECT_CHILD"}},
+    {path: "/exam-mark", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
+    {path: "/exam-mark/subject/:id", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
+    {path: "/exam-mark/add", handler: {resource: Resource.EXAM_MARK, operation: "CREATE"}},
+    {path: "/reportcard", handler: {resource: Resource.REPORT_CARD, operation: "LIST"}},
+    {path: "/reportcard/:id", handler: {resource: Resource.REPORT_CARD, operation: "READ"}},
+    {path: "/reportcard/:id/edit", handler: {resource: Resource.REPORT_CARD, operation: "UPDATE"}},
+    {path: "/reprimand", handler: {resource: Resource.REPRIMAND, operation: "LIST"}},
+    {path: "/reprimand/:id", handler: {resource: Resource.REPRIMAND, operation: "READ"}},
+    {path: "/reprimand/add", handler: {resource: Resource.REPRIMAND, operation: "CREATE"}},
+    {path: "/api/reprimand/student", handler: {resource: Resource.REPRIMAND, operation: "CREATE"}},
 ]
 routeList.forEach(route => recognizer.add([route]));
 

@@ -1,26 +1,41 @@
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+"use server";
+
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
+import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import AssignmentDetailsClient from "./AssignmentDetails";
 
-export default async function AssignmentPage() {
+export default async function AssignmentDetailsPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   await assertPermission({ resource: Resource.ASSIGNMENT, operation: "READ" });
   const prisma = await getCurrentProfilePrismaClient();
 
-  const assignmentId = 0; //TODO: get assignment id from URL
-  const assignment = await prisma.assignment.findUnique({
-    where: { id: assignmentId },
-    select: { fileUrl: true },
+  const assignmentData = await prisma.assignment.findUnique({
+    where: { id: Number(params.id) },
+    include: {
+      subject: {
+        include: {
+          grade: true,
+        },
+      },
+    },
   });
 
-  if (!assignment) {
-    return <div>Assignment not found</div>;
+  if (!assignmentData) {
+    return <div>No se encontró el trabajo práctico.</div>;
   }
 
-  return (
-    <div>
-      <a href={assignment.fileUrl} target="_blank" rel="noopener noreferrer">
-        Download Assignment
-      </a>
-    </div>
-  );
+  const assignment = {
+    id: assignmentData.id,
+    title: assignmentData.title,
+    description: assignmentData.description || "",
+    fileUrl: assignmentData.fileUrl,
+    grade: assignmentData.subject?.grade || { name: "Sin Grado" },
+    subject: assignmentData.subject,
+  };
+
+  return <AssignmentDetailsClient assignment={assignment} />;
 }

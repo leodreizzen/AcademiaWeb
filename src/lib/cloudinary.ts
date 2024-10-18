@@ -19,6 +19,7 @@ export async function generateSignature(): Promise<SignatureData> {
   const paramsToSign = {
     timestamp,
     upload_preset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || '',
+    use_filename: 'true',
   };
 
   const signature = cloudinary.v2.utils.api_sign_request(
@@ -39,4 +40,8 @@ export async function uploadFileToCloudinary(formData: FormData): Promise<any> {
     }
   );
   return response.json();
+}
+
+export async function deleteFileFromCloudinary(public_id: string): Promise<any>{
+  return cloudinary.v2.uploader.destroy(public_id);
 }

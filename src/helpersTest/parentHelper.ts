@@ -213,8 +213,10 @@ export async function newBirthDateOverEighteen(page: Page) {
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
     
+
     while (await page.getByRole('dialog').nth(1).isVisible() === false) {
         await page.locator('#dob').click();
+        
         await page.waitForTimeout(500);
     }
 

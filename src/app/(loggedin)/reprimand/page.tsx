@@ -4,6 +4,7 @@ import ListReprimands from "@/components/list/ListReprimands";
 import {countReprimands, fetchReprimands} from "@/app/(loggedin)/reprimand/fetchReprimands";
 import {z} from "zod";
 import {format} from "date-fns";
+import {REPRIMANDS_PER_PAGE} from "@/lib/data/pagination";
 const paramsModel = z.object({
     initDate: z.optional(z.coerce.date()),
     endDate: z.optional(z.coerce.date()),
@@ -20,14 +21,12 @@ export default async function ReprimandListPage({
 
     const data = paramsModel.parse(searchParams);
     const {initDate, endDate, page} = data;
-    const COUNT_PER_PAGE = 5;
-
 
     const results = await fetchReprimands({page: page ?? 1, init: initDate, end: endDate});
     const count = await countReprimands(initDate, endDate);
 
 
-    const numberOfPages = Math.ceil(count / COUNT_PER_PAGE);
+    const numberOfPages = Math.ceil(count / REPRIMANDS_PER_PAGE);
 
     let defaultInitDate = "";
     if(initDate){

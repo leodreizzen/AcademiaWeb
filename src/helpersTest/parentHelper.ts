@@ -3,6 +3,8 @@ import {  faker } from "@faker-js/faker/locale/es";
 import { newBirthDate, randomDNI } from "./studentHelper";
 import exp from "constants";
 
+
+
 export async function searchParentByDni(page: Page, Dni: string) {
     await page.getByPlaceholder('DNI').click();
     await page.getByPlaceholder('DNI').fill(Dni);
@@ -211,8 +213,10 @@ export async function newBirthDateOverEighteen(page: Page) {
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
     
+
     while (await page.getByRole('dialog').nth(1).isVisible() === false) {
         await page.locator('#dob').click();
+        
         await page.waitForTimeout(500);
     }
 

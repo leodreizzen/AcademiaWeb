@@ -3,9 +3,8 @@
 import { z } from "zod";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import { assignmentSchema } from "@/lib/models/addAssignment";
-import { uploadFile } from "../(loggedin)/assignment/add/addAssignmentForm";
 
-export async function submitAssignment(formData: FormData, file: File | null) {
+export async function submitAssignment(formData: FormData, fileName: string) {
   try {
     const title = formData.get("title");
     const description = formData.get("description") || "";
@@ -16,20 +15,10 @@ export async function submitAssignment(formData: FormData, file: File | null) {
       description,
       subject,
       grade,
-    });
-    const prisma = await getCurrentProfilePrismaClient();
-    const fileUrl = await uploadFile(file);
-
-    await prisma.assignment.create({
-      data: {
-        title: validatedData.title,
-        description: validatedData.description,
-        fileUrl: fileUrl,
-        subjectId: Number(validatedData.subject),
-      },
+      fileName,
     });
 
-    return { success: true };
+    return { success: true, validatedData: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { success: false, errors: error.flatten() };
@@ -39,4 +28,26 @@ export async function submitAssignment(formData: FormData, file: File | null) {
       error: "Ocurrió un error al procesar el formulario.",
     };
   }
+}
+
+export async function submitAssignmentToDB(
+  validatedData: {
+    title: string;
+    grade: string;
+    subject: string;
+    description?: string | undefined;
+    fileName: string;
+  },
+  fileUrl: string
+) {
+  const prisma = await getCurrentProfilePrismaClient();
+
+  await prisma.assignment.create({
+    data: {
+      title: validatedData.title,
+      description: validatedData.description,
+      fileUrl: fileUrl,
+      subjectId: Number(validatedData.subject),
+    },
+  });
 }

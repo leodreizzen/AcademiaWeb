@@ -11,7 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TextArea } from "@/components/ui/textarea";
-import { submitAssignment } from "@/app/server-actions/submitAssignment";
+import {
+  submitAssignment,
+  submitAssignmentToDB,
+} from "@/app/server-actions/submitAssignment";
 import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
 import Link from "next/link";
 import { generateSignature, uploadFileToCloudinary } from "@/lib/cloudinary";
@@ -78,12 +81,25 @@ export default function AddAssignmentForm() {
     if (selectedGradeId !== null && selectedSubjectId !== null) {
       formData.append("subject", selectedSubjectId.toString());
       formData.append("grade", selectedGradeId.toString());
-
+      if (!file) {
+        setErrors({ file: ["Debes subir un archivo"] });
+        setSuccessMessage(null);
+        return;
+      }
       try {
         setUploading(true);
-        const response = await submitAssignment(formData, file);
+        const response = await submitAssignment(formData, file.name);
+        console.log(response);
         setUploading(false);
-        if (response.success) {
+        if (response.success && response.validatedData) {
+          const fileUrl = await uploadFile(file);
+          if (!fileUrl) {
+            setErrors({ file: ["Error al subir el archivo"] });
+            setSuccessMessage(null);
+            return;
+          }
+
+          submitAssignmentToDB(response.validatedData, fileUrl);
           setSuccessMessage("¡El archivo se ha subido correctamente!");
           setErrors(null);
 
@@ -99,7 +115,7 @@ export default function AddAssignmentForm() {
             const errorMessages = Object.keys(fieldErrors).reduce(
               (acc, key) => {
                 const errorMessage = fieldErrors[key];
-                if (key === "fileUrl") {
+                if (key === "fileName") {
                   key = "file";
                 }
                 return { ...acc, [key]: errorMessage };
@@ -276,8 +292,7 @@ export default function AddAssignmentForm() {
   );
 }
 
-export async function uploadFile(file: File | null) {
-  if (!file) return null;
+export async function uploadFile(file: File): Promise<string | null> {
   const { apiKey, signature, timestamp } = await generateSignature();
 
   const originalFileName = file.name;

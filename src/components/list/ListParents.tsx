@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, Edit, Eye, Trash2 } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls";
-import {ParentWithUser} from "@/app/(loggedin)/parent/data";
+
 import {usePathname, useRouter} from "next/navigation";
 import { removeParent } from '@/app/(loggedin)/parent/removeParent';
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {ParentWithUser} from "@/lib/definitions/parent";
 
 type PrincipalProps = {
   data: ParentWithUser[];
@@ -99,7 +100,7 @@ export function ListParents({ data, count, numberOfParents }: PrincipalProps) {
                       <p className="text-base text-gray-400 mt-1">DNI: {parent.user.dni}</p>
                     </div>
                     <div className="space-x-3 text-nowrap">
-                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.user.dni)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
+                      <Button variant="outline" size="default" onClick={() => handleEdit(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </Button>
                       <Button variant="outline" size="default" onClick={() => handleView(parent.id)} className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AdministatorUser } from "./types";
 import { removeAdmin } from "./adminActions";
-import { ADMINS_PER_PAGE } from "./adminConstants";
+import { ADMINS_PER_PAGE } from "@/lib/data/pagination";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";

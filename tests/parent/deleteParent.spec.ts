@@ -4,6 +4,7 @@ import { createParentWithOnlyOneChild,createChildrenWithTwoParents,createParentW
 
 import {loginAsTestUser} from "../testutils";
 import {getTestUser} from "../testdata";
+import { removeStudentAndParent } from '@/helpersTest/studentHelper';
 
 test.beforeEach(async ({page}) => {
     await page.goto('/');
@@ -108,7 +109,6 @@ test.describe('Testing delete parent', () => {
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-        console.log("Parent DNI: " + parentDni);
 
         const deleteButton = page.locator('button:has-text("Borrar")');
 
@@ -123,7 +123,7 @@ test.describe('Testing delete parent', () => {
 
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-        await remove
+        await removeStudentAndParent(page, parentDni, parentDni);
 
 
     });

@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 
 const dniDefaultStudent = getTestUser("student").dni.toString();
 
-const parentTestUser = getTestUser("parent");
+const parentTestUser = getTestUser("secondparent");
 
 
 

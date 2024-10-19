@@ -78,7 +78,7 @@ test.describe('Testing borrar alumno', () => {
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
         await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
-        await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+        await page.getByRole('button', { name: 'Seleccionar' }).last().click();
         await page.locator('button[type="submit"]').click();
         await page.waitForURL('/student');
         await expect(page).toHaveURL('/student');

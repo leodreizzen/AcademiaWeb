@@ -97,7 +97,8 @@ async function createUsers(prisma: zPrismaClient) {
                     },
                     address: person.address,
                     phoneNumber: person.phoneNumber,
-                    email: person.email
+                    email: person.email,
+                    birthdate: person.dateOfBirth
                 }
             })
         }
@@ -137,7 +138,8 @@ async function createUsers(prisma: zPrismaClient) {
                     },
                     address: person.address,
                     phoneNumber: person.phoneNumber,
-                    email: person.email
+                    email: person.email,
+                    birthdate: person.dateOfBirth
                 }
             })
         }
@@ -160,9 +162,128 @@ async function createUsers(prisma: zPrismaClient) {
     }
 }
 
+async function createStudentWithReprimands(prisma: zPrismaClient) {
+    const student = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141313,
+                    firstName: "Domenick",
+                    lastName: "Cruickshank-Murazik",
+                    password: "Ao=xz=V%xvo6"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "2º año"
+                }
+            },
+            parents: {
+                create: {
+                        user: {
+                            create: {
+                                dni: 12121515,
+                                firstName: "Kennith",
+                                lastName: "Tillman",
+                                password: "wb^yuSy!4sR!"
+                            }
+                        },
+                        address: "7172 Alexandra Road Apt. 241",
+                        phoneNumber: "+17859001694",
+                        email: "Annamae.Berge96@gmail.com",
+                        birthdate: new Date("1990-04-21")
+                }
+            },
+            address: "7172 Alexandra Road Apt. 241",
+            phoneNumber: "+17986648567",
+            email: "Alex_Keebler11@gmail.com",
+            birthdate: new Date("2008-08-11")
+        }
+    })
+
+    const teacher = await prisma.teacher.create({
+        data: {
+            user: {
+                create: {
+                    dni: 12121212,
+                    firstName: "Myah",
+                    lastName: "Deckow",
+                    password: "kO+W%6e0oAoU"
+                }
+            },
+            address: "5306 The Oval Suite 507",
+            phoneNumber: "+13463278552",
+            email: "Wellington_Marvin95@hotmail.com",
+            subjects: {
+                connect: [
+                    {
+                        gradeName_name: {
+                            gradeName: "2º año",
+                            name: "Matemáticas"
+                        }
+                    }
+                ]
+            }
+        }
+    })
+
+    await prisma.reprimand.create({
+        data: {
+            students: {
+                connect: {
+                    id: student.id
+                }
+            },
+            message: "Se portó mal.",
+            dateTime: new Date(),
+            Teacher: {
+                connect: {
+                    id: teacher.id
+                }
+            }
+        }
+    })
+}
+
+async function createStudentWithExam(prisma: zPrismaClient) {
+    const student = await prisma.profile.findUniqueOrThrow({
+        where: {
+            dni_role: {
+                dni: 14141313,
+                role: "student"
+            }
+        },
+    })
+    await prisma.exam.create({
+        data: {
+            subject: {
+                connect: {
+                    gradeName_name: {
+                        gradeName: "2º año",
+                        name: "Matemáticas"
+                    }
+                }
+            },
+            date: new Date("2021-06-01"),
+            marks: {
+                create: {
+                    student: {
+                        connect: {
+                            id: student.id
+                        }
+                    },
+                    mark: 10
+                }
+            }
+        }
+    })
+}
+
 async function seed(){
     await createGrades(prisma)
     await createSubjects(prisma)
     await createUsers(prisma)
+    await createStudentWithReprimands(prisma)
+    await createStudentWithExam(prisma)
 }
 seed().catch(console.error)

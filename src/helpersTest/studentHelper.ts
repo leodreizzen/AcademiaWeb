@@ -1,5 +1,5 @@
 import { Page, expect } from "@playwright/test";
-import {  faker } from "@faker-js/faker/locale/es";
+import { faker } from "@faker-js/faker/locale/es";
 import { searchParentByDni } from "./parentHelper";
 
 
@@ -53,15 +53,47 @@ function randomDay() {
     return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
 }
 
+
+export function monthToNumber(month: string) {
+    switch (month) {
+        case 'enero':
+            return '01';
+        case 'febrero':
+            return '02';
+        case 'marzo':
+            return '03';
+        case 'abril':
+            return '04';
+        case 'mayo':
+            return '05';
+        case 'junio':
+            return '06';
+        case 'julio':
+            return '07';
+        case 'agosto':
+            return '08';
+        case 'septiembre':
+            return '09';
+        case 'octubre':
+            return '10';
+        case 'noviembre':
+            return '11';
+        case 'diciembre':
+            return '12';
+        default:
+            return '01';
+    }
+}
+
 export async function newBirthDate(page: Page) {
     const year = randomYear();
-    const month = faker.date.month({context:true, }).toString();
+    const month = faker.date.month({ context: true, }).toString();
     const day = randomDay();
 
     await page.waitForTimeout(500);
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
-    
+
     while (await page.getByRole('dialog').isVisible() === false) {
         await page.locator('#dob').click();
         await page.waitForTimeout(500);
@@ -71,24 +103,38 @@ export async function newBirthDate(page: Page) {
     await page.getByRole('dialog').focus();
     await page.waitForTimeout(1000);
 
-    while (await page.isVisible(`text=${month}`) === false) {
-        await page.getByTestId('ArrowLeftIcon').click();
-    }
 
     await page.getByTestId('ArrowDropDownIcon').click();
-    await page.getByRole('radio', { exact:true, name: year }).click();
+    await page.getByRole('radio', { exact: true, name: year }).click();
+
+    while (await page.isVisible(`text=${month}`) === false) {
+        await page.getByTestId('ArrowLeftIcon').click();
+        await page.waitForTimeout(500);
+    }
+
+    if (await page.isVisible(`text=${year}`) === false) {
+        await page.getByTestId('ArrowRightIcon').click();
+        await page.waitForTimeout(500);
+        while (await page.isVisible(`text=${month}`) === false) {
+            await page.getByTestId('ArrowRightIcon').click();
+            await page.waitForTimeout(500);
+        }
+    }
+
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
 
-    return `${day}/${month}/${year}`;
+    console.log(`${day}/${monthToNumber(month)}/${year}`);
+
+    return `${day}/${monthToNumber(month)}/${year}`;
 
 }
 
 export async function newBirthDateCustom(page: Page, year: string, month: string, day: string) {
-    
+
     await page.waitForTimeout(500);
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
-    
+
     while (await page.getByRole('dialog').isVisible() === false) {
         await page.locator('#dob').click();
         await page.waitForTimeout(500);
@@ -98,15 +144,20 @@ export async function newBirthDateCustom(page: Page, year: string, month: string
     await page.getByRole('dialog').focus();
     await page.waitForTimeout(1000);
 
-    while (await page.isVisible(`text=${month}`) === false) {
-        await page.getByTestId('ArrowLeftIcon').click();
-    }
 
     await page.getByTestId('ArrowDropDownIcon').click();
-    await page.getByRole('radio', { exact:true, name: year }).click();
+    await page.getByRole('radio', { exact: true, name: year }).click();
+
+    while (await page.isVisible(`text=${month}`) === false) {
+        await page.getByTestId('ArrowLeftIcon').click();
+        await page.waitForTimeout(500);
+    }
+
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
 
-    return `${day}/${month}/${year}`;
+    console.log(`${day}/${monthToNumber(month)}/${year}`);
+
+    return `${day}/${monthToNumber(month)}/${year}`;
 
 }
 
@@ -145,7 +196,7 @@ export async function removeStudent(page: Page, dni: string) {
     await page.getByRole('button', { name: 'Borrar' }).click();
 }
 
-export async function removeStudentAndParent(page:Page, dniStudent:string , dniParent:string){
+export async function removeStudentAndParent(page: Page, dniStudent: string, dniParent: string) {
 
     await searchStudentByDni(page, dniStudent.toString());
 

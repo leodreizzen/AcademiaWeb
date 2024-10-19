@@ -54,6 +54,10 @@ export default function AdminList({ administrators, count }: AdminListProps) {
         push(`/admin/${id}/edit`);
     };
     const handleRemove = async (id: number) => {
+        const mustRemove = confirm("¿Esta seguro que quiere eliminar el administrador?");
+        if (!mustRemove) {
+            return;
+        }
         const isRemove = await removeAdmin(id);
         if (isRemove) {
             refresh();

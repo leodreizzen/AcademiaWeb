@@ -28,7 +28,7 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
     await page.fill('input[id="input-email"]', faker.internet.email());
     await page.fill('input[id="input-address"]', faker.location.direction());
 
-    page.once('dialog', dialog => {
+    page.once('dialog', async dialog => {
         expect(dialog.message()).toBe('El admin se ha registrado correctamente');
         dialog.dismiss();
     }
@@ -51,7 +51,7 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await page.fill('input[id="input-firstName"]', newName);
 
-    page.once('dialog', dialog => {
+    page.once('dialog', async dialog => {
         expect(dialog.message()).toBe('El admin se ha guardado correctamente');
         dialog.dismiss();
     }
@@ -79,6 +79,11 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await searchAdminByDni(page, DNI);
 
+    page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('¿Esta seguro que quiere eliminar el administrador?');
+        await dialog.accept();
+    });
+
     await page.getByRole('button', { name: 'Borrar' }).click();
 
 
@@ -100,7 +105,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
     await page.fill('input[id="input-email"]', faker.internet.email());
     await page.fill('input[id="input-address"]', faker.location.direction());
 
-    page.once('dialog', dialog => {
+    page.once('dialog', async dialog => {
         expect(dialog.message()).toBe('El admin se ha registrado correctamente');
         dialog.dismiss();
     }
@@ -131,7 +136,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
     await page.fill('input[id="input-email"]', newEmail);
     await page.fill('input[id="input-address"]', newAddress);
 
-    page.once('dialog', dialog => {
+    page.once('dialog',async dialog => {
         expect(dialog.message()).toBe('El admin se ha guardado correctamente');
         dialog.dismiss();
     }
@@ -163,6 +168,11 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await searchAdminByDni(page, DNI);
 
+    page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('¿Esta seguro que quiere eliminar el administrador?');
+        await dialog.accept();
+    });
+
     await page.getByRole('button', { name: 'Borrar' }).click();
 
 
@@ -184,7 +194,7 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
     await page.fill('input[id="input-email"]', faker.internet.email());
     await page.fill('input[id="input-address"]', faker.location.direction());
 
-    page.once('dialog', dialog => {
+    page.once('dialog',async dialog => {
         expect(dialog.message()).toBe('El admin se ha registrado correctamente');
         dialog.dismiss();
     }
@@ -210,11 +220,8 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
     await page.fill('input[id="input-email"]', '');
     await page.fill('input[id="input-address"]', '');
 
-    page.once('dialog', dialog => {
-        expect(dialog.message()).toBe('El admin se ha guardado correctamente');
-        dialog.dismiss();
-    }
-    );
+
+
     await expect( page.locator('button[type="submit"]') ).toBeDisabled();
 
 
@@ -230,7 +237,14 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
     
     await page.waitForTimeout(1000);
 
+    page.on('dialog', async dialog => {
+        expect(dialog.message()).toBe('¿Esta seguro que quiere eliminar el administrador?');
+        await dialog.accept();
+    });
+
     await searchAdminByDni(page, DNI);
+
+    
 
     await page.getByRole('button', { name: 'Borrar' }).click();
 

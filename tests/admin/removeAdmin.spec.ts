@@ -27,7 +27,7 @@ test.describe('Remove admin', () => {
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        page.on('dialog', dialog => {
+        page.once('dialog', dialog => {
             expect(dialog.message()).toBe('El admin se ha registrado correctamente');
             dialog.dismiss();
         }
@@ -59,7 +59,6 @@ test.describe('Remove admin', () => {
 
         await page.waitForURL('/');
 
-        console.log('Admin nuevo logeado correctamente');
         await menuButton.click();
         await logoutButton.click();
 
@@ -71,10 +70,15 @@ test.describe('Remove admin', () => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();;
 
         await searchAdminByDni(page, DNI);
+
+        page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('¿Esta seguro que quiere eliminar el administrador?');
+            await dialog.accept();
+        });
+
         await page.locator('button:has-text("Borrar")').click();
 
         await page.waitForTimeout(300);
-
 
         await menuButton.click();
 

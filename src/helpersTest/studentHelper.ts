@@ -1,5 +1,6 @@
 import { Page, expect } from "@playwright/test";
 import {  faker } from "@faker-js/faker/locale/es";
+import { searchParentByDni } from "./parentHelper";
 
 
 export async function randomDNI() {
@@ -162,7 +163,7 @@ export async function createStudentWithOneParent(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     await page.locator('button[type="submit"]').click();
 
@@ -170,4 +171,37 @@ export async function createStudentWithOneParent(page: Page) {
 
     return dni;
 
+}
+
+export async function removeStudent(page: Page, dni: string) {
+    await searchStudentByDni(page, dni.toString());
+
+    await page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('Alumno eliminado correctamente');
+        await dialog.dismiss();
+    });
+
+    await page.getByRole('button', { name: 'Borrar' }).click();
+}
+
+export async function removeStudentAndParent(page:Page, dniStudent:string , dniParent:string){
+
+    await searchStudentByDni(page, dniStudent.toString());
+
+    await page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('Alumno eliminado correctamente');
+        await dialog.dismiss();
+    });
+
+    await page.getByRole('button', { name: 'Borrar' }).click();
+
+    await page.waitForTimeout(1000);
+
+    await page.goto('/parent');
+
+    await page.waitForURL('/parent');
+
+    expect(await searchParentByDni(page, dniParent.toString())).toBeTruthy();
+
+    await page.getByRole('button', { name: 'Borrar' }).click();
 }

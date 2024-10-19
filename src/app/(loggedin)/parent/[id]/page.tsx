@@ -23,6 +23,7 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
         )
     }
 
+    console.log(JSON.stringify(parent))
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
             <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
@@ -51,7 +52,7 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Fecha de nacimiento</Label>
-                            <p className="text-lg">{format(parent.birthdate, "dd/mm/yyyy")}</p>
+                            <p className="text-lg">{format(parent.birthdate, "dd/MM/yyyy")}</p>
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>

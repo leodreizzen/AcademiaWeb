@@ -58,7 +58,7 @@ export default async function StudentInfoPage({params}: {params: {id: string}}) 
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Fecha de nacimiento</Label>
-                            <p className="text-lg">{format(student.birthdate, "dd/mm/yyyy")}</p>
+                            <p className="text-lg">{format(student.birthdate, "dd/MM/yyyy")}</p>
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>

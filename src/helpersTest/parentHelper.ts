@@ -185,7 +185,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
     await expect(page).toHaveURL('/student');
     await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
 
-    return parentDni;
+    return { dni, parentDni };
 }
 
 

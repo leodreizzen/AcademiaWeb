@@ -99,7 +99,7 @@ test.describe('Testing delete parent', () => {
     test('Borrar padre con 1 hijo donde el hijo tiene 1 solo padre y es el padre a eliminar (Caso Negativo)', async ({page}) => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
-        const parentDni = await createParentWithOnlyOneChild(page);
+        const {dni,parentDni} = await createParentWithOnlyOneChild(page);
         await page.waitForTimeout(1000);
 
         await page.goto('/');
@@ -123,7 +123,11 @@ test.describe('Testing delete parent', () => {
 
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-        await removeStudentAndParent(page, parentDni, parentDni);
+        await page.getByRole('link', {name: 'Alumnos'}).first().click();
+
+        await page.waitForTimeout(1000);
+
+        await removeStudentAndParent(page, dni, parentDni);
 
 
     });

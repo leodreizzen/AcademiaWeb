@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { newBirthDateOverEighteen, searchParentByDni } from '@/helpersTest/parentHelper';
-import { createParentWithOnlyOneChild, createChildrenWithTwoParents, createParentWithoutChildren } from '@/helpersTest/parentHelper';
+import { searchParentByDni } from '@/helpersTest/parentHelper';
+import { createParentWithoutChildren } from '@/helpersTest/parentHelper';
 
 import { loginAsTestUser } from "../testutils";
 import { getTestUser } from "../testdata";

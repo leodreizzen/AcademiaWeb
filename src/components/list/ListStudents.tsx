@@ -54,10 +54,8 @@ export function ListStudents({ data, count, numberOfStudents }: PrincipalProps) 
   }
 
   const handleRemove = async (id: number) => {
-    const doRemove = await removeStudent(id);
-    if (doRemove) {
-      refresh();
-    }
+    const success = await removeStudent(id);
+    alert(success ? "Alumno eliminado correctamente" : "Error al eliminar el alumno");
   }
 
   const handleCreate = () => {

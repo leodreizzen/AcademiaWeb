@@ -46,8 +46,9 @@ test.describe('Testing new reprimand', () => {
         });
         await page.locator('button[type="submit"]').click();
 
-        await page.goto('/reprimand');
-        await page.waitForURL('/reprimand');
+        await page.waitForTimeout(1000);
+
+        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
 
         /**
          * 
@@ -63,6 +64,8 @@ test.describe('Testing new reprimand', () => {
          * 
          * 
          */
+
+        await page.waitForTimeout(5000);
         
         await page.getByText('Ver Detalle').first().click();
 
@@ -107,6 +110,7 @@ test.describe('Testing new reprimand', () => {
         });
         await page.locator('button[type="submit"]').click();
 
+        await page.waitForTimeout(5000);
         await page.goto('/reprimand');
         await page.waitForURL('/reprimand');
         /**

@@ -5,7 +5,7 @@ import {revalidatePath} from "next/cache";
 export async function removeStudent(id: number) {
     const prisma = await getCurrentProfilePrismaClient();
     try {
-        prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx) => {
             const student = await tx.student.findUnique({
                 where: {
                     id
@@ -73,7 +73,6 @@ export async function removeStudent(id: number) {
         })
         return true;
     } catch (error) {
-        console.error("Error deleting student:", error);
         return false;
     }
 }

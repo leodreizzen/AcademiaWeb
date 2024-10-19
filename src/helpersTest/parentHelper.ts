@@ -90,7 +90,7 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 

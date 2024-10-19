@@ -123,6 +123,8 @@ test.describe('Testing delete parent', () => {
 
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
+        await remove
+
 
     });
 

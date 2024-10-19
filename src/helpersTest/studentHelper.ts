@@ -52,6 +52,38 @@ function randomDay() {
     return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
 }
 
+
+export function monthToNumber(month: string) {
+    switch (month) {
+        case 'enero':
+            return '01';
+        case 'febrero':
+            return '02';
+        case 'marzo':
+            return '03';
+        case 'abril':
+            return '04';
+        case 'mayo':
+            return '05';
+        case 'junio':
+            return '06';
+        case 'julio':
+            return '07';
+        case 'agosto':
+            return '08';
+        case 'septiembre':
+            return '09';
+        case 'octubre':
+            return '10';
+        case 'noviembre':
+            return '11';
+        case 'diciembre':
+            return '12';
+        default:
+            return '01';
+    }
+}
+
 export async function newBirthDate(page: Page) {
     const year = randomYear();
     const month = faker.date.month({context:true, }).toString();
@@ -78,7 +110,9 @@ export async function newBirthDate(page: Page) {
     await page.getByRole('radio', { exact:true, name: year }).click();
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
 
-    return `${day}/${month}/${year}`;
+    console.log(`${day}/${monthToNumber(month)}/${year}`);
+
+    return `${day}/${monthToNumber(month)}/${year}`;
 
 }
 
@@ -97,15 +131,20 @@ export async function newBirthDateCustom(page: Page, year: string, month: string
     await page.getByRole('dialog').focus();
     await page.waitForTimeout(1000);
 
-    while (await page.isVisible(`text=${month}`) === false) {
-        await page.getByTestId('ArrowLeftIcon').click();
-    }
-
+    
     await page.getByTestId('ArrowDropDownIcon').click();
     await page.getByRole('radio', { exact:true, name: year }).click();
+
+    while (await page.isVisible(`text=${month}`) === false) {
+        await page.getByTestId('ArrowLeftIcon').click();
+        await page.waitForTimeout(500);
+    }
+
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
 
-    return `${day}/${month}/${year}`;
+    console.log(`${day}/${monthToNumber(month)}/${year}`);
+
+    return `${day}/${monthToNumber(month)}/${year}`;
 
 }
 

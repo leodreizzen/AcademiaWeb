@@ -72,7 +72,7 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
     expect (await page.locator(`text=${newLastName}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${newAddress}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${newEmail}`).isVisible()).toBe(true);
-    //expect (await page.locator(`text=${newDate}`).isVisible()).toBe(true);
+    expect (await page.locator(`text=${newDate}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${parentTestUser.dni.toString()}`).isVisible()).toBe(true);
 
     await page.goto('/student');

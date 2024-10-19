@@ -86,6 +86,7 @@ export function ListParents({data, count, numberOfParents}: PrincipalProps) {
                         />
                         <Tooltip content="Buscar" classNames={{content: "text-white"}}>
                             <Button onClick={handleSearch} variant="secondary"
+                                    test-id = "search-button"
                                     className="bg-gray-600 hover:bg-gray-500 px-5">
                                 <Search className="h-5 w-5"/>
                             </Button>
@@ -105,18 +106,21 @@ export function ListParents({data, count, numberOfParents}: PrincipalProps) {
                                 <div className="space-x-3 text-nowrap">
                                     <Tooltip content="Editar" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="default" onClick={() => handleEdit(parent.id)}
+                                                test-id="edit-parent"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                                             <Edit className="h-4 w-4"/>
                                         </Button>
                                     </Tooltip>
                                     <Tooltip content="Ver" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="default" onClick={() => handleView(parent.id)}
+                                                test-id="view-parent"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                                             <Eye className="h-4 w-4"/>
                                         </Button>
                                     </Tooltip>
                                     <Tooltip content="Borrar" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="default" onClick={() => handleRemove(parent.id)}
+                                                test-id="remove-parent"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500">
                                             <Trash2 className="h-4 w-4"/>
                                         </Button>

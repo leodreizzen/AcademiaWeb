@@ -63,7 +63,9 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl text-white font-bold">Buscador de Sanciones</h2>
                         <Tooltip content=" Agregar Amonestación" classNames={{content: "text-white"}}>
-                            <Button onClick={() => handleAdd()} className="bg-green-600 hover:bg-green-700">
+                            <Button onClick={() => handleAdd()} 
+                                test-id="add-reprimand"
+                                className="bg-green-600 hover:bg-green-700">
                                 <Plus className="h-4 w-4"/>
                             </Button>
                         </Tooltip>
@@ -94,7 +96,7 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                             </div>
 
                             <Tooltip content="Buscar" classNames={{content: "text-white"}}>
-                                <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700 self-end">
+                                <Button onClick={handleSearch} test-id="search-button" className="bg-blue-600 hover:bg-blue-700 self-end">
                                     <Search className="h-4 w-4"/>
                                 </Button>
                             </Tooltip>
@@ -111,6 +113,7 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                         </div>
                                         <Tooltip content="Ver" classNames={{content: "text-white"}}>
                                             <Button
+                                                test-id="show-reprimand"
                                                 onClick={() => toggleDetalle(sancion.id)}
                                                 className="bg-green-600 hover:bg-green-700"
                                             >

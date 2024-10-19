@@ -8,7 +8,7 @@ import Link from "next/link";
 export default async function StudentInfoPage({params}: {params: {id: string}}) {
     await assertPermission({resource: Resource.STUDENT, operation: "READ"});
 
-    const student = await fetchStudentById(params.id)
+    const student = await fetchStudentById(parseInt(params.id))
 
     if (!student) {
         return (

@@ -80,7 +80,6 @@ test.describe('Remove admin', () => {
 
         await page.waitForTimeout(300);
 
-
         await menuButton.click();
 
         await page.waitForTimeout(300);

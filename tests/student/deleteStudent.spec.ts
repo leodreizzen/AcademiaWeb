@@ -37,7 +37,7 @@ test.describe('Testing borrar alumno', () => {
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
         await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
-        await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+        await page.getByRole('button', { name: 'Seleccionar' }).last().click();
         await page.locator('button[type="submit"]').click();
         await page.waitForURL('/student');
         await expect(page).toHaveURL('/student');
@@ -45,12 +45,19 @@ test.describe('Testing borrar alumno', () => {
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
 
+        
+
         const viewButton = page.locator('button:has-text("Borrar")');
+        
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
+
         await viewButton.click();
         await page.waitForTimeout(10000);
 
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.waitForTimeout(1000);
         const resultAfterDelete = await searchStudentByDni(page,dniStudent);
         expect(resultAfterDelete).toBeFalsy();
     });
@@ -71,13 +78,18 @@ test.describe('Testing borrar alumno', () => {
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
         await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
-        await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+        await page.getByRole('button', { name: 'Seleccionar' }).last().click();
         await page.locator('button[type="submit"]').click();
         await page.waitForURL('/student');
         await expect(page).toHaveURL('/student');
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
+
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
 
         const deleteButton = page.locator('button:has-text("Borrar")');
         await deleteButton.click();
@@ -134,6 +146,11 @@ test.describe('Testing borrar alumno', () => {
         await page.waitForTimeout(10000);
         const result = await searchParentByDni(page, dniPadre);
         expect(result).toBeTruthy();
+
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
 
         const viewButton = page.locator('button:has-text("Ver")');
         await viewButton.click();

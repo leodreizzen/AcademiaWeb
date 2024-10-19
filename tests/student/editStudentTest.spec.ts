@@ -22,12 +22,12 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
     await loginAsTestUser(page, 'administrator');
     await page.waitForURL('/');
     await page.getByRole('link', { name: 'Alumnos' }).first().click();
-    await page.getByRole('button', { name: 'Nuevo Alumno' }).first().click();
+    await page.getByTestId("create-button").first().click();
     const dni = await createStudentWithOneParent(page);
     await page.waitForTimeout(1000);
     await searchStudentByDni(page, dni);
     await page.waitForTimeout(1000);
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId("edit-button").click();
     const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
     const newFirstName = faker.person.firstName();
     const newLastName = faker.person.lastName();
@@ -83,7 +83,7 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-button").click();
 
 });
 
@@ -92,12 +92,12 @@ test('Modificar alumno con datos invalidos', async ({ page }) => {
     await loginAsTestUser(page, 'administrator');
     await page.waitForURL('/');
     await page.getByRole('link', { name: 'Alumnos' }).first().click();
-    await page.getByRole('button', { name: 'Nuevo Alumno' }).first().click();
+    await page.getByTestId("create-button").first().click();
     const dni = await createStudentWithOneParent(page);
     await page.waitForTimeout(1000);
     await searchStudentByDni(page, dni);
     await page.waitForTimeout(1000);
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId("edit-button").click();
     
     await page.locator('input[id="input-phoneNumber"]').fill('');
     await page.locator('input[id="input-firstName"]').fill("");
@@ -121,7 +121,7 @@ test('Modificar alumno con datos invalidos', async ({ page }) => {
 
     await searchStudentByDni(page, dni);
     await page.waitForTimeout(1000);
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId("edit-button").click();
 
 
     await page.getByRole('button', { name: 'Editar Responsables' }).click();
@@ -138,7 +138,7 @@ test('Modificar alumno con datos invalidos', async ({ page }) => {
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-button").click();
 
 });
 

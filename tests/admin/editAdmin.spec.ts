@@ -18,7 +18,7 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
     await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
     await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
     //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-    await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+    await page.getByTestId("add-admin-button").click();
     //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
     const DNI = await randomDNI();
     await page.fill('input[id="input-dni"]', DNI);
@@ -45,7 +45,8 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId("edit-admin-button").click();
+    
 
     const newName = faker.person.firstName();
 
@@ -67,7 +68,7 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Ver' }).click();
+    await page.getByTestId("view-admin-button").click();
 
     await page.waitForTimeout(1000);
 
@@ -90,7 +91,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
     await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
     await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
     //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-    await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+    await page.getByTestId("add-admin-button").click();
     //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
     const DNI = await randomDNI();
     await page.fill('input[id="input-dni"]', DNI);
@@ -117,7 +118,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId("edit-admin-button").click();
 
     const newName = faker.person.firstName();
     const newLastName = faker.person.lastName();
@@ -147,7 +148,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Ver' }).click();
+    await page.getByTestId("view-admin-button").click();
 
     await page.waitForTimeout(1000);
 
@@ -174,7 +175,7 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
     await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
     await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
     //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-    await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+    await page.getByTestId("add-admin-button").click();
     //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
     const DNI = await randomDNI();
     await page.fill('input[id="input-dni"]', DNI);
@@ -201,7 +202,7 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
 
     await page.waitForTimeout(1000);
 
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId("edit-admin-button").click();
 
 
     await page.fill('input[id="input-firstName"]', '');

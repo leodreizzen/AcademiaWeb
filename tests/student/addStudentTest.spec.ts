@@ -29,7 +29,7 @@ test('Datos validos alumno', async ({ page }) => {
     await page.waitForURL('/')
 
     await page.getByRole('navigation').getByRole('link', { name: 'Alumnos' }).click();
-    await page.locator('text="Nuevo Alumno"').click();
+    await page.getByTestId("create-button").click();
 
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());

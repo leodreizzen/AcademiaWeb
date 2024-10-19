@@ -24,8 +24,8 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docentes' }).first().click();
-        await page.waitForSelector('button:has-text(" Nuevo docente")', { state: 'visible' });
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.waitForSelector('button:test-id("add-teacher-button")', { state: 'visible' });
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-name"]').fill(faker.person.firstName());
@@ -47,7 +47,7 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-name"]').fill(faker.person.firstName());
@@ -98,7 +98,7 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-name"]').fill(faker.person.firstName());
@@ -121,7 +121,7 @@ test.describe('Testing alta docente', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill('');
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -140,7 +140,7 @@ test.describe('Testing alta docente', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-name"]').fill(faker.person.firstName());
@@ -159,7 +159,7 @@ test.describe('Testing alta docente', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -178,7 +178,7 @@ test.describe('Testing alta docente', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -197,7 +197,7 @@ test.describe('Testing alta docente', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -215,7 +215,7 @@ test.describe('Testing alta docente', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/')    
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -236,7 +236,7 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -255,7 +255,7 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -274,7 +274,7 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill('123456');
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
@@ -293,7 +293,7 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/');
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docente' }).first().click();
-        await page.locator('button:has-text("Nuevo Docente")').click();
+        await page.getByTestId("add-teacher-button").click();
 
  	    await page.locator('input[id="input-dni"]').fill(existingTeacherDni);
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());

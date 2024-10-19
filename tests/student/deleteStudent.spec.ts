@@ -24,7 +24,7 @@ test.describe('Testing borrar alumno', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.locator('text="Nuevo Alumno"').click();
+        await page.getByTestId("create-button").click();
 
         const dniStudent = randomDNI();
 
@@ -45,7 +45,7 @@ test.describe('Testing borrar alumno', () => {
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
 
-        const viewButton = page.locator('button:has-text("Borrar")');
+        const viewButton = page.getByTestId("remove-button");
         await viewButton.click();
         await page.waitForTimeout(10000);
 
@@ -59,7 +59,7 @@ test.describe('Testing borrar alumno', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.locator('text="Nuevo Alumno"').click();
+        await page.getByTestId("create-button").click();
 
         const dniStudent = randomDNI();
         await page.locator('input[id="input-dni"]').fill(dniStudent);
@@ -79,7 +79,7 @@ test.describe('Testing borrar alumno', () => {
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
 
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-button");
         await deleteButton.click();
         await page.waitForTimeout(10000);
 
@@ -102,7 +102,7 @@ test.describe('Testing borrar alumno', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.locator('text="Nuevo Alumno"').click();
+        await page.getByTestId("create-button").click();
 
         const dniStudent = randomDNI();
 
@@ -126,7 +126,7 @@ test.describe('Testing borrar alumno', () => {
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-button");
         await deleteButton.click();
         await page.waitForTimeout(10000);
 
@@ -135,7 +135,7 @@ test.describe('Testing borrar alumno', () => {
         const result = await searchParentByDni(page, dniPadre);
         expect(result).toBeTruthy();
 
-        const viewButton = page.locator('button:has-text("Ver")');
+        const viewButton = page.getByTestId("view-button");
         await viewButton.click();
         await page.waitForTimeout(10000);
 

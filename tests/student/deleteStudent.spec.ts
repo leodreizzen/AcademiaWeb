@@ -58,7 +58,6 @@ test.describe('Testing borrar alumno', () => {
         await page.waitForTimeout(10000);
 
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.waitForTimeout(1000);
         const resultAfterDelete = await searchStudentByDni(page,dniStudent);
         expect(resultAfterDelete).toBeFalsy();
     });

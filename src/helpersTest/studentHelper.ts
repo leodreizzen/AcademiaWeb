@@ -124,7 +124,7 @@ export async function createStudentWithOneParent(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     await page.locator('button[type="submit"]').click();
 

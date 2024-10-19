@@ -138,6 +138,8 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
 
     await expect(page.getByText("Nuevo Alumno")).toBeVisible();
@@ -190,6 +192,8 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
     expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
 
@@ -222,6 +226,8 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
     await page.getByRole('button', { name: 'Seleccionar' }).first().click();
 
     await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL('/student');
 
     await expect(page).toHaveURL('/student');
 

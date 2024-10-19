@@ -8,20 +8,24 @@ import {Search, Eye, Plus} from "lucide-react"
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {ReprimandWithTeacherUser} from "@/app/(loggedin)/reprimand/data";
 import PaginationControls from "@/components/list/PaginationControls";
+import {fetchCurrentUser} from "@/lib/data/users";
+import {ProfileWithRoleAndUser} from "@/lib/definitions";
 
 type PrincipalProps = {
     data: ReprimandWithTeacherUser[];
     count: number;
     defaultInitDate: string;
     defaultEndDate: string;
+    profile: ProfileWithRoleAndUser | null;
 }
 
-export default function ListReprimands({data, count, defaultInitDate, defaultEndDate}: PrincipalProps) {
+export default function ListReprimands({data, count, defaultInitDate, defaultEndDate, profile}: PrincipalProps) {
     const [initDate, setinitDate] = useState(defaultInitDate);
     const [endDate, setendDate] = useState(defaultEndDate);
     const [detalleVisible, setDetalleVisible] = useState<number | null>(null)
     const {replace, push} = useRouter();
     const pathname = usePathname();
+
 
     const handleSearch = () => {
         const init = new Date(initDate);
@@ -94,32 +98,72 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                             <Search className="mr-2 h-4 w-4"/> Buscar
                         </Button>
                     </div>
-                    {data.length > 0 ? (
-                        <ul className="space-y-4">
-                            {data.map((sancion) => (
-                                <li key={sancion.id} className="bg-gray-700 p-4 rounded-lg">
-                                    <div className="flex justify-between items-center">
-                                        <div className="text-white">
-                                            <p className="font-semibold">Fecha: {sancion.dateTime.toLocaleDateString()}</p>
-                                            <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>
+                    {profile !== null && profile.role === "Teacher" ? (
+                        data.length > 0 ? (
+                            <ul className="space-y-4">
+                                {data.map((sancion) => (
+                                    <li key={sancion.id} className="bg-gray-700 p-4 rounded-lg">
+                                        <div className="flex justify-between items-center">
+                                            <div className="text-white">
+                                                <p className="font-semibold">Fecha: {sancion.dateTime.toLocaleDateString()}</p>
+                                                <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>
+                                                {/* Mostramos los estudiantes solo si el rol es 'teacher' */}
+                                                <p>Estudiantes:</p>
+                                                <ul>
+                                                    {sancion.students.map((student) => (
+                                                        <li key={student.id}>
+                                                            {student.user.firstName} {student.user.lastName}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                            <Button
+                                                onClick={() => toggleDetalle(sancion.id)}
+                                                className="bg-green-600 hover:bg-green-700"
+                                            >
+                                                <Eye className="mr-2 h-4 w-4" /> Ver Detalle
+                                            </Button>
                                         </div>
-                                        <Button
-                                            onClick={() => toggleDetalle(sancion.id)}
-                                            className="bg-green-600 hover:bg-green-700"
-                                        >
-                                            <Eye className="mr-2 h-4 w-4"/> Ver Detalle
-                                        </Button>
-                                    </div>
-                                    {detalleVisible === sancion.id && (
-                                        <div className="mt-2">
-                                            {renderDetalle(sancion.message)}
-                                        </div>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
+                                        {detalleVisible === sancion.id && (
+                                            <div className="mt-2">
+                                                {renderDetalle(sancion.message)}
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-white">No se encontraron sanciones para la fecha seleccionada.</p>
+                        )
                     ) : (
-                        <p className="text-white">No se encontraron sanciones para la fecha seleccionada.</p>
+                        /* Si el rol no es 'teacher', mostramos el código anterior */
+                        data.length > 0 ? (
+                            <ul className="space-y-4">
+                                {data.map((sancion) => (
+                                    <li key={sancion.id} className="bg-gray-700 p-4 rounded-lg">
+                                        <div className="flex justify-between items-center">
+                                            <div className="text-white">
+                                                <p className="font-semibold">Fecha: {sancion.dateTime.toLocaleDateString()}</p>
+                                                <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>
+                                            </div>
+                                            <Button
+                                                onClick={() => toggleDetalle(sancion.id)}
+                                                className="bg-green-600 hover:bg-green-700"
+                                            >
+                                                <Eye className="mr-2 h-4 w-4"/> Ver Detalle
+                                            </Button>
+                                        </div>
+                                        {detalleVisible === sancion.id && (
+                                            <div className="mt-2">
+                                                {renderDetalle(sancion.message)}
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-white">No se encontraron sanciones para la fecha seleccionada.</p>
+                        )
                     )}
                 </CardContent>
             </Card>

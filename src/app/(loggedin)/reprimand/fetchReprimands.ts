@@ -38,7 +38,9 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                         id: id
                     }
                 }
-            } : {};
+            } : {
+                teacherId: profile.id
+            };
 
 
             return await prisma.reprimand.findMany({
@@ -54,6 +56,11 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                             user: true
                         }
                     },
+                    students: {
+                        include : {
+                            user: true
+                        }
+                    }
                 },
                 orderBy: {
                     dateTime: "desc"
@@ -84,9 +91,6 @@ export async function countReprimands(init?: Date, end?: Date) {
                     id = selectedChild.id;
                 else
                     return 0;
-            } else {
-                console.error("Error counting reprimands: User is not a student or parent");
-                return 0;
             }
 
             const dateFilter = init && end ? {
@@ -102,7 +106,9 @@ export async function countReprimands(init?: Date, end?: Date) {
                         id: id
                     }
                 }
-            } : {};
+            } : {
+                teacherId: profile.id
+            };
 
 
             return await prisma.reprimand.count({

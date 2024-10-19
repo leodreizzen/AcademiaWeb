@@ -1,5 +1,6 @@
-import {Reprimand, Teacher, User} from "@prisma/client"
+import {Reprimand, Student, Teacher, User} from "@prisma/client"
 
-export interface ReprimandWithTeacherUser  extends Reprimand{
-    teacher : Teacher & { user : User}
+export interface ReprimandWithTeacherUser extends Reprimand {
+    teacher: Teacher & { user: User }
+    students: (Student & { user: User })[]
 }

@@ -58,6 +58,7 @@ model Student extends Profile {
     reportCards           ReportCard[]
 
     @@allow('read', true)
+    @@allow('update', auth().role == "Teacher")
     @@allow('all', auth().role == "Administrator")
     @@allow('all', auth().role == "Superuser")
 }

@@ -68,7 +68,7 @@ export const PersonSchema = z.object({
                 return z.NEVER;
             }
             const subjects = new Set<string>();
-            for (const [subject, grade] of value.subjects) {
+            for (const [grade, subject] of value.subjects) {
                 if (subjects.has(subject)) {
                     ctx.addIssue({
                         code: "custom",

@@ -49,7 +49,7 @@ test('Modificar padre con datos validos', async ({ page }) => {
         await dialog.accept();
     });
 
-    await page.getByTestId('edit-parent').click();
+    await page.getByRole('button', { name: 'Editar' }).last().click();
 
     await page.waitForEvent('dialog');
 

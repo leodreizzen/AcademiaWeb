@@ -24,7 +24,6 @@ test.describe('Testing alta docente', () => {
         await page.waitForURL('/')    
 
         await page.getByRole('navigation').getByRole('link', { name: 'Docentes' }).first().click();
-        await page.waitForSelector('button:test-id("add-teacher-button")', { state: 'visible' });
         await page.getByTestId("add-teacher-button").click();
 
         await page.locator('input[id="input-dni"]').fill(randomDNI());

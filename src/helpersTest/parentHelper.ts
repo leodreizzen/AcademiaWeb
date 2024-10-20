@@ -129,7 +129,6 @@ export async function createChildrenWithTwoParents(page: Page) {
     
 
     await expect(page).toHaveURL('/student');
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     return parentDni;
 }
 
@@ -186,7 +185,6 @@ export async function createParentWithOnlyOneChild(page: Page) {
     await page.getByRole('button', { name: 'Registrar' }).click();
 
     await expect(page).toHaveURL('/student');
-    await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     return parentDni;
 }

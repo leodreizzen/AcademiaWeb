@@ -22,7 +22,7 @@ export default function AdminItem({administrator, onView, onEdit, onRemove}: Adm
             <div className="flex items-center gap-4">
                 <Tooltip content="Editar" classNames={{content: "text-white"}}>
                     <Button variant="outline" size="sm" onClick={() => onEdit(administrator.id)}
-                            test-id="edit-admin-button"
+                            data-testid="edit-admin-button"
                             className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Edit className="h-4 w-4"/>
                     </Button>
@@ -30,14 +30,14 @@ export default function AdminItem({administrator, onView, onEdit, onRemove}: Adm
                 <Tooltip content="Ver" classNames={{content: "text-white"}}>
 
                     <Button variant="outline" size="sm" onClick={() => onView(administrator.id)}
-                            test-id="view-admin-button"
+                            data-testid="view-admin-button"
                             className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Eye className="h-4 w-4"/>
                     </Button>
                 </Tooltip>
                 <Tooltip content="Borrar" classNames={{content: "text-white"}}>
                     <Button variant="outline" size="sm" onClick={() => onRemove(administrator.id)}
-                            test-id="remove-admin-button"
+                            data-testid="remove-admin-button"
                             className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                         <Trash2 className="h-4 w-4"/>
                     </Button>

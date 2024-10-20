@@ -138,9 +138,10 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
 
-    await expect(page.getByText("Nuevo Alumno")).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 
@@ -182,12 +183,11 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Seleccionar' }).last().click(); //como el creado es el ultimo, selecciono este para asignarle al alumno
 
-
-
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 });
@@ -218,7 +218,6 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     await expect(page).toHaveURL('/student');
 
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
 
 });

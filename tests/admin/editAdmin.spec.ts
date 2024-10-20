@@ -80,7 +80,7 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await searchAdminByDni(page, DNI);
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-admin-button").click();
 
 
 });
@@ -164,7 +164,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await searchAdminByDni(page, DNI);
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-admin-button").click();
 
 
 });
@@ -233,7 +233,7 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
 
     await searchAdminByDni(page, DNI);
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-admin-button").click();
 
 
 });

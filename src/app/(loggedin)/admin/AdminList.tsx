@@ -94,7 +94,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
 
                     <Tooltip content="Nuevo administrador" classNames={{ content: "text-white" }}>
                         <Button onClick={handleAdd} variant="secondary"
-                            test-id="add-admin-button"
+                            data-testid="add-admin-button"
                             className="bg-green-600 hover:bg-green-500 text-white">
                             <Plus className="h-4 w-4" />
                         </Button>
@@ -119,7 +119,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                     />
                     <Tooltip content="Buscar" classNames={{ content: "text-white" }}>
                         <Button onClick={searchAdministrator} variant="secondary"
-                            test-id="search-button"
+                            data-testid="search-button"
                             className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
                             <Search className="h-5 w-5" />
                         </Button>

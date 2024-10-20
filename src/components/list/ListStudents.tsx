@@ -70,7 +70,7 @@ export function ListStudents({data, count, numberOfStudents}: PrincipalProps) {
                     <h2 className="text-2xl sm:text-3xl font-bold text-white">Listado de Alumnos</h2>
                     <Tooltip content="Nuevo alumno" classNames={{content: "text-white"}}>
                         <Button onClick={handleCreate} variant="secondary"
-                                test-id="create-button"
+                                data-testid="create-button"
                                 className="bg-green-600 hover:bg-green-500 text-white">
                             <Plus className="h-4 w-4"/>
                         </Button>
@@ -94,7 +94,7 @@ export function ListStudents({data, count, numberOfStudents}: PrincipalProps) {
                         />
                         <Tooltip content="Buscar"  classNames={{content: "text-white"}}>
                             <Button onClick={handleSearch} variant="secondary"
-                                    test-id= "search-button"
+                                    data-testid= "search-button"
                                     className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
                                 <Search className="h-5 w-5"/>
                             </Button>
@@ -115,21 +115,21 @@ export function ListStudents({data, count, numberOfStudents}: PrincipalProps) {
                                 <div className="flex space-x-3 w-full sm:w-auto">
                                     <Tooltip content="Editar" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="sm" onClick={() => handleEdit(student.id)}
-                                                test-id="edit-button"
+                                                data-testid="edit-button"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                             <Edit className="h-4 w-4"/>
                                         </Button>
                                     </Tooltip>
                                     <Tooltip content="Ver" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="sm" onClick={() => handleView(student.id)}
-                                                test-id="view-button"
+                                                data-testid="view-button"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                             <Eye className="h-4 w-4"/>
                                         </Button>
                                     </Tooltip>
                                     <Tooltip content="Borrar" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="sm" onClick={() => handleRemove(student.id)}
-                                                test-id="remove-button"
+                                                data-testid="remove-button"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                             <Trash2 className="h-4 w-4"/>
                                         </Button>

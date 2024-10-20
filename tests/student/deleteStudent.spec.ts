@@ -135,7 +135,7 @@ test.describe('Testing borrar alumno', () => {
         const result = await searchParentByDni(page, dniPadre);
         expect(result).toBeTruthy();
 
-        const viewButton = page.getByTestId("view-button");
+        const viewButton = page.getByTestId("view-parent");
         await viewButton.click();
         await page.waitForTimeout(10000);
 

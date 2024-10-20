@@ -63,7 +63,7 @@ export function ListTeachers({data, count, numberOfTeachers}: PrincipalProps) {
                     <h2 className="text-2xl sm:text-3xl font-bold text-white">Listado de Docentes</h2>
                     <Tooltip content="Nuevo docente" classNames={{content: "text-white"}}>
                         <Button onClick={handleCreate} variant="secondary"
-                                test-id="add-teacher-button"
+                                data-testid="add-teacher-button"
                                 className="bg-green-600 hover:bg-green-500 text-white">
                             <Plus className="h-4 w-4"/>
                         </Button>
@@ -88,7 +88,7 @@ export function ListTeachers({data, count, numberOfTeachers}: PrincipalProps) {
                         />
                         <Tooltip content="Buscar" classNames={{content: "text-white"}}>
                             <Button onClick={handleSearch} variant="secondary"
-                                    test-id="search-button"
+                                    data-testid="search-button"
                                     className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
                                 <Search className="h-5 w-5"/>
                             </Button>
@@ -109,7 +109,7 @@ export function ListTeachers({data, count, numberOfTeachers}: PrincipalProps) {
                                 <div className="flex space-x-3 w-full sm:w-auto">
                                     <Tooltip content="Editar" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="sm" onClick={() => handleEdit(teacher.id)}
-                                                test-id="edit-teacher-button"
+                                                data-testid="edit-teacher-button"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                             <Edit className="h-4 w-4"/>
                                         </Button>
@@ -118,7 +118,7 @@ export function ListTeachers({data, count, numberOfTeachers}: PrincipalProps) {
 
                                     <Tooltip content="Ver" classNames={{content: "text-white"}}>
                                         <Button variant="outline" size="sm" onClick={() => handleView(teacher.id)}
-                                                test-id="view-teacher-button"
+                                                data-testid="view-teacher-button"
                                                 className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0">
                                             <Eye className="h-4 w-4"/>
                                         </Button>

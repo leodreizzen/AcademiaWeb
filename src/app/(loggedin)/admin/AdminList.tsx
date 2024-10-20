@@ -6,9 +6,10 @@ import { removeAdmin } from "./adminActions";
 import { ADMINS_PER_PAGE } from "@/lib/data/pagination";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tooltip } from "@nextui-org/tooltip";
 import {NoResultCard} from "@/components/list/NoResultCard";
 
 interface AdminListProps {
@@ -79,9 +80,14 @@ export default function AdminList({ administrators, count }: AdminListProps) {
             <div className="p-8 bg-[#212937] rounded-lg">
                 <div className="flex justify-between">
                     <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
-                    <Button onClick={handleAdd} variant="secondary" className="bg-green-600 hover:bg-green-500 text-white">
-                        <Plus className="mr-2 h-4 w-4" /> Nuevo administrador
-                    </Button>
+
+                    <Tooltip content="Nuevo administrador" classNames={{ content: "text-white" }}>
+                        <Button onClick={handleAdd} variant="secondary"
+                            data-testid="add-admin-button"
+                            className="bg-green-600 hover:bg-green-500 text-white">
+                            <Plus className="h-4 w-4" />
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className="mt-8">
                     <Input
@@ -100,9 +106,13 @@ export default function AdminList({ administrators, count }: AdminListProps) {
                         onChange={e => handleChangeLastname(e.target.value)}
                         className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
                     />
-                    <Button onClick={() => searchAdministrator()} variant="secondary" className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
-                        <Search className="h-5 w-5" />
-                    </Button>
+                    <Tooltip content="Buscar" classNames={{ content: "text-white" }}>
+                        <Button onClick={()=>searchAdministrator()} variant="secondary"
+                            data-testid="search-button"
+                            className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
+                            <Search className="h-5 w-5" />
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
                     {noResults && <NoResultCard user={"administradores"}/>}

@@ -179,6 +179,8 @@ export async function createStudentWithOneParent(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
 
     return dni;
@@ -193,7 +195,7 @@ export async function removeStudent(page: Page, dni: string) {
         await dialog.dismiss();
     });
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-button").click();
 }
 
 export async function removeStudentAndParent(page: Page, dniStudent: string, dniParent: string) {
@@ -205,7 +207,7 @@ export async function removeStudentAndParent(page: Page, dniStudent: string, dni
         await dialog.dismiss();
     });
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-button").click();
 
     await page.waitForTimeout(1000);
 
@@ -215,5 +217,5 @@ export async function removeStudentAndParent(page: Page, dniStudent: string, dni
 
     expect(await searchParentByDni(page, dniParent.toString())).toBeTruthy();
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId("remove-parent").click();
 }

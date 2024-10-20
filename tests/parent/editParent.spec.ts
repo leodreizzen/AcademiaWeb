@@ -27,7 +27,8 @@ test('Modificar padre con datos validos', async ({ page }) => {
     await page.waitForTimeout(1000);
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId('edit-parent').click();
+    
 
     await page.waitForTimeout(1000);
     const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
@@ -48,7 +49,7 @@ test('Modificar padre con datos validos', async ({ page }) => {
         await dialog.accept();
     });
 
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByRole('button', { name: 'Editar' }).last().click();
 
     await page.waitForEvent('dialog');
 
@@ -69,7 +70,7 @@ test('Modificar padre con datos validos', async ({ page }) => {
 
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId('remove-parent').click();;
 });
 
 test('Modificar padre con datos invalidos', async ({ page }) => {
@@ -85,7 +86,7 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
     await page.waitForTimeout(1000);
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-    await page.getByRole('button', { name: 'Editar' }).click();
+    await page.getByTestId('edit-parent').click();
 
     await page.waitForTimeout(1000);
     const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
@@ -115,5 +116,5 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
 
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-    await page.getByRole('button', { name: 'Borrar' }).click();
+    await page.getByTestId('remove-parent').click();;
 });

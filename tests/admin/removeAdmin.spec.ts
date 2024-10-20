@@ -17,7 +17,7 @@ test.describe('Remove admin', () => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -76,7 +76,7 @@ test.describe('Remove admin', () => {
             await dialog.accept();
         });
 
-        await page.locator('button:has-text("Borrar")').click();
+        await page.getByTestId("remove-admin-button").click();
 
         await page.waitForTimeout(300);
 

@@ -27,7 +27,7 @@ test.describe('Testing delete parent', () => {
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-parent");
 
         await deleteButton.click();
 
@@ -68,7 +68,7 @@ test.describe('Testing delete parent', () => {
         await page.waitForTimeout(1000);
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-parent");
 
         await deleteButton.click();
 
@@ -110,7 +110,7 @@ test.describe('Testing delete parent', () => {
         expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
 
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-parent");
 
         page.once('dialog', async dialog => {
             expect(dialog.message()).toBe('No se puede eliminar, hay estudiantes con un solo padre');

@@ -1,67 +1,67 @@
 "use client"
 
-import {useState} from 'react'
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Card, CardContent} from "@/components/ui/card"
-import {Search, Edit, Eye, Plus, Trash2} from 'lucide-react'
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Search, Edit, Eye, Plus, Trash2 } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls"
-import {StudentWithUser} from "@/app/(loggedin)/student/data"
-import {usePathname, useRouter} from "next/navigation"
+import { StudentWithUser } from "@/app/(loggedin)/student/data"
+import { usePathname, useRouter } from "next/navigation"
 import {NoResultCard} from "@/components/list/NoResultCard";
 import {removeStudent} from '@/app/(loggedin)/student/removeStudents';
 import {Tooltip} from "@nextui-org/tooltip";
 
 type PrincipalProps = {
-    data: StudentWithUser[];
-    count: number;
-    numberOfStudents: number;
+  data: StudentWithUser[];
+  count: number;
+  numberOfStudents: number;
 };
 
 
-export function ListStudents({data, count, numberOfStudents}: PrincipalProps) {
-    const [dni, setDni] = useState("")
-    const [lastName, setLastName] = useState("")
-    const {replace, push, refresh} = useRouter();
-    const pathname = usePathname();
 
-    const handleSearch = () => {
-        const params = new URLSearchParams({
-            dni: dni,
-            lastName: lastName
-        });
 
-        replace(`${pathname}?${params.toString()}`);
-    };
+export function ListStudents({ data, count, numberOfStudents }: PrincipalProps) {
+  const [dni, setDni] = useState("")
+  const [lastName, setLastName] = useState("")
+  const { replace, push, refresh } = useRouter();
+  const pathname = usePathname();
 
-    const handleDniEdit = (dni: string) => {
-        setDni(dni);
-        setLastName("")
-    }
+  const handleSearch = () => {
+    const params = new URLSearchParams({
+      dni: dni,
+      lastName: lastName
+    });
 
-    const handleLastNameEdit = (lastName: string) => {
-        setDni("");
-        setLastName(lastName)
-    }
+    replace(`${pathname}?${params.toString()}`);
+  };
 
-    const handleEdit = (id: number) => {
-        push(`/student/${id}/edit`)
-    }
+  const handleDniEdit = (dni: string) => {
+    setDni(dni);
+    setLastName("")
+  }
 
-    const handleView = (id: number) => {
-        push(`/student/${id}`)
-    }
+  const handleLastNameEdit = (lastName: string) => {
+    setDni("");
+    setLastName(lastName)
+  }
 
-    const handleRemove = async (id: number) => {
-        const doRemove = await removeStudent(id);
-        if (doRemove) {
-            refresh();
-        }
-    }
+  const handleEdit = (id: number) => {
+    push(`/student/${id}/edit`)
+  }
 
-    const handleCreate = () => {
-        push('/student/add')
-    }
+  const handleView = (id: number) => {
+    push(`/student/${id}`)
+  }
+
+  const handleRemove = async (id: number) => {
+    const success = await removeStudent(id);
+    alert(success ? "Alumno eliminado correctamente" : "Error al eliminar el alumno");
+  }
+
+  const handleCreate = () => {
+    push('/student/add')
+  }
 
     return (
         <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">

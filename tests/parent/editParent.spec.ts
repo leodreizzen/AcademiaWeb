@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { newBirthDateOverEighteen, searchParentByDni } from '@/helpersTest/parentHelper';
-import { createParentWithOnlyOneChild, createChildrenWithTwoParents, createParentWithoutChildren } from '@/helpersTest/parentHelper';
+import { searchParentByDni } from '@/helpersTest/parentHelper';
+import { createParentWithoutChildren } from '@/helpersTest/parentHelper';
 
 import { loginAsTestUser } from "../testutils";
 import { getTestUser } from "../testdata";
@@ -42,7 +42,7 @@ test('Modificar padre con datos validos', async ({ page }) => {
     await page.locator('input[id="input-lastName"]').fill(newLastName);
     await page.locator('input[id="input-address"]').fill(newAddress);
     await page.locator('input[id="input-email"]').fill(newEmail);
-    const newDate = await newBirthDateCustom(page, '1990', 'Enero', '1');
+    const newDate = await newBirthDateCustom(page, '1990', 'enero', '1');
 
     page.once('dialog', async dialog => {
         expect(dialog.message()).toBe('El responsable se ha modificado correctamente');
@@ -61,7 +61,8 @@ test('Modificar padre con datos validos', async ({ page }) => {
     expect (await page.locator(`text=${newLastName}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${newAddress}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${newEmail}`).isVisible()).toBe(true);
-    //expect (await page.locator(`text=${newDate}`).isVisible()).toBe(true);
+    
+    expect (await page.locator(`text=${newDate}`).isVisible()).toBe(true);
 
     await page.goto('/parent');
 

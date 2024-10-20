@@ -4,6 +4,7 @@ import fetchStudentById from "@/lib/actions/student-info";
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
 import Link from "next/link";
+import {format} from "date-fns";
 
 export default async function StudentInfoPage({params}: {params: {id: string}}) {
     await assertPermission({resource: Resource.STUDENT, operation: "READ"});
@@ -54,6 +55,10 @@ export default async function StudentInfoPage({params}: {params: {id: string}}) 
                         <div>
                             <Label className="text-sm font-medium text-gray-400">Año</Label>
                             <p className="text-lg">{student.gradeName}</p>
+                        </div>
+                        <div className="md:col-span-2">
+                            <Label className="text-sm font-medium text-gray-400">Fecha de nacimiento</Label>
+                            <p className="text-lg">{format(student.birthdate, "dd/MM/yyyy")}</p>
                         </div>
                         <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>

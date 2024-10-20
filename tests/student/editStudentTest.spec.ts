@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 
 const dniDefaultStudent = getTestUser("student").dni.toString();
 
-const parentTestUser = getTestUser("parent");
+const parentTestUser = getTestUser("secondParent");
 
 
 
@@ -72,7 +72,7 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
     expect (await page.locator(`text=${newLastName}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${newAddress}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${newEmail}`).isVisible()).toBe(true);
-    //expect (await page.locator(`text=${newDate}`).isVisible()).toBe(true);
+    expect (await page.locator(`text=${newDate}`).isVisible()).toBe(true);
     expect (await page.locator(`text=${parentTestUser.dni.toString()}`).isVisible()).toBe(true);
 
     await page.goto('/student');
@@ -82,6 +82,11 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
     await searchStudentByDni(page, dni);
 
     await page.waitForTimeout(1000);
+
+    await page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('Alumno eliminado correctamente');
+        await dialog.dismiss();
+    });
 
     await page.getByTestId("remove-button").click();
 
@@ -137,6 +142,11 @@ test('Modificar alumno con datos invalidos', async ({ page }) => {
     await searchStudentByDni(page, dni);
 
     await page.waitForTimeout(1000);
+
+    await page.once('dialog', async dialog => {
+        expect(dialog.message()).toBe('Alumno eliminado correctamente');
+        await dialog.dismiss();
+    });
 
     await page.getByTestId("remove-button").click();
 

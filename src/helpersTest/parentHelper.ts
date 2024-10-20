@@ -54,8 +54,6 @@ export async function createParentWithoutChildren(page: Page) {
     await newBirthDate(page);
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
-
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
@@ -68,7 +66,6 @@ export async function createParentWithoutChildren(page: Page) {
 
     await page.getByRole('button', { name: 'Agregar' }).click();
 
-    console.log("Parent created with DNI: " + parentDni);
     return parentDni;
 }
 
@@ -90,7 +87,7 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
@@ -186,7 +183,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
 
     await expect(page).toHaveURL('/student');
 
-    return parentDni;
+    return { dni, parentDni };
 }
 
 

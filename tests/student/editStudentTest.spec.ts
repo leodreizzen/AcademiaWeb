@@ -77,6 +77,8 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
 
     await page.goto('/student');
 
+    
+
     await page.waitForTimeout(1000);
 
     await searchStudentByDni(page, dni);

@@ -107,7 +107,7 @@ export default function AdminList({ administrators, count }: AdminListProps) {
                         className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
                     />
                     <Tooltip content="Buscar" classNames={{ content: "text-white" }}>
-                        <Button onClick={()=>searchAdministrator} variant="secondary"
+                        <Button onClick={()=>searchAdministrator()} variant="secondary"
                             data-testid="search-button"
                             className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
                             <Search className="h-5 w-5" />

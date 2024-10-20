@@ -1,9 +1,9 @@
 "use server"
 
 import { revalidatePath } from "next/cache";
-import { ADMINS_PER_PAGE } from "./adminConstants";
 import { AdminQuery } from "./types";
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import {ADMINS_PER_PAGE} from "@/lib/data/pagination";
 
 
 export async function getAdmins({ page, dni, lastName }: AdminQuery) {
@@ -13,8 +13,8 @@ export async function getAdmins({ page, dni, lastName }: AdminQuery) {
             skip: (page - 1) * ADMINS_PER_PAGE,
             take: ADMINS_PER_PAGE,
             where: {
-                ...(dni !== undefined && { dni: dni }),
-                ...(lastName && {
+                ...(dni != undefined && { dni: dni }),
+                ...(lastName != undefined && {
                     user: {
                         lastName: {
                           contains: lastName,

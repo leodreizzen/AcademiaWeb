@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -27,6 +27,10 @@ export function ListStudents({ data, count, numberOfStudents }: PrincipalProps) 
   const { replace, push, refresh } = useRouter();
   const pathname = usePathname();
 
+  useEffect(() => {
+    refresh();
+  }, [pathname, refresh]);
+  
   const handleSearch = () => {
     const params = new URLSearchParams({
       dni: dni,

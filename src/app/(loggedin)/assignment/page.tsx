@@ -21,6 +21,7 @@ export default async function AssignmentPage({
 
   return (
     <TPListPage
+      totalAssignments={count}
       data={assignments}
       count={numberOfPages}
     />

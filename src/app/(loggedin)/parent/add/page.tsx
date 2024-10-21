@@ -1,7 +1,3 @@
-/*
-* Imports necesarios
-* */
-
 export default function ParentListPage() {
     return (
         <div className=" w-full flex flex-col items-center justify-center min-h-screen relative">

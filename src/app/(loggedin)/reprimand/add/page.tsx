@@ -1,10 +1,10 @@
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
+import AddReprimandForm from "@/components/ui/reprimand/AddReprimandForm";
+import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
 
 export default async function AddReprimandPage(){
     await assertPermission({resource: Resource.REPRIMAND, operation: "CREATE"});
-
-    return (<div>
-        <h1>Registrar amonestación</h1>
-    </div>)
+    const grades = await fetchGrades();
+    return <AddReprimandForm grades={grades}/>
 }

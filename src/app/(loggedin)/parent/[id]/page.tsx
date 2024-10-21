@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import {fetchParentById} from "@/lib/actions/info-parent";
 import Link from "next/link";
+import {format} from "date-fns";
 
 export default async function ParentInfoPage({params}: {params: {id: string}}) {
 
@@ -12,21 +13,22 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
             <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
                 <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold text-center">Padre no encontrado</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-center">Responsable no encontrado</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-center">El padre con el ID {params.id} no existe.</p>
+                        <p className="text-center">El responsable con el ID {params.id} no existe.</p>
                     </CardContent>
                 </Card>
             </div>
         )
     }
 
+    console.log(JSON.stringify(parent))
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
             <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-center">Información del Padre</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-center">Información del Responsable</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -49,6 +51,10 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
                             <p className="text-lg">{parent.phoneNumber}</p>
                         </div>
                         <div className="md:col-span-2">
+                            <Label className="text-sm font-medium text-gray-400">Fecha de nacimiento</Label>
+                            <p className="text-lg">{format(parent.birthdate, "dd/MM/yyyy")}</p>
+                        </div>
+                        <div className="md:col-span-2">
                             <Label className="text-sm font-medium text-gray-400">Correo Electrónico</Label>
                             <p className="text-lg">{parent.email}</p>
                         </div>
@@ -64,8 +70,8 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
                                 <Link href={`/student/${student.id}`} key={index}>
                                     <div key={index} className="bg-gray-700 p-3 rounded-lg mt-2">
                                         <p className="font-semibold">{student.user.firstName}</p>
-                                        <p className="text-sm text-gray-300">Curso: {student.grade.name}</p>
-                                        <p className="text-sm text-gray-300">DNI: {student.dni}</p>
+                                        <p className="text-sm text-gray-300">Curso: {student.gradeName}</p>
+                                        <p className="text-sm text-gray-300">DNI: {student.user.dni}</p>
                                     </div>
                                 </Link>
                             ))}

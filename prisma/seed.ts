@@ -243,6 +243,185 @@ async function createStudentWithReprimands(prisma: zPrismaClient) {
             }
         }
     })
+
+    const studentWithTwoReprimands = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141314,
+                    firstName: "Hermina",
+                    lastName: "Mohr",
+                    password: "+$iiD*5MYM5Y"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "3º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121516,
+                            firstName: "Patrick",
+                            lastName: "Johns",
+                            password: "R^Ed+Es0_f8r"
+                        }
+                    },
+                    address: "675 6th Street Apt. 697",
+                    phoneNumber: "+13214786260",
+                    email: "Dustin_Veum34@yahoo.com",
+                    birthdate: new Date("1990-04-21"),
+                }
+            },
+            address: "675 6th Street Apt. 697",
+            phoneNumber: "+19464413146",
+            email: "Nils_Morar48@gmail.com",
+            birthdate: new Date("2008-08-11"),
+        }
+    })
+
+    const teacherTwoReprimands = await prisma.teacher.create({
+        data: {
+            user: {
+                create: {
+                    dni: 12121213,
+                    firstName: "Imogene",
+                    lastName: "Orn",
+                    password: ">aH9n5wBy_It"
+                }
+            },
+            address: "97120 Sanford Hills Apt. 726",
+            phoneNumber: "+15203111694",
+            email: "Anya_Weissnat1@yahoo.com",
+            subjects: {
+                connect: [
+                    {
+                        gradeName_name: {
+                            gradeName: "3º año",
+                            name: "Matemáticas"
+                        }
+                    }
+                ]
+            }
+        }
+    })
+
+    await prisma.reprimand.create({
+        data: {
+            students: {
+                connect: {
+                    id: studentWithTwoReprimands.id
+                }
+            },
+            message: "Tiró un util escolar por la ventana.",
+            dateTime: new Date(),
+            Teacher: {
+                connect: {
+                    id: teacherTwoReprimands.id
+                }
+            }
+        }
+    })
+
+    await prisma.reprimand.create({
+        data: {
+            students: {
+                connect: {
+                    id: studentWithTwoReprimands.id
+                }
+            },
+            message: "Rompio un banco a propósito.",
+            dateTime: new Date(),
+            Teacher: {
+                connect: {
+                    id: teacherTwoReprimands.id
+                }
+            }
+        }
+    })
+
+    const studentWithOneReprimand = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141315,
+                    firstName: "Jade",
+                    lastName: "Heller",
+                    password: "JRA+WxP6as=("
+                }
+            },
+            grade: {
+                connect: {
+                    name: "4º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121517,
+                            firstName: "Geo",
+                            lastName: "Little",
+                            password: "!X)0ijnVsI@5"
+                        }
+                    },
+                    address: "5539 Elinore Dam Suite 520",
+                    phoneNumber: "+18944317300",
+                    email: "Aniyah_Erdman22@gmail.com",
+                    birthdate: new Date("1990-04-21"),
+                }
+            },
+            address: "5539 Elinore Dam Suite 520",
+            phoneNumber: "+16719766023",
+            email: "Katrine87@gmail.com",
+            birthdate: new Date("2008-08-11"),
+        }
+    })
+
+    const teacherOneReprimand = await prisma.teacher.create({
+        data: {
+            user: {
+                create: {
+                    dni: 12121214,
+                    firstName: "Myah",
+                    lastName: "Deckow",
+                    password: "kO+W%6e0oAoU"
+                }
+            },
+            address: "5306 The Oval Suite 507",
+            phoneNumber: "+13463278552",
+            email: "Royce55@yahoo.com",
+            subjects: {
+                connect: [
+                    {
+                        gradeName_name: {
+                            gradeName: "4º año",
+                            name: "Matemáticas"
+                        }
+                    }
+                ]
+            },
+        }
+    })
+
+    await prisma.reprimand.create({
+        data: {
+            students: {
+                connect: {
+                    id: studentWithOneReprimand.id
+                }
+            },
+            message: "Usó el teléfono a escondidas en un exámen.",
+            dateTime: new Date(),
+            Teacher: {
+                connect: {
+                    id: teacherOneReprimand.id
+                }
+            }
+        }
+    })
 }
 
 async function createStudentWithExam(prisma: zPrismaClient) {
@@ -254,6 +433,84 @@ async function createStudentWithExam(prisma: zPrismaClient) {
             }
         },
     })
+
+    const secondStudentForFirstExam = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141316,
+                    firstName: "Britney",
+                    lastName: "Harvey",
+                    password: "We(AD5O@I@8*"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "2º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121515,
+                            firstName: "Gregoria",
+                            lastName: "Watsica",
+                            password: "=8)N5$<c!GNf"
+                        }
+                    },
+                    address: "6540 Third Street Apt. 520",
+                    phoneNumber: "+19885293824",
+                    email: "Doyle.McLaughlin12@yahoo.com",
+                    birthdate: new Date("1990-04-21")
+                }
+            },
+            address: "6540 Third Street Apt. 520",
+            phoneNumber: "+12382535911",
+            email: "Aurelie.Corkery@yahoo.com",
+            birthdate: new Date("2008-08-11")
+        }
+    })
+
+    const thirdStudentForFirstExam = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141317,
+                    firstName: "Anissa",
+                    lastName: "Lindgren",
+                    password: "Gs8=t&t_?*GH"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "2º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121516,
+                            firstName: "Reggie",
+                            lastName: "Mante-Lubowitz",
+                            password: "gE<W5k!=u$Ik"
+                        }
+                    },
+                    address: "84856 University Avenue Apt. 574",
+                    phoneNumber: "+18266199048",
+                    email: "Daija.Schowalter26@yahoo.com",
+                    birthdate: new Date("1990-04-21")
+                }
+            },
+            address: "84856 University Avenue Apt. 574",
+            phoneNumber: "+16763641080",
+            email: "Amara_Strosin8@hotmail.com",
+            birthdate: new Date("2008-08-11")
+        }
+    })
+
+
     await prisma.exam.create({
         data: {
             subject: {
@@ -264,16 +521,372 @@ async function createStudentWithExam(prisma: zPrismaClient) {
                     }
                 }
             },
-            date: new Date("2021-06-01"),
+            date: new Date("2024-06-01"),
             marks: {
+                create: [
+                    {
+                        student: {
+                            connect: {
+                                id: student.id
+                            }
+                        },
+                        mark: 7
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: secondStudentForFirstExam.id
+                            }
+                        },
+                        mark: 5
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: thirdStudentForFirstExam.id
+                            }
+                        },
+                        mark: 9
+                    }
+                ]
+            }
+        }
+    })
+
+    const studentWithTwoExams = await prisma.profile.findUniqueOrThrow({
+        where: {
+            dni_role: {
+                dni: 14141314,
+                role: "student"
+            }
+        },
+    })
+
+    const secondStudentForSecondExam = await prisma.student.create({
+        data: {
+            user: {
                 create: {
-                    student: {
-                        connect: {
-                            id: student.id
+                    dni: 14141318,
+                    firstName: "Allen",
+                    lastName: "Schowalter",
+                    password: "7zsFg$Ghm&V%"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "3º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121517,
+                            firstName: "Lucinda",
+                            lastName: "Powlowski",
+                            password: "v28Aww8&9Qtz"
                         }
                     },
-                    mark: 10
+                    address: "43854 S Main Suite 869",
+                    phoneNumber: "+15147608135",
+                    email: "Thurman.Schaefer95@hotmail.com",
+                    birthdate: new Date("1990-04-21")
                 }
+            },
+            address: "43854 S Main Suite 869",
+            phoneNumber: "+14139457826",
+            email: "Cassandre_Fadel1@gmail.com",
+            birthdate: new Date("2008-08-11")
+        }
+    })
+
+    const thirdStudentForSecondExam = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141319,
+                    firstName: "Violette",
+                    lastName: "Carroll",
+                    password: "zPI_t0&d@RPI"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "3º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121518,
+                            firstName: "Peter",
+                            lastName: "Hamill",
+                            password: "Zi6#kqp6sJPI"
+                        }
+                    },
+                    address: "64692 Klocko Haven Apt. 554",
+                    phoneNumber: "+16857891088",
+                    email: "Raymond.Gerlach43@hotmail.com",
+                    birthdate: new Date("1990-04-21")
+                }
+            },
+            address: "64692 Klocko Haven Apt. 554",
+            phoneNumber: "+14493227056",
+            email: "Grayson.Champlin99@yahoo.com",
+            birthdate: new Date("2008-08-11")
+        }
+    })
+
+    await prisma.exam.create({
+        data: {
+            subject: {
+                connect: {
+                    gradeName_name: {
+                        gradeName: "3º año",
+                        name: "Matemáticas"
+                    }
+                }
+            },
+            date: new Date("2024-06-01"),
+            marks: {
+                create: [
+                    {
+                        student: {
+                            connect: {
+                                id: studentWithTwoExams.id
+                            }
+                        },
+                        mark: 6
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: secondStudentForSecondExam.id
+                            }
+                        },
+                        mark: 5
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: thirdStudentForSecondExam.id
+                            }
+                        },
+                        mark: 9
+                    }
+                ]
+            }
+        }
+    })
+
+    await prisma.exam.create({
+        data: {
+            subject: {
+                connect: {
+                    gradeName_name: {
+                        gradeName: "3º año",
+                        name: "Matemáticas"
+                    }
+                }
+            },
+            date: new Date("2024-06-02"),
+            marks: {
+                create: [
+                    {
+                        student: {
+                            connect: {
+                                id: studentWithTwoExams.id
+                            }
+                        },
+                        mark: 8
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: secondStudentForSecondExam.id
+                            }
+                        },
+                        mark: 6
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: thirdStudentForSecondExam.id
+                            }
+                        },
+                        mark: 10
+                    }
+                ]
+            }
+        }
+    })
+
+    await prisma.exam.create({
+        data: {
+            subject: {
+                connect: {
+                    gradeName_name: {
+                        gradeName: "3º año",
+                        name: "Lengua"
+                    }
+                }
+            },
+            date: new Date("2024-06-03"),
+            marks: {
+                create: [
+                    {
+                        student: {
+                            connect: {
+                                id: studentWithTwoExams.id
+                            }
+                        },
+                        mark: 9
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: secondStudentForSecondExam.id
+                            }
+                        },
+                        mark: 7
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: thirdStudentForSecondExam.id
+                            }
+                        },
+                        mark: 10
+                    }
+                ]
+            }
+        }
+    })
+
+    const studentWithOneExam = await prisma.profile.findUniqueOrThrow({
+        where: {
+            dni_role: {
+                dni: 14141315,
+                role: "student"
+            }
+        },
+    })
+
+    const studentWithOneExam2 = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141320,
+                    firstName: "Mercedes",
+                    lastName: "Deckow",
+                    password: "Zy%mM5W%(@C7"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "4º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121517,
+                            firstName: "Aisha",
+                            lastName: "Dibbert",
+                            password: "GcqC^q76aVo1"
+                        }
+                    },
+                    address: "58015 Sadye Cliff Apt. 244",
+                    phoneNumber: "+15077052911",
+                    email: "Orin.Franey@gmail.com",
+                    birthdate: new Date("1990-04-21"),
+                }
+            },
+            address: "58015 Sadye Cliff Apt. 244",
+            phoneNumber: "+15248788790",
+            email: "Aryanna_Roberts@gmail.com",
+            birthdate: new Date("2008-08-11"),
+        }
+    })
+
+    const studentWithOneExam3 = await prisma.student.create({
+        data: {
+            user: {
+                create: {
+                    dni: 14141321,
+                    firstName: "Marjolaine",
+                    lastName: "Emmerich",
+                    password: "o&MmqR<I3$0a"
+                }
+            },
+            grade: {
+                connect: {
+                    name: "4º año"
+                }
+            },
+            parents: {
+                create: {
+                    user: {
+                        create: {
+                            dni: 12121517,
+                            firstName: "Chelsea",
+                            lastName: "Cole",
+                            password: "5Ol7*EK=qu)="
+                        }
+                    },
+                    address: "5810 S High Street Suite 541",
+                    phoneNumber: "+19445951880",
+                    email: "Sam9@gmail.com",
+                    birthdate: new Date("1990-04-21"),
+                }
+            },
+            address: "5810 S High Street Suite 541",
+            phoneNumber: "+14398967244",
+            email: "Domenic_Nikolaus-Kuhlman33@yahoo.com",
+            birthdate: new Date("2008-08-11"),
+        }
+    })
+
+    await prisma.exam.create({
+        data: {
+            subject: {
+                connect: {
+                    gradeName_name: {
+                        gradeName: "4º año",
+                        name: "Matemáticas"
+                    }
+                }
+            },
+            date: new Date("2024-06-01"),
+            marks: {
+                create: [
+                    {
+                        student: {
+                            connect: {
+                                id: studentWithOneExam.id
+                            }
+                        },
+                        mark: 8
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: studentWithOneExam2.id
+                            }
+                        },
+                        mark: 6
+                    },
+                    {
+                        student: {
+                            connect: {
+                                id: studentWithOneExam3.id
+                            }
+                        },
+                        mark: 10
+                    }
+                ]
             }
         }
     })

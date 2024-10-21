@@ -55,4 +55,12 @@ test.describe('Testing listado parent', () => {
         }
     );
 
+    test('Busqueda de padre por DNI todo 0', async ({page}) => {
+            await loginAsTestUser(page, 'administrator');
+            await page.waitForURL('/');
+            await page.getByRole('navigation').getByRole('link', {name: 'Responsables'}).click();
+            await expect(await searchParentByDni(page, '000000000')).toBeFalsy();
+            expect (await page.isVisible(`text=${'No se encontraron responsables con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        });
+
 });

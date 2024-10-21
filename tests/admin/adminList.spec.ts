@@ -13,10 +13,6 @@ const admin = getTestUser('administrator');
 const DNISeeded = admin.dni.toString();
 const LastNameSeeded = admin.lastName;
 
-
-
-
-
 test.describe('Testing listado admin', () => {
 
     test('Listado admin buscado por DNI (CASO POSITIVO)', async ({ page }) => {
@@ -40,8 +36,8 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
         await expect(page.locator(".test-admin-item").first()).toBeVisible();
 
-        await expect(await searchAdminByDni(page, '123456789')).toBeFalsy();
-        expect (await page.isVisible(`text=${'No se encontraron administradores  con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        await expect(await searchAdminByDni(page, '12345678910')).toBeFalsy();
+        expect (await page.locator(`text=${'No se encontraron administradores con esos filtros'}`).isVisible()).toBeTruthy();
         
         
     });
@@ -66,7 +62,20 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
         await expect(await searchAdminByLastName(page, 'asdasdasdasdasd')).toBeFalsy();
-        expect (await page.isVisible(`text=${'No se encontraron administradores  con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        expect (await page.locator(`text=${'No se encontraron administradores con esos filtros'}`).isVisible()).toBeTruthy();
+        
+    });
+
+    test('Listado admin buscado por DNI TODO 0 (CASO NEGATIVO) ', async ({ page }) => {
+        await loginAsTestUser(page, 'administrator');
+        await page.waitForURL('/');
+
+        
+        await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
+        await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
+
+        await expect(await searchAdminByDni(page, '000000000')).toBeFalsy();
+        expect (await page.locator(`text=${'No se encontraron administradores con esos filtros'}`).isVisible()).toBeTruthy();
         
     });
 

@@ -3,6 +3,7 @@
 import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import { Student } from "@prisma/client";
 import { StudentWithUser } from "../student/data";
+import {revalidatePath} from "next/cache";
 
 
 export async function removeParent(id: number): Promise<string | null> {
@@ -51,6 +52,7 @@ export async function removeParent(id: number): Promise<string | null> {
                 }
             });
         }
+        revalidatePath("/parent");
         return null;
     } catch (error: any) {
         console.error("Error fetching parent:", error);

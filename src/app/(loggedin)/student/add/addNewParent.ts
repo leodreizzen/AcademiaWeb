@@ -83,7 +83,7 @@ export async function addParent(phoneNumber: string, address: string, email: str
         console.error("Error adding parent:", error);
         return{
             success: false,
-            error: "Error al agregar el padre"
+            error: "Error al agregar el responsable"
         };
     }
 }

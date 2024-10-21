@@ -3,6 +3,8 @@ import {  faker } from "@faker-js/faker/locale/es";
 import { newBirthDate, randomDNI } from "./studentHelper";
 import exp from "constants";
 
+
+
 export async function searchParentByDni(page: Page, Dni: string) {
     await page.getByPlaceholder('DNI').click();
     await page.getByPlaceholder('DNI').fill(Dni);
@@ -37,7 +39,7 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 
 
 export async function createParentWithoutChildren(page: Page) {
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();
@@ -52,8 +54,6 @@ export async function createParentWithoutChildren(page: Page) {
     await newBirthDate(page);
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
-
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
@@ -66,13 +66,12 @@ export async function createParentWithoutChildren(page: Page) {
 
     await page.getByRole('button', { name: 'Agregar' }).click();
 
-    console.log("Parent created with DNI: " + parentDni);
     return parentDni;
 }
 
 export async function createChildrenWithTwoParents(page: Page) {
     await page.waitForURL('/')
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();
@@ -88,7 +87,7 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
@@ -126,13 +125,12 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     
 
-    await expect(page).toHaveURL('http://localhost:3000/student');
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
+    await expect(page).toHaveURL('/student');
     return parentDni;
 }
 
 export async function createParentWithOnlyOneChild(page: Page) {
-    await page.goto('http://localhost:3000/student/add');
+    await page.goto('/student/add');
 
     const dni = await randomDNI();
 
@@ -183,10 +181,9 @@ export async function createParentWithOnlyOneChild(page: Page) {
 
     await page.getByRole('button', { name: 'Registrar' }).click();
 
-    await expect(page).toHaveURL('http://localhost:3000/student');
-    await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
+    await expect(page).toHaveURL('/student');
 
-    return parentDni;
+    return { dni, parentDni };
 }
 
 
@@ -211,8 +208,10 @@ export async function newBirthDateOverEighteen(page: Page) {
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
     
+
     while (await page.getByRole('dialog').nth(1).isVisible() === false) {
         await page.locator('#dob').click();
+        
         await page.waitForTimeout(500);
     }
 

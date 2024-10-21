@@ -236,7 +236,7 @@ async function createStudentWithReprimands(prisma: zPrismaClient) {
             },
             message: "Se portó mal.",
             dateTime: new Date(),
-            Teacher: {
+            teacher: {
                 connect: {
                     id: teacher.id
                 }
@@ -317,7 +317,7 @@ async function createStudentWithReprimands(prisma: zPrismaClient) {
             },
             message: "Tiró un util escolar por la ventana.",
             dateTime: new Date(),
-            Teacher: {
+            teacher: {
                 connect: {
                     id: teacherTwoReprimands.id
                 }
@@ -334,7 +334,7 @@ async function createStudentWithReprimands(prisma: zPrismaClient) {
             },
             message: "Rompio un banco a propósito.",
             dateTime: new Date(),
-            Teacher: {
+            teacher: {
                 connect: {
                     id: teacherTwoReprimands.id
                 }
@@ -415,7 +415,7 @@ async function createStudentWithReprimands(prisma: zPrismaClient) {
             },
             message: "Usó el teléfono a escondidas en un exámen.",
             dateTime: new Date(),
-            Teacher: {
+            teacher: {
                 connect: {
                     id: teacherOneReprimand.id
                 }

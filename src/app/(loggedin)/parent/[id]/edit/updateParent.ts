@@ -1,10 +1,9 @@
 "use server"
 import {revalidatePath} from "next/cache";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
+import prisma from "@/lib/prisma";
 
 export async function updateParent(id: number, phoneNumber: string, address: string, email: string, firstName: string, lastName: string, dni: number, birthDay : Date): Promise<ActionResult> {
-    const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.$transaction(async (prisma) => {
             const existingUserEmail = await prisma.profile.findFirst({
@@ -42,12 +41,16 @@ export async function updateParent(id: number, phoneNumber: string, address: str
                 data: {
                     birthdate: birthDay,
                     phoneNumber: phoneNumber,
-                    email: email,
                     address: address,
-                    user: {
+                    profile: {
                         update: {
-                            firstName: firstName,
-                            lastName: lastName,
+                            email: email,
+                            user: {
+                                update: {
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                }
+                            }
                         }
                     }
                 }

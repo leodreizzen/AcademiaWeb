@@ -2,11 +2,10 @@
 
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {ParentWithUser} from "@/lib/definitions/parent";
+import prisma from "@/lib/prisma";
 
 export async function updateStudent(id: number, phoneNumber: string, address: string, email: string, parents: ParentWithUser[], gradeName: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult>  {
-    const prisma = await getCurrentProfilePrismaClient();
     let result: ActionResult;
     try {
         result = await prisma.$transaction(async (prisma) => {
@@ -43,7 +42,6 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
                 data: {
                     birthdate: birthDay,
                     phoneNumber: phoneNumber,
-                    email: email,
                     address: address,
                     grade: {
                         connect: {
@@ -54,10 +52,15 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
                     parents: {
                         set: parents.map((parent) => ({ id: parent.id })), // Update parent IDs if needed
                     },
-                    user: {
+                    profile: {
                         update: {
-                            firstName: name,
-                            lastName: surname,
+                            email: email,
+                            user: {
+                                update: {
+                                    firstName: name,
+                                    lastName: surname,
+                                }
+                            }
                         }
                     }
                 }

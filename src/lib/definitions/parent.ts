@@ -1,8 +1,14 @@
 import {Parent, Profile, User} from "@prisma/client";
-import {StudentWithUser} from "@/app/(loggedin)/student/data";
 
-export interface ParentWithUser extends Parent, Profile{
-    user : User
+import {StudentWithUser} from "@/lib/definitions/student";
+import {UserWithoutPassword} from "@/lib/definitions";
+
+export interface ParentWithProfileData extends Parent, Profile{
+
+}
+
+export interface ParentWithUser extends ParentWithProfileData{
+    user : UserWithoutPassword
 }
 
 export interface ParentWithUserAndChildren extends ParentWithUser{

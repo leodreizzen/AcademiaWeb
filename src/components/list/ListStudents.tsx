@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Search, Edit, Eye, Plus, Trash2 } from 'lucide-react'
 import PaginationControls from "@/components/list/PaginationControls"
-import { StudentWithUser } from "@/app/(loggedin)/student/data"
 import { usePathname, useRouter } from "next/navigation"
 import {NoResultCard} from "@/components/list/NoResultCard";
 import {removeStudent} from '@/app/(loggedin)/student/removeStudents';
 import {Tooltip} from "@nextui-org/tooltip";
+import {StudentWithUser} from "@/lib/definitions/student";
 
 type PrincipalProps = {
   data: StudentWithUser[];

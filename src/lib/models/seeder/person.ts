@@ -1,5 +1,7 @@
 import {z} from 'zod';
 import {maxDigits, minDigits} from "@/lib/utils";
+import { fromZonedTime } from 'date-fns-tz';
+import {parse, isValid} from 'date-fns';
 
 const dniMessage = "Los DNI tienen que tener de 7 a 9 dígitos, y ser solo números.";
 const dniSchema = z.coerce.number({message: dniMessage}).min(minDigits(7), {message: dniMessage}).max(maxDigits(9), {message: dniMessage});
@@ -20,7 +22,17 @@ export const PersonSchema = z.object({
     parentDnis: z.array(dniSchema).optional(),
     grade: z.string().optional(),
     subjects: z.array(z.tuple([z.string(), z.string()])).optional(),
-    dateOfBirth: z.string().date("Invalid date of birth").optional(),
+    dateOfBirth: z.string().transform((value, ctx) => {
+        const date = parse(value, 'dd-MM-yyyy', new Date());
+        if (!isValid(date)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Invalid date. Format must be DD-MM-YYYY",
+            });
+            return z.NEVER;
+        }
+        return fromZonedTime(date, 'America/Argentina/Buenos_Aires');
+    }).optional()
 }).refine((value) => {
     if (value.roles.includes("student"))
         return value.parentDnis !== undefined && value.parentDnis.length > 0;

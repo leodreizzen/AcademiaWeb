@@ -13,13 +13,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {Avatar, AvatarFallback} from "@/components/ui/avatar"
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet"
-import {ProfileRole, ProfileWithRoleAndUser} from "@/lib/definitions"
+import {ProfileRole} from "@/lib/definitions"
 import {roleDisplayNames} from "@/lib/roleDisplayNames"
 import {navbarItems} from "@/components/ui/Navbar/navbar_links"
 import {logout} from "@/lib/actions/login"
 import {roleColors} from "@/components/ui/roleColors"
 import {Student} from "@prisma/client";
-import {StudentWithUser} from "@/app/(loggedin)/student/data";
+
+import {StudentWithUser} from "@/lib/definitions/student";
+import {PrismaProfileWithUser} from "@/lib/data/mappings";
 
 export type RoleAndParent = {
     role: Exclude<ProfileRole, "Parent">
@@ -200,8 +202,4 @@ export default function NavBar(props: NavbarProps) {
             </div>
         </nav>
     )
-}
-
-type NavBarProps = {
-    profile: ProfileWithRoleAndUser
 }

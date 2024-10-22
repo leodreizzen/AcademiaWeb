@@ -1,43 +1,59 @@
 'use server';
 
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import prisma from "@/lib/prisma";
+import {StudentWithUser} from "@/lib/definitions/student";
+import {mapStudentWithUser, PrismaStudentWithUser} from "@/lib/data/mappings";
 
-export async function fetchStudentsFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number) {
-    const prisma = await getCurrentProfilePrismaClient()
+export async function fetchStudentsFiltered({dni, lastName}: {
+    dni?: number,
+    lastName?: string
+}, page: number): Promise<StudentWithUser[]> {
     try {
+        let students: PrismaStudentWithUser[];
         if (dni !== undefined) {
             const NUMBER_OF_PRODUCTS = 10;
-            return await prisma.student.findMany({
+            students = await prisma.student.findMany({
                 skip: (page - 1) * NUMBER_OF_PRODUCTS,
                 take: NUMBER_OF_PRODUCTS,
                 where: {
-                    user: {
-                        dni: Number(dni)
+                    profile: {
+                        user: {
+                            dni: Number(dni)
+                        }
                     }
                 },
-                include : {
-                    user: true
+                include: {
+                    profile: {
+                        include: {
+                            user: true
+                        }
+                    }
                 }
             })
         } else {
-            return await prisma.student.findMany({
+            students = await prisma.student.findMany({
                 where: {
-                    user: {
-                        lastName: {
-                            contains: lastName,
-                            mode: 'insensitive',
-                        },
-                    },
+                    profile: {
+                        user: {
+                            lastName: {
+                                contains: lastName,
+                                mode: 'insensitive',
+                            },
+                        }
+                    }
                 },
-                include : {
-                    user: true
+                include: {
+                    profile: {
+                        include: {
+                            user: true
+                        }
+                    }
                 }
             })
         }
+        return students.map(mapStudentWithUser)
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        return [];
     }
-    catch(error)
-        {
-            console.error("Error fetching products:", error);
-            return [];
-        }
-    }
+}

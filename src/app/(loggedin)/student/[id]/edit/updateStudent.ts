@@ -68,7 +68,7 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
 
             console.log(`Student updated with ID: ${updatedStudent.id}`);
             revalidatePath("/student");
-            revalidatePath(`/student/edit/${updatedStudent.id}`);
+            revalidatePath(`/student/${updatedStudent.id}/edit/`);
             revalidatePath(`/student/${updatedStudent.id}`);
             return {success: true}
 

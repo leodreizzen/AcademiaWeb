@@ -34,6 +34,7 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
                     error: messageError
                 }
             }
+            console.log(`id: ${id}, birhDat: ${birthDay}`)
 
             const updatedStudent = await prisma.student.update({
                 where: {
@@ -68,7 +69,7 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
 
             console.log(`Student updated with ID: ${updatedStudent.id}`);
             revalidatePath("/student");
-            revalidatePath(`/student/${updatedStudent.id}/edit/`);
+            revalidatePath(`/student/${updatedStudent.id}/edit`);
             revalidatePath(`/student/${updatedStudent.id}`);
             return {success: true}
 

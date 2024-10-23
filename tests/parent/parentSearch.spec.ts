@@ -34,7 +34,7 @@ test.describe('Testing listado parent', () => {
             await page.getByRole('navigation').getByRole('link', {name: 'Responsables'}).click();
             await page.waitForURL('/parent', {waitUntil: 'domcontentloaded'});
             await expect(await searchParentByDni(page, '123456789')).toBeFalsy();
-            expect (await page.isVisible(`text=${'No se encontraron responsables con esos filtros'}`,{timeout:1000})).toBeTruthy();
+            await expect (page.locator(`text=${'No se encontraron responsables con esos filtros'}`)).toBeVisible();
         }
     );
 
@@ -51,7 +51,7 @@ test.describe('Testing listado parent', () => {
             await page.waitForURL('/');
             await page.getByRole('navigation').getByRole('link', {name: 'Responsables'}).click();
             await expect(await searchParentByLastName(page, 'asdasdasdasdasdasd')).toBeFalsy();
-            expect (await page.isVisible(`text=${'No se encontraron responsables con esos filtros'}`,{timeout:1000})).toBeTruthy();
+            await expect (page.locator(`text=${'No se encontraron responsables con esos filtros'}`)).toBeVisible();
         }
     );
 
@@ -60,7 +60,7 @@ test.describe('Testing listado parent', () => {
             await page.waitForURL('/');
             await page.getByRole('navigation').getByRole('link', {name: 'Responsables'}).click();
             await expect(await searchParentByDni(page, '000000000')).toBeFalsy();
-            expect (await page.isVisible(`text=${'No se encontraron responsables con esos filtros'}`,{timeout:1000})).toBeTruthy();
+            await expect (page.locator(`text=${'No se encontraron responsables con esos filtros'}`)).toBeVisible();
         });
 
 });

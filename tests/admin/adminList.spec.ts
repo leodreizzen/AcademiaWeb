@@ -37,7 +37,7 @@ test.describe('Testing listado admin', () => {
         await expect(page.locator(".test-admin-item").first()).toBeVisible();
 
         await expect(await searchAdminByDni(page, '12345678910')).toBeFalsy();
-        expect (await page.locator(`text=${'No se encontraron administradores con esos filtros'}`).isVisible()).toBeTruthy();
+        await expect (page.locator(`text=${'No se encontraron administradores con esos filtros'}`)).toBeVisible();
         
         
     });
@@ -62,7 +62,7 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
         await expect(await searchAdminByLastName(page, 'asdasdasdasdasd')).toBeFalsy();
-        expect (await page.locator(`text=${'No se encontraron administradores con esos filtros'}`).isVisible()).toBeTruthy();
+        await expect (page.locator(`text=${'No se encontraron administradores con esos filtros'}`)).toBeVisible();
         
     });
 
@@ -75,7 +75,7 @@ test.describe('Testing listado admin', () => {
         await page.waitForURL('/admin',{waitUntil: 'domcontentloaded'});
 
         await expect(await searchAdminByDni(page, '000000000')).toBeFalsy();
-        expect (await page.locator(`text=${'No se encontraron administradores con esos filtros'}`).isVisible()).toBeTruthy();
+        await expect (page.locator(`text=${'No se encontraron administradores con esos filtros'}`)).toBeVisible();
         
     });
 

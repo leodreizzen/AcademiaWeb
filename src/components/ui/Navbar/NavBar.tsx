@@ -73,7 +73,7 @@ export default function NavBar(props: NavbarProps) {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
-                            <Link href="/" className="text-white text-xl font-bold">
+                            <Link href="/" className="text-white text-xl font-bold" data-testid="home_button">
                                 AcademiaWeb
                             </Link>
                         </div>

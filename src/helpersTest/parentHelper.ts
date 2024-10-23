@@ -65,6 +65,7 @@ export async function createParentWithoutChildren(page: Page) {
     await newBirthDateOverEighteen(page);
 
     await page.getByRole('button', { name: 'Agregar' }).click();
+    await expect((page.locator(".h2", {hasText: "Nuevo Reponsable"}))).toHaveCount(0);
 
     return parentDni;
 }
@@ -121,10 +122,6 @@ export async function createChildrenWithTwoParents(page: Page) {
     });
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-
-
-    
-
     await expect(page).toHaveURL('/student');
     return parentDni;
 }
@@ -180,7 +177,6 @@ export async function createParentWithOnlyOneChild(page: Page) {
     });
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-
     await expect(page).toHaveURL('/student');
 
     return { dni, parentDni };

@@ -55,9 +55,10 @@ export async function updateParent(id: number, phoneNumber: string, address: str
                     }
                 }
             });
-            revalidatePath("/student/add")
-            revalidatePath("/parent")
-            revalidatePath(`/parent/${updatedParent.id}/edit`)
+            revalidatePath("/student/add");
+            revalidatePath("/parent");
+            revalidatePath("/api/internal/parent");
+            revalidatePath("/api/internal/parent/count");            revalidatePath(`/parent/${updatedParent.id}/edit`)
             console.log(`Parent editing with ID: ${updatedParent.id}`);
             return {
                 success: true

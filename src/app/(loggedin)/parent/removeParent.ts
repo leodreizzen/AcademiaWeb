@@ -64,6 +64,8 @@ export async function removeParent(id: number): Promise<string | null> {
             });
         }
         revalidatePath("/parent");
+        revalidatePath("/api/internal/parent")
+        revalidatePath("/api/internal/parent/count")
         return null;
     } catch (error: any) {
         console.error("Error fetching parent:", error);

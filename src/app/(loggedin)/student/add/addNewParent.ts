@@ -77,6 +77,8 @@ export async function addParent(phoneNumber: string, address: string, email: str
             });
             revalidatePath("/student/add")
             revalidatePath("/parent")
+            revalidatePath("/api/internal/parent");
+            revalidatePath("/api/internal/parent/count");
             console.log(`Parent created with ID: ${parent.id}`);
             return {
                 success: true

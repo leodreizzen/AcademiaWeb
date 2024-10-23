@@ -83,6 +83,7 @@ export async function removeStudent(id: number) {
                 });
             }
             revalidatePath("/student");
+            revalidatePath("/api/internal/reprimand/student");
         })
         return true;
     } catch (error) {

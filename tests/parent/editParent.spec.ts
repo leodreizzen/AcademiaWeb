@@ -77,11 +77,11 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
     await page.waitForURL('/');
     const parentDni = await createParentWithoutChildren(page);
 
-    await page.goto('/');
+    await page.getByTestId("home_button").click();
     await page.waitForURL('/');
     await page.getByRole('link', { name: 'Responsables' }).first().click();
-
     await expect(page.getByText("Listado de Responsables")).toBeVisible();
+
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
     await page.getByTestId('edit-parent').click();
@@ -108,9 +108,8 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
     expect (await page.locator(`text=Ingrese una dirección válida para el responsable`).isVisible()).toBe(true);
     expect (await page.locator(`text=El responsable debe ser mayor de 18 años`).isVisible()).toBe(true);
 
-    await page.goto('/parent');
-
-    await page.waitForURL('/parent');
+    await page.getByRole('link', { name: 'Responsables' }).first().click();
+    await expect(page.getByText("Listado de Responsables")).toBeVisible();
 
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 

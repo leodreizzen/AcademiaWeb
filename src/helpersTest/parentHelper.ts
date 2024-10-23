@@ -39,7 +39,11 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 
 
 export async function createParentWithoutChildren(page: Page) {
-    await page.goto('/student/add');
+    await page.getByRole('link', { name: 'Alumnos' }).first().click();
+    await expect(page.getByText("Listado de Alumnos")).toBeVisible();
+
+    await page.getByTestId("create-button").click();
+    await expect(page.getByText("Registrar Alumno")).toBeVisible();
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();

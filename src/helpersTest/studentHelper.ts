@@ -123,8 +123,6 @@ export async function newBirthDate(page: Page) {
 
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
 
-    console.log(`${day}/${monthToNumber(month)}/${year}`);
-
     return `${day}/${monthToNumber(month)}/${year}`;
 
 }
@@ -154,8 +152,6 @@ export async function newBirthDateCustom(page: Page, year: string, month: string
     }
 
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
-
-    console.log(`${day}/${monthToNumber(month)}/${year}`);
 
     return `${day}/${monthToNumber(month)}/${year}`;
 

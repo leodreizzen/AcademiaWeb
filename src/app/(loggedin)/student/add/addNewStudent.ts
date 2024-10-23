@@ -44,36 +44,6 @@ export async function addStudent(phoneNumber: string, address: string, email: st
                 }
             }
 
-            console.log(JSON.stringify({
-                data: {
-                    birthdate : birthDay,
-                    phoneNumber: phoneNumber,
-                    grade: {
-                        connect: {
-                            name: gradeName
-                        }
-                    },
-                    address: address,
-                    parents: {
-                        connect: parents.map((parent) => ({id: parent.id})),
-                    },
-                    profile: {
-                        create: {
-                            role: "Student",
-                            user: {
-                                create: {
-                                    firstName: name,
-                                    lastName: surname,
-                                    dni: dni,
-                                    passwordHash: await hashPassword(dni.toString())
-                                }
-                            },
-                            email: email,
-                        }
-                    }
-                }
-            }, null, 2))
-
             const student = await prisma.student.create({
                 data: {
                     birthdate : birthDay,

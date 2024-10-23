@@ -21,7 +21,7 @@ export type EmailSendResult = {
 export default async function sendEmail({fromName, fromAccount, to, subject, react, cc, bcc}:{fromName:string, fromAccount:string, to: string, subject: string, cc?: string, bcc?: string, react: ReactElement}): Promise<EmailSendResult>{
     const from = `${fromName} <${fromAccount}@${process.env.EMAIL_DOMAIN}>`;
     if(isTesting()) {
-        console.log("Ommiting email send in testing mode")
+        console.log("Omiting email send in testing mode")
         saveTestingEmail({to, subject, from: from, cc: cc, bcc: bcc, props:react.props})
         return {success: true}
     }

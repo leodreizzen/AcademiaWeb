@@ -26,7 +26,6 @@ export function AdminRegistrationFormComponent() {
 
     const handleSubmitStep = async (data : AdminData) => {
         const resul = await addAdminToDataBase(data)
-        console.log("BUENAS", resul)
         if (!resul.success) {
             alert(resul.error)
         } else {

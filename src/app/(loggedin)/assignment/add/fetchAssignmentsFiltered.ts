@@ -1,7 +1,6 @@
 "use server";
-
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import { AssignmentType } from "@/types/assignment";
+import prisma from "@/lib/prisma";
 
 export async function fetchAssignmentsFiltered(
   {
@@ -11,7 +10,6 @@ export async function fetchAssignmentsFiltered(
   }: { title?: string; subject?: number; grade?: string },
   page: number
 ): Promise<AssignmentType[]> {
-  const prisma = await getCurrentProfilePrismaClient();
   const NUMBER_OF_PRODUCTS = 10;
   const skip = Math.max(0, (page - 1) * NUMBER_OF_PRODUCTS);
 

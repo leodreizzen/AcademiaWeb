@@ -10,6 +10,7 @@ import {redirect} from "next/navigation";
 import {headers} from "next/headers";
 import { AlertTriangle } from "lucide-react"
 import {roleColors} from "@/components/ui/roleColors";
+import LoginErrorPage from "@/components/ui/login/LoginErrorPage";
 
 export default async function RoleSelectPage({searchParams: {callbackUrl}}: {searchParams: {callbackUrl?: string}} ) {
     const dni = (await auth())?.user.dni;
@@ -29,7 +30,7 @@ export default async function RoleSelectPage({searchParams: {callbackUrl}}: {sea
 
     if(roles.length === 0) {
         console.error("User has no roles")
-        return <ErrorPage/>
+        return <LoginErrorPage title="Se ha producido un error" message="El usuario no tiene roles asignados. Por favor contacta a un administrador."/>
     }
 
     return (

@@ -4,8 +4,9 @@ import {auth, signIn, signOut, unstable_update} from "@/auth";
 import {ProfileRole} from "@/lib/definitions";
 import {z} from "zod";
 import {redirect} from "next/navigation";
-import {headers} from "next/headers";
 import {fetchUserProfiles} from "@/lib/data/users";
+import {fetchChildrenByParentDni} from "@/lib/data/children";
+import {tryRedirectToCallback} from "../login_redirects";
 
 type CallbackError = {
     type: "CallbackRouteError",
@@ -17,8 +18,7 @@ type CallbackError = {
 export async function login(_data: LoginData) {
     try{
         const callback = await signIn("credentials", {dni: _data.dni, password: _data.password, redirect: false})
-        const params = new URLSearchParams({callbackUrl: callback})
-        redirect("/selectrole?"+params.toString())
+        await tryRedirectToCallback(callback);
     }catch (e){
         const error = e as CallbackError;
         if (error.type == "CallbackRouteError"){
@@ -39,18 +39,27 @@ export async function selectRole(_role: ProfileRole, callbackUrl?: string): Prom
         if(role.success) {
             const userProfiles = await fetchUserProfiles(dni)
             const userProfile = userProfiles.find(profile => profile.role === role.data)
+
             if (userProfile) {
-                await unstable_update({user: {role: role.data as ProfileRole}, roleChangeKey: process.env.ROLE_CHANGE_KEY})
+                let selectedStudentData = {};
+                if(role.data == "Parent"){
+                    const children = await fetchChildrenByParentDni(userProfile.id);
+                    if(children.length === 1){
+                        selectedStudentData = {
+                            selectedChildId: children[0].id,
+                            selectedStudentChangeKey: process.env.SELECT_CHILD_KEY
+                        }
+                    }
+                }
+
+                await unstable_update({user: {role: role.data as ProfileRole}, roleChangeKey: process.env.ROLE_CHANGE_KEY, ...selectedStudentData})
             }
             else {
                 console.error("Invalid role", role)
                 redirect("/login")
             }
 
-            if(callbackUrl && new URL(callbackUrl).host === headers().get("host"))
-                redirect(callbackUrl);
-            else
-                redirect("/")
+            await tryRedirectToCallback(callbackUrl);
         }
     }
     redirect("/login")

@@ -1,9 +1,8 @@
 "use server";
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import { AssignmentType } from "@/types/assignment";
+import prisma from "@/lib/prisma";
 
 export async function fetchAssignments(page: number): Promise<AssignmentType[]> {
-  const prisma = await getCurrentProfilePrismaClient();
   const NUMBER_OF_PRODUCTS = 10;
   const skip = Math.max(0, (page - 1) * NUMBER_OF_PRODUCTS);
   try {
@@ -31,7 +30,6 @@ export async function fetchAssignments(page: number): Promise<AssignmentType[]> 
 }
 
 export async function getAssignmentById(assignmentId: number) {
-  const prisma = await getCurrentProfilePrismaClient();
   try {
     return await prisma.assignment.findUnique({
       where: {
@@ -45,7 +43,6 @@ export async function getAssignmentById(assignmentId: number) {
 }
 
 export async function updateAssignment(assignmentId: number, data: any) {
-  const prisma = await getCurrentProfilePrismaClient();
   try {
     await prisma.assignment.update({
       where: {
@@ -54,6 +51,7 @@ export async function updateAssignment(assignmentId: number, data: any) {
       data: {
         title: data.title,
         description: data.description,
+        subjectId: data.subjectId,
       },
     });
   } catch (error) {

@@ -1,10 +1,9 @@
 "use server"
 import {ChangePasswordData, ChangePasswordModel} from "@/lib/models/change-password";
-import getPrismaClient, {getRawPrismaClient} from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import prisma from "@/lib/prisma";
+import {hashPassword} from "@/lib/data/passwords";
 
-const rawPrisma = getRawPrismaClient()
-const prisma = getPrismaClient({id: 1, role:"Superuser"})
 
 type ChangePasswordResponse = {
     success: boolean,
@@ -19,9 +18,12 @@ export async function changePassword(dni: number, _data: ChangePasswordData): Pr
                 success: false,
                 message: "Datos inválidos"
             }
-        const user = await rawPrisma.user.findUnique({
+        const user = await prisma.user.findUnique({
             where: {
                 dni: dni
+            },
+            omit: {
+                passwordHash: false
             }
         })
         if (!user)
@@ -29,7 +31,7 @@ export async function changePassword(dni: number, _data: ChangePasswordData): Pr
                 success: false,
                 message: "Usuario no encontrado"
             }
-        const passwordCorrect = await bcrypt.compare(data.data.password, user.password)
+        const passwordCorrect = await bcrypt.compare(data.data.password, user.passwordHash)
         if(!passwordCorrect)
             return {
                 success: false,
@@ -40,7 +42,7 @@ export async function changePassword(dni: number, _data: ChangePasswordData): Pr
                 dni: dni
             },
             data: {
-                password: data.data.newPassword
+                passwordHash: await hashPassword(data.data.newPassword)
             }
         })
         return {

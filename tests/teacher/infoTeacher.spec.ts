@@ -21,7 +21,7 @@ test.describe('Testing info teacher', () => {
         await firstButton.click();
         const result = await searchTeacherByDni(page, dniDefaultTeacher);
         expect(result).toBeTruthy();
-        const viewButton = page.locator('button:has-text("Ver")');
+        const viewButton = page.getByTestId("view-teacher-button");
         await viewButton.click();
         const resultDni = page.locator('div:has(label:text("DNI")) p.text-lg');
         await expect(resultDni.first()).toHaveText(dniDefaultTeacher);
@@ -32,7 +32,7 @@ test.describe('Testing info teacher', () => {
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Docentes' }).first().click();
         const { name: expectedName, dni: expectedDNI } = await getFirstPersonDetails(page);
-        await page.locator('.rounded-xl button:has-text("Ver")').first().click();
+        await page.getByTestId("view-teacher-button").first().click();
         const { fullName: resultFullName, dni: resultDni } = await getPersonDetails(page);
         await expect(resultFullName).toBe(expectedName);
         await expect(resultDni).toBe(expectedDNI);

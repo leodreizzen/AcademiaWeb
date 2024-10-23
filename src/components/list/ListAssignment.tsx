@@ -4,14 +4,16 @@ import {useEffect, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Card, CardContent} from "@/components/ui/card";
-import {Search, Edit, Eye, Plus} from "lucide-react";
+import {Search, Edit, Eye, Plus, Trash2} from "lucide-react";
 import PaginationControls from "@/components/list/PaginationControls";
-import {AssignmentType} from "@/types/assignment";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {deleteAssignment} from "@/app/server-actions/deleteAssignment";
-import {getGradesAndSubjects} from "@/app/server-actions/fetchGradeSubject";
-import {Select, SelectContent, SelectItem, SelectTrigger} from "../ui/select";
-import {SelectValue} from "@radix-ui/react-select";
+import { AssignmentType } from "@/types/assignment";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { deleteAssignment } from "@/app/server-actions/deleteAssignment";
+import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
+import { SelectValue } from "@radix-ui/react-select";
+import { NoResultCard } from "./NoResultCard";
+import {Tooltip} from "@nextui-org/tooltip";
 
 type TPListPageProps = {
     data: AssignmentType[];
@@ -20,127 +22,127 @@ type TPListPageProps = {
 };
 
 interface Subject {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 interface Grade {
-    name: string;
-    subjects: Subject[];
+  name: string;
+  subjects: Subject[];
 }
 
-export default function TPListPage({
-                                       data = [],
-                                       count,
-                                       totalAssignments,
-                                   }: TPListPageProps) {
-    const [title, setTitle] = useState("");
-    const [grades, setGrades] = useState<Grade[]>([]);
-    const [selectedGradeName, setSelectedGradeName] = useState<string | null>(
-        null
+export default function TPListPage({ data = [], count }: TPListPageProps) {
+  const [title, setTitle] = useState("");
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [selectedGradeName, setSelectedGradeName] = useState<string | null>(
+    null
+  );
+  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(
+    null
+  );
+
+  const { replace, push } = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setTitle(searchParams.get("title") || "");
+    setSelectedGradeName(searchParams.get("grade") || null);
+    setSelectedSubjectId(
+      searchParams.get("subject") ? Number(searchParams.get("subject")) : null
     );
-    const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(
-        null
+
+    async function fetchGradesAndSubjects() {
+      try {
+        const data = await getGradesAndSubjects();
+        const processedGrades = data.grades.map((grade: any) => ({
+          name: grade.name || "Unnamed Grade",
+          subjects: (grade.subjects || []).map((subject: any) => ({
+            id: Number(subject.id),
+            name: subject.name || "Unnamed Subject",
+          })),
+        }));
+        setGrades(processedGrades);
+      } catch (error) {
+        console.error("Error fetching grades and subjects:", error);
+      }
+    }
+
+    fetchGradesAndSubjects();
+  }, [searchParams]);
+
+  const handleGradeChange = (e: string) => {
+    let gradeName = e;
+    if (gradeName === "empty") {
+      gradeName = "";
+    }
+    setSelectedGradeName(gradeName || null);
+    setSelectedSubjectId(null);
+  };
+
+  const handleSubjectChange = (e: string) => {
+    let subjectId = e;
+    if (subjectId === "empty") {
+      subjectId = "";
+    }
+    setSelectedSubjectId(subjectId ? Number(subjectId) : null);
+  };
+
+  const handleSearch = () => {
+    const params = new URLSearchParams({
+      title: title,
+      subject: selectedSubjectId?.toString() || "",
+      grade: selectedGradeName || "",
+      page: "1",
+    });
+
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const handleTitleEdit = (value: string) => {
+    setTitle(value);
+    setSelectedSubjectId(null);
+  };
+
+  const handleEdit = (id: number) => {
+    push(`/assignment/${id}/edit`);
+  };
+
+  const handleView = (id: number) => {
+    const assignment = data.find((assignment) => assignment.id === id);
+    if (assignment && assignment.fileUrl) {
+      push("/assignment/" + id);
+    } else {
+      console.error("URL not found for assignment with id", id);
+    }
+  };
+
+  const handleCreate = () => {
+    push("/assignment/add");
+  };
+
+  const handleDelete = async (id: number) => {
+    const confirmation = window.confirm(
+      "¿Estás seguro de que deseas eliminar este trabajo práctico?"
     );
-
-    const {replace, push} = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-
-    useEffect(() => {
-        setTitle(searchParams.get("title") || "");
-        setSelectedGradeName(searchParams.get("grade") || null);
-        setSelectedSubjectId(
-            searchParams.get("subject") ? Number(searchParams.get("subject")) : null
-        );
-
-        async function fetchGradesAndSubjects() {
-            try {
-                const data = await getGradesAndSubjects();
-                const processedGrades = data.grades.map((grade: any) => ({
-                    name: grade.name || "Unnamed Grade",
-                    subjects: (grade.subjects || []).map((subject: any) => ({
-                        id: Number(subject.id) || Math.floor(Math.random() * 1000000),
-                        name: subject.name || "Unnamed Subject",
-                    })),
-                }));
-                setGrades(processedGrades);
-            } catch (error) {
-                console.error("Error fetching grades and subjects:", error);
-            }
+    if (confirmation) {
+      try {
+        const response = await deleteAssignment(id);
+        if (!response.success) {
+          alert("Ocurrió un error al eliminar el trabajo práctico.");
+          return;
         }
-
-        fetchGradesAndSubjects();
-    }, [searchParams]);
-
-    const handleGradeChange = (e: string) => {
-        let gradeName = e;
-        if (gradeName === "empty") {
-            gradeName = "";
-        }
-        setSelectedGradeName(gradeName || null);
-        setSelectedSubjectId(null);
-    };
-
-    const handleSubjectChange = (e: string) => {
-        let subjectId = e;
-        if (subjectId === "empty") {
-            subjectId = "";
-        }
-        setSelectedSubjectId(subjectId ? Number(subjectId) : null);
-    };
-
-    const handleSearch = () => {
-        const params = new URLSearchParams({
-            title: title,
-            subject: selectedSubjectId?.toString() || "",
-            grade: selectedGradeName || "",
-            page: "1",
-        });
-
-        replace(`${pathname}?${params.toString()}`);
-    };
-
-    const handleTitleEdit = (value: string) => {
-        setTitle(value);
-        setSelectedSubjectId(null);
-    };
-
-    const handleEdit = (id: number) => {
-        push(`/assignment/${id}/edit`);
-    };
-
-    const handleView = (id: number) => {
-        const assignment = data.find((assignment) => assignment.id === id);
-        if (assignment && assignment.fileUrl) {
-            window.open(assignment.fileUrl, "_blank");
-        } else {
-            console.error("URL not found for assignment with id", id);
-        }
-    };
-
-    const handleCreate = () => {
-        push("/assignment/add");
-    };
-
-    const handleDelete = async (id: number) => {
-        const confirmation = window.confirm(
-            "¿Estás seguro de que deseas eliminar este trabajo práctico?"
-        );
-        if (confirmation) {
-            try {
-                await deleteAssignment(id);
-                alert("Trabajo práctico eliminado con éxito");
-                replace(pathname);
-            } catch (error) {
-                console.error("Error al eliminar el trabajo práctico:", error);
-                alert("Ocurrió un error al eliminar el trabajo práctico.");
-            }
-        }
-    };
+        alert("Trabajo práctico eliminado con éxito");
+        replace(pathname);
+      } catch (error) {
+        console.error("Error al eliminar el trabajo práctico:", error);
+        alert("Ocurrió un error al eliminar el trabajo práctico.");
+      }
+    }
+  };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 sm:p-6">
+        <div className="min-h-full bg-gray-900 flex items-center justify-center p-4 sm:p-6">
             <div className="w-full max-w-2xl bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl sm:text-3xl font-bold text-white">
@@ -151,7 +153,9 @@ export default function TPListPage({
                         variant="secondary"
                         className="bg-green-600 hover:bg-green-500 text-white"
                     >
-                        <Plus className="mr-2 h-4 w-4"/> Nuevo TP
+                        <Tooltip content="Nuevo TP" classNames={{content: "text-white"}}>
+                            <Plus className="h-4 w-4"/>
+                        </Tooltip>
                     </Button>
                 </div>
 
@@ -174,13 +178,19 @@ export default function TPListPage({
                                 <SelectValue placeholder="Curso"/>
                             </SelectTrigger>
                             <SelectContent className="bg-gray-700">
-                                <SelectItem value={"empty"} key={"empty"}
-                                            className="bg-gray-700 text-gray-100 focus:border-gray-500">
+                                <SelectItem
+                                    value={"empty"}
+                                    key={"empty"}
+                                    className="bg-gray-700 text-gray-100 focus:border-gray-500"
+                                >
                                     Curso
                                 </SelectItem>
                                 {grades.map((grade) => (
-                                    <SelectItem key={grade.name} value={grade.name}
-                                                className="bg-gray-700 text-gray-100 focus:border-gray-500">
+                                    <SelectItem
+                                        key={grade.name}
+                                        value={grade.name}
+                                        className="bg-gray-700 text-gray-100 focus:border-gray-500"
+                                    >
                                         {grade.name}
                                     </SelectItem>
                                 ))}
@@ -197,8 +207,11 @@ export default function TPListPage({
                                 <SelectValue placeholder="Materia"/>
                             </SelectTrigger>
                             <SelectContent className="bg-gray-700">
-                                <SelectItem value={"empty"} key={"empty"}
-                                            className="bg-gray-700 text-gray-100 focus:border-gray-500">
+                                <SelectItem
+                                    value={"empty"}
+                                    key={"empty"}
+                                    className="bg-gray-700 text-gray-100 focus:border-gray-500"
+                                >
                                     Materia
                                 </SelectItem>
                                 {selectedGradeName &&
@@ -215,13 +228,15 @@ export default function TPListPage({
                                     ))}
                             </SelectContent>
                         </Select>
-                        <Button
-                            onClick={handleSearch}
-                            variant="secondary"
-                            className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto"
-                        >
-                            <Search className="h-5 w-5"/>
-                        </Button>
+                        <Tooltip content="Buscar" classNames={{content: "text-white"}}>
+                            <Button
+                                onClick={handleSearch}
+                                variant="secondary"
+                                className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto"
+                            >
+                                <Search className="h-5 w-5"/>
+                            </Button>
+                        </Tooltip>
                     </div>
                 </div>
 
@@ -240,48 +255,49 @@ export default function TPListPage({
                                         </p>
                                     </div>
                                     <div className="flex space-x-3 w-full sm:w-auto">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleEdit(assignment.id)}
-                                            className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
-                                        >
-                                            <Edit className="mr-2 h-4 w-4"/> Editar
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleView(assignment.id)}
-                                            className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
-                                        >
-                                            <Eye className="mr-2 h-4 w-4"/> Ver
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleDelete(assignment.id)}
-                                            className="bg-red-600 text-white hover:bg-red-500 border-red-500 flex-grow sm:flex-grow-0"
-                                        >
-                                            Eliminar
-                                        </Button>
+                                        <Tooltip content="Editar" classNames={{content: "text-white"}}>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleEdit(assignment.id)}
+                                                className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                                            >
+                                                <Edit className="h-4 w-4"/>
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip content="Ver" classNames={{content: "text-white"}}>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleView(assignment.id)}
+                                                className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                                            >
+                                                <Eye className="h-4 w-4"/>
+                                            </Button>
+                                        </Tooltip>
+                                        <Tooltip content="Borrar" classNames={{content: "text-white"}}>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleDelete(assignment.id)}
+                                                className="bg-red-600 text-white hover:bg-red-500 border-red-500 flex-grow sm:flex-grow-0"
+                                            >
+                                                <Trash2 className="h-4 w-4"/>
+                                            </Button>
+                                        </Tooltip>
                                     </div>
                                 </CardContent>
                             </Card>
                         ))
                     ) : (
-                        <p className="text-center text-white text-lg">
-                            No hay trabajos prácticos subidos aún.
-                        </p>
+                        <NoResultCard user={"trabajos prácticos"}/>
                     )}
                 </div>
 
-                <div className="mt-6">
-                    <PaginationControls cantPages={count}/>
-                </div>
-                <p className="text-center text-white text-sm mt-2">
-                    Total de trabajos prácticos: {totalAssignments}
-                </p>
-            </div>
+        <div className="mt-6">
+          <PaginationControls cantPages={count} />
         </div>
-    );
+      </div>
+    </div>
+  );
 }

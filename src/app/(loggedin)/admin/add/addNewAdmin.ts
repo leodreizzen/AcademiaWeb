@@ -2,10 +2,10 @@
 
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import prisma from "@/lib/prisma";
+import {hashPassword} from "@/lib/data/passwords";
 
 export async function addAdmin(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number): Promise<ActionResult>  {
-    const prisma = await getCurrentProfilePrismaClient();
     let result: ActionResult;
     try {
         result = await prisma.$transaction(async (prisma) => {
@@ -20,23 +20,27 @@ export async function addAdmin(phoneNumber: string, address: string, email: stri
             const admin = await prisma.administrator.create({
                 data: {
                     phoneNumber: phoneNumber,
-                    email: email,
                     address: address,
-                    user: {
+                    profile: {
                         create: {
-                            firstName: name,
-                            lastName: surname,
-                            dni: dni,
-                            password: dni.toString()
+                            user: {
+                                create: {
+                                    firstName: name,
+                                    lastName: surname,
+                                    dni: dni,
+                                    passwordHash: await hashPassword(dni.toString())
+                                }
+                            },
+                            role: "Administrator",
+                            email: email
                         }
                     }
+
                 }
             });
-
             console.log(`Admin created with ID: ${admin.id}`);
             revalidatePath("/admin");
             return {success: true}
-
         } );
     } catch (error) {
         console.error("Error adding admin:", error);

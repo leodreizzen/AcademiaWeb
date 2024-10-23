@@ -1,23 +1,19 @@
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {expandProfile} from "@/lib/data/mappings";
+import prisma from "@/lib/prisma";
 
 export default async function getTeacherInfo(id: number) {
-    const prisma = await getCurrentProfilePrismaClient()
-    return prisma.teacher.findFirst({
+    const teacherInfo = await prisma.teacher.findFirst({
         where: {
             id: id
         },
-        select: {
-            dni: true,
-            phoneNumber: true,
-            address: true,
-            email: true,
-            subjects: true,
-            user: {
-                select: {
-                    firstName: true,
-                    lastName: true
+        include: {
+            profile: {
+                include: {
+                    user: true
                 }
-            }
+            },
+            subjects: true
         }
     });
+    return teacherInfo ? expandProfile(teacherInfo) : null;
 }

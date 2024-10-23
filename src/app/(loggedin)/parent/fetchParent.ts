@@ -1,19 +1,24 @@
 'use server';
 
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {ParentWithUser} from "@/lib/definitions/parent";
+import prisma from "@/lib/prisma";
+import {mapParentWithUser} from "@/lib/data/mappings";
 
-export async function fetchParents(page: number) {
-    const prisma = await getCurrentProfilePrismaClient()
+export async function fetchParents(page: number): Promise<ParentWithUser[]> {
     const NUMBER_OF_PRODUCTS = 10;
     try {
-
-        return await prisma.parent.findMany({
+        const parents =  await prisma.parent.findMany({
             skip: (page - 1) * NUMBER_OF_PRODUCTS,
             take: NUMBER_OF_PRODUCTS,
             include: {
-                user: true
+                profile: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         });
+        return parents.map(mapParentWithUser)
     } catch (error) {
         console.error("Error fetching parents:", error);
         return [];
@@ -21,7 +26,6 @@ export async function fetchParents(page: number) {
 }
 
 export async function countParents() {
-    const prisma = await getCurrentProfilePrismaClient()
     try {
         return await prisma.parent.count();
     } catch (error) {

@@ -1,36 +1,29 @@
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {ParentWithUserAndChildren} from "@/lib/definitions/parent";
+import prisma from "@/lib/prisma";
+import {mapParentWithUserAndChildren} from "@/lib/data/mappings";
 
-export async function fetchParentById(id: string) {
-    const prisma = await getCurrentProfilePrismaClient()
-    return prisma.parent.findUnique({
+export async function fetchParentById(id: string): Promise<ParentWithUserAndChildren | null> {
+    const parent = await prisma.parent.findUnique({
         where: {
             id: parseInt(id)
         },
-        select: {
-            id: true,
-            dni: true,
-            phoneNumber: true,
-            email: true,
-            address: true,
+        include: {
+            profile: {
+                include: {
+                    user: true
+                }
+            },
             children: {
-                select: {
-                    id: true,
-                    dni: true,
-                    grade: true,
-                    user: {
-                        select: {
-                            firstName: true,
-                            lastName: true
+                include: {
+                    profile: {
+                        include: {
+                            user: true
                         }
                     }
                 }
-            },
-            user: {
-                select: {
-                    firstName: true,
-                    lastName: true
-                }
             }
         }
+
     })
+    return parent ? mapParentWithUserAndChildren(parent): null;
 }

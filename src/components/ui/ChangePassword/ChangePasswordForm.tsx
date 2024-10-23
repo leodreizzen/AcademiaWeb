@@ -8,11 +8,11 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {ChangePasswordData, ChangePasswordModel} from "@/lib/models/change-password";
 import {changePassword} from "@/lib/actions/change-password";
 import {FieldForm} from "@/components/ui/FieldForm";
-import {ProfileWithRoleAndUser} from "@/lib/definitions";
 import {useRouter} from "next/navigation";
+import {PrismaProfileWithUser} from "@/lib/data/mappings";
 
 interface changePasswordFormProps {
-    user: ProfileWithRoleAndUser;
+    user: PrismaProfileWithUser;
 }
 
 export default function ChangePasswordForm({user}: changePasswordFormProps) {

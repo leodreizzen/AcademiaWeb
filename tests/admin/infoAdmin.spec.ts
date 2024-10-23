@@ -20,7 +20,7 @@ test.describe('Testing info admin', () => {
         await firstButton.click();
         const result = await searchAdminByDni(page, dniDefaultAdmin);
         expect(result).toBeTruthy();
-        const viewButton = page.locator('button:has-text("Ver")');
+        const viewButton = await page.getByTestId("view-admin-button");
         await viewButton.click();
         const resultDni = page.locator('div:has-text("DNI")').locator('p.text-lg');
         await expect(resultDni.first()).toHaveText(dniDefaultAdmin);
@@ -38,7 +38,7 @@ test.describe('Testing info admin', () => {
 
         const expectedName = (await page.locator(nameSelector).first().textContent()) || 'Nombre no encontrado';
         const expectedDNI = (await page.locator(dniSelector).first().textContent())?.replace('DNI: ', '').trim() || 'DNI no encontrado';
-        const viewButton = page.locator('button:has-text(" Ver")').first().click();
+        const viewButton = page.getByTestId("view-admin-button").first().click();
         await page.waitForTimeout(1000);
       
         const resultNombre = await page.locator('div:has-text("Nombre") + p.text-lg').first().textContent();

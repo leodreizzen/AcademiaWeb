@@ -1,10 +1,8 @@
 "use server"
 
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
+import prisma from "@/lib/prisma";
 
 export async function getGradesAndSubjects() {
-  const prisma = await getCurrentProfilePrismaClient();
-
   try {
     const grades = await prisma.grade.findMany({
       include: {

@@ -20,7 +20,7 @@ test.describe('Testing info alumno', () => {
         const result = await searchStudentByDni(page, dniDefaultStudent);
         expect(result).toBeTruthy();
 
-        const viewButton = page.locator('button:has-text("Ver")');
+        const viewButton = page.getByTestId("view-button");
         await viewButton.click();
     
         await page.waitForSelector('div:has-text("DNI")');
@@ -35,7 +35,7 @@ test.describe('Testing info alumno', () => {
         await page.waitForTimeout(1000);
 
         const { name: expectedName, dni: expectedDNI } = await getFirstPersonDetails(page);
-        await page.locator('.rounded-xl button:has-text("Ver")').first().click();
+        await page.getByTestId("view-button").first().click();
         const { fullName: resultFullName, dni: resultDni } = await getPersonDetails(page);
         await expect(resultFullName).toBe(expectedName);
         await expect(resultDni).toBe(expectedDNI);

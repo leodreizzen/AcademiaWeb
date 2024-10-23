@@ -1,40 +1,55 @@
 'use server';
 
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import prisma from "@/lib/prisma";
 
+import {TeacherWithUser} from "@/lib/definitions/teacher";
+import {mapTeacherWithUser, PrismaTeacherWithUser} from "@/lib/data/mappings";
 
-export async function fetchTeachersFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number) {
-    const prisma = await getCurrentProfilePrismaClient()
+export async function fetchTeachersFiltered({dni, lastName}: {dni?: number, lastName?: string}, page: number): Promise<TeacherWithUser[]> {
     try {
-        if (dni) {
+        let teachers: PrismaTeacherWithUser[];
+        if (dni !== undefined) {
             const NUMBER_OF_TEACHERS = 10;
-            return await prisma.teacher.findMany({
+            teachers = await prisma.teacher.findMany({
                 skip: (page - 1) * NUMBER_OF_TEACHERS,
                 take: NUMBER_OF_TEACHERS,
                 where: {
-                    user: {
-                        dni: Number(dni)
+                    profile:{
+                        user: {
+                            dni: Number(dni)
+                        }
                     }
                 },
                 include : {
-                    user: true
+                    profile: {
+                        include: {
+                            user: true
+                        }
+                    }
                 }
             })
         } else {
-            return await prisma.teacher.findMany({
+            teachers = await prisma.teacher.findMany({
                 where: {
-                    user: {
-                        lastName: {
-                            contains: lastName,
-                            mode: 'insensitive',
+                    profile:{
+                        user: {
+                            lastName: {
+                                contains: lastName,
+                                mode: 'insensitive',
+                            },
                         },
-                    },
+                    }
                 },
                 include : {
-                    user: true
+                    profile: {
+                        include: {
+                            user: true
+                        }
+                    }
                 }
             })
         }
+        return teachers.map(mapTeacherWithUser)
     }
     catch(error)
     {

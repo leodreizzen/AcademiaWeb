@@ -53,7 +53,7 @@ test.describe('Testing buscar estudiante', () => {
             const result = await searchStudentByLastName(page, lastName);
             expect(result).toBeFalsy();
 
-            expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
+            await expect (page.locator(`text=${'No se encontraron alumnos con esos filtros'}`)).toBeVisible();
         });
 
         test('Busqueda de DNI no existente', async ({ page })=> {
@@ -68,7 +68,7 @@ test.describe('Testing buscar estudiante', () => {
             const result = await searchStudentByDni(page, dni);
             expect(result).toBeFalsy();
 
-            expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
+            await expect (page.locator(`text=${'No se encontraron alumnos con esos filtros'}`)).toBeVisible();
         });
 
         test('Busqueda de DNI con todo 0', async ({ page })=> {
@@ -83,7 +83,7 @@ test.describe('Testing buscar estudiante', () => {
             const result = await searchStudentByDni(page, dni);
             expect(result).toBeFalsy();
 
-            expect (await page.isVisible(`text=${'No se encontraron alumnos con esos filtros'}`,{timeout:1000})).toBeTruthy();
+            await expect (page.locator(`text=${'No se encontraron alumnos con esos filtros'}`)).toBeVisible();
         });
 
         

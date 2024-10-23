@@ -1,37 +1,31 @@
 "use server"
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {StudentWithUserAndParent} from "@/lib/definitions/parent";
+import prisma from "@/lib/prisma";
+import {mapStudentWithUserAndParent} from "@/lib/data/mappings";
 
 
 export default async function fetchStudentById(id: number): Promise<StudentWithUserAndParent | null> {
-    const prisma = await getCurrentProfilePrismaClient()
-    return prisma.student.findUnique({
+    const student = await prisma.student.findUnique({
         where: {
             id: id
         },
-        select: {
-            id: true,
-            dni: true,
-            phoneNumber: true,
-            address: true,
-            email: true,
-            grade: true,
-            gradeName: true,
-            role: true,
-            birthdate: true,
-            parents: {
-                select: {
-                    id: true,
-                    dni: true,
-                    user: true,
-                    birthdate: true,
-                    email: true,
-                    role: true,
-                    phoneNumber: true,
-                    address: true
+        include: {
+            profile: {
+                include: {
+                    user: true
                 }
             },
-            user: true
+            parents: {
+                include: {
+                    profile: {
+                        include: {
+                            user: true
+                        }
+                    }
+                }
+            }
         }
-    });
+    })
+
+    return student ? mapStudentWithUserAndParent(student) : null;
 }

@@ -1,8 +1,9 @@
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import {ParentWithUser} from "@/lib/definitions/parent";
+import prisma from "@/lib/prisma";
+import {mapParentWithUser} from "@/lib/data/mappings";
 
-export async function fetchParentsByStudentId(studentId: number) {
-    const prisma = await getCurrentProfilePrismaClient();
-    return prisma.parent.findMany({
+export async function fetchParentsByStudentId(studentId: number): Promise<ParentWithUser[]> {
+    const parents =  await prisma.parent.findMany({
         where: {
             children: {
                 some: {
@@ -11,7 +12,12 @@ export async function fetchParentsByStudentId(studentId: number) {
             }
         },
         include: {
-            user: true,
+            profile: {
+                include: {
+                    user: true
+                }
+            }
         }
     });
+    return parents.map(mapParentWithUser)
 }

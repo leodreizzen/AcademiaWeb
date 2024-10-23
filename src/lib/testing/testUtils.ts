@@ -18,11 +18,9 @@ if(!globalWithTesting.testingEmails){
 
 export function saveTestingEmail(email: TestingEmail){
     globalWithTesting.testingEmails.push(email)
-    console.log(globalWithTesting.testingEmails)
 }
 
 export function getTestingEmails(){
-    console.log(globalWithTesting.testingEmails)
     return [...globalWithTesting.testingEmails]
 }
 

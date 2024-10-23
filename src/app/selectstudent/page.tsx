@@ -27,7 +27,7 @@ export default async function SelectStudentPage({searchParams: {callbackUrl}}: {
                                 className="w-full h-16 justify-start px-4 text-white hover:bg-gray-700 hover:text-white transition-colors duration-200"
                             >
                                 <GraduationCap className={`mr-4 h-6 w-6 ${studentColor}`}/>
-                                <span className="text-lg">{student.firstName} {student.lastName}</span>
+                                <span className="text-lg">{student.user.firstName} {student.user.lastName}</span>
                             </Button>
                         </form>
                     ))}

@@ -17,7 +17,6 @@ export default async function AdminListPage({ searchParams }: { searchParams: Ad
     const lastName = searchParams.lastName;
 
     const administratorsFromDB = await getAdmins({page, dni, lastName});
-    console.log(administratorsFromDB);
     const administratorCount = await getTotalAdmins()
 
     return (

@@ -107,23 +107,21 @@ export async function newBirthDate(page: Page) {
     await page.getByTestId('ArrowDropDownIcon').click();
     await page.getByRole('radio', { exact: true, name: year }).click();
 
-    while (await page.isVisible(`text=${month}`) === false) {
+    while (await page.isVisible(`.MuiPickersCalendarHeader-label:has-text("${month}")`) === false) {
         await page.getByTestId('ArrowLeftIcon').click();
         await page.waitForTimeout(500);
     }
 
-    if (await page.isVisible(`text=${year}`) === false) {
+    if (await page.isVisible(`.MuiPickersCalendarHeader-label:has-text("${year}")`) === false) {
         await page.getByTestId('ArrowRightIcon').click();
         await page.waitForTimeout(500);
-        while (await page.isVisible(`text=${month}`) === false) {
+        while (await page.isVisible(`.MuiPickersCalendarHeader-label:has-text("${month}")`) === false) {
             await page.getByTestId('ArrowRightIcon').click();
             await page.waitForTimeout(500);
         }
     }
 
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
-
-    console.log(`${day}/${monthToNumber(month)}/${year}`);
 
     return `${day}/${monthToNumber(month)}/${year}`;
 
@@ -148,14 +146,12 @@ export async function newBirthDateCustom(page: Page, year: string, month: string
     await page.getByTestId('ArrowDropDownIcon').click();
     await page.getByRole('radio', { exact: true, name: year }).click();
 
-    while (await page.isVisible(`text=${month}`) === false) {
+    while (await page.isVisible(`.MuiPickersCalendarHeader-label:has-text("${month}")`) === false) {
         await page.getByTestId('ArrowLeftIcon').click();
         await page.waitForTimeout(500);
     }
 
     await page.getByRole('gridcell', { exact: true, name: day }).first().click();
-
-    console.log(`${day}/${monthToNumber(month)}/${year}`);
 
     return `${day}/${monthToNumber(month)}/${year}`;
 

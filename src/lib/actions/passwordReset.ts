@@ -14,6 +14,7 @@ import {User} from "@prisma/client";
 import {EmailSendResult} from "@/lib/email/emailSender";
 import sendResetPasswordEmail from "@/lib/email/resetPassword";
 import {getFullUrl} from "@/lib/serverUtils";
+import {UserWithoutPassword} from "@/lib/definitions";
 
 if(!process.env.VERCEL_URL){
     throw new Error("VERCEL_URL not set")
@@ -45,7 +46,7 @@ export async function requestPasswordReset(_data: ForgotPasswordData): Promise<O
     return {success: true}
 }
 
-async function sendResetEmail(user: User, email: string): Promise<EmailSendResult>{
+async function sendResetEmail(user: UserWithoutPassword, email: string): Promise<EmailSendResult>{
     const token = await createPasswordResetToken(user);
     const searchParams = new URLSearchParams({token});
     searchParams.set('token', token);

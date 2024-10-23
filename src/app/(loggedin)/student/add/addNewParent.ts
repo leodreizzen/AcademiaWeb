@@ -1,12 +1,11 @@
 'use server';
 import {revalidatePath} from "next/cache";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
+import prisma from "@/lib/prisma";
+import {hashPassword} from "@/lib/data/passwords";
 
 
-
-export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number, birthDay : Date): Promise<ActionResult> {
-    const prisma = await getCurrentProfilePrismaClient();
+export async function addParent(phoneNumber: string, address: string, email: string, name: string, surname: string, dni: number, birthDay: Date): Promise<ActionResult> {
     try {
         return await prisma.$transaction(async (prisma) => {
             const existingProfile = await prisma.profile.findFirst({
@@ -14,11 +13,11 @@ export async function addParent(phoneNumber: string, address: string, email: str
                     dni: dni
                 }
             })
-            if(existingProfile){
-                if(existingProfile.role == "Student" || existingProfile.role == "Parent"){
+            if (existingProfile) {
+                if (existingProfile.role == "Student" || existingProfile.role == "Parent") {
                     return {
                         success: false,
-                        error: `Ya existe un ${existingProfile.role == "Student"? "alumno" : "responsable"} con ese dni`
+                        error: `Ya existe un ${existingProfile.role == "Student" ? "alumno" : "responsable"} con ese dni`
                     }
                 }
             }
@@ -28,20 +27,20 @@ export async function addParent(phoneNumber: string, address: string, email: str
                     OR: [
                         {
                             AND: [
-                                { email: email },
-                                { role: "Administrator" }
+                                {email: email},
+                                {role: "Administrator"}
                             ]
                         },
                         {
                             AND: [
-                                { email: email },
-                                { dni: { not: dni } }
+                                {email: email},
+                                {dni: {not: dni}}
                             ]
                         }
                     ]
                 }
             });
-            if(existingUserEmail){
+            if (existingUserEmail) {
                 const messageError = existingUserEmail.role == "Administrator" ? "El email de un administrador no se puede compartir entre perfiles" : "El email ya está en uso por otro usuario"
                 return {
                     success: false,
@@ -50,30 +49,36 @@ export async function addParent(phoneNumber: string, address: string, email: str
             }
 
 
-
             const parent = await prisma.parent.create({
                 data: {
-                    birthdate : birthDay,
+                    birthdate: birthDay,
                     phoneNumber: phoneNumber,
-                    email: email,
                     address: address,
-                    user: {
-                        connectOrCreate: {
-                            where: {
-                                dni: dni
+                    profile: {
+                        create: {
+                            user: {
+                                connectOrCreate: {
+                                    where: {
+                                        dni: dni
+                                    },
+                                    create: {
+                                        firstName: name,
+                                        lastName: surname,
+                                        dni: dni,
+                                        passwordHash: await hashPassword(dni.toString())
+                                    }
+                                }
                             },
-                            create: {
-                                firstName: name,
-                                lastName: surname,
-                                dni: dni,
-                                password: dni.toString()
-                            }
+                            role: "Parent",
+                            email: email
                         }
                     }
-                },
+                }
             });
             revalidatePath("/student/add")
             revalidatePath("/parent")
+            revalidatePath("/api/internal/parent");
+            revalidatePath("/api/internal/parent/count");
             console.log(`Parent created with ID: ${parent.id}`);
             return {
                 success: true
@@ -81,7 +86,7 @@ export async function addParent(phoneNumber: string, address: string, email: str
         });
     } catch (error) {
         console.error("Error adding parent:", error);
-        return{
+        return {
             success: false,
             error: "Error al agregar el responsable"
         };

@@ -1,16 +1,30 @@
 "use server"
 
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import {revalidatePath} from "next/cache";
+import prisma from "@/lib/prisma";
 export async function removeStudent(id: number) {
-    const prisma = await getCurrentProfilePrismaClient();
     try {
         await prisma.$transaction(async (tx) => {
             const student = await tx.student.findUnique({
                 where: {
                     id
+                },
+                include: {
+                    profile: {
+                        include: {
+                            user: {
+                                include: {
+                                    profiles: true
+                                }
+                            }
+                        }
+                    }
                 }
             });
+            if (!student) {
+                console.error("Error fetching student");
+                return false;
+            }
 
             const submissions = await tx.assignmentSubmission.findMany({
                 where: {
@@ -54,22 +68,22 @@ export async function removeStudent(id: number) {
                     id
                 }
             });
-            const user = await tx.user.findUnique({
+
+            await tx.profile.delete({
                 where: {
-                    dni: student!.dni
-                },
-                include: {
-                    profiles: true
+                    id: student.id
                 }
             });
-            if (user?.profiles.length === 0) {
+
+            if (student.profile.user.profiles.length === 1) {
                 await tx.user.delete({
                     where: {
-                        dni: student!.dni
+                        dni: student.profile.dni
                     }
                 });
             }
             revalidatePath("/student");
+            revalidatePath("/api/internal/reprimand/student");
         })
         return true;
     } catch (error) {

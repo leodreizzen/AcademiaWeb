@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "secrets": "tsx secrets.tsx",
-    "postinstall": "npm run secrets && zenstack generate && npx prisma generate",
+    "postinstall": "npm run secrets && npx prisma generate",
     "email": "email dev",
     "savetestdata": "tsx encryptTestData.ts",
     "testdev": "cross-env TESTING=true npm run dev -- -p 4000",
@@ -26,7 +26,7 @@
     "@nextui-org/system": "^2.2.6",
     "@nextui-org/theme": "^2.2.11",
     "@nextui-org/tooltip": "^2.0.41",
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.21.1",
     "@prisma/extension-accelerate": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
@@ -39,12 +39,12 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@react-email/components": "^0.0.25",
     "@types/bcrypt": "^5.0.2",
-    "@zenstackhq/runtime": "2.6.1",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.5.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.11.9",
@@ -68,6 +68,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.19.1",
+    "utility-types": "^3.11.0",
+    "uuid": "^10.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -84,10 +86,9 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.9",
     "postcss": "^8",
-    "prisma": "^5.19.1",
+    "prisma": "^5.21.1",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5",
-    "zenstack": "2.6.1"
+    "typescript": "^5"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -16,7 +16,9 @@ model User {
   profiles     Profile[]
   passwordHash String
 
-  resetToken PasswordResetToken?
+  messagesRecipient Message[]           @relation("recipient")
+  messagesSender    Message[]           @relation("sender")
+  resetToken        PasswordResetToken?
 }
 
 enum Role {
@@ -55,16 +57,19 @@ model Student {
   examMarks             ExamMark[]
   assignmentSubmissions AssignmentSubmission[]
   reportCards           ReportCard[]
+  attendanceItems       AttendanceItem[]
 }
 
 model Parent {
   // extends Profile
-  profile     Profile   @relation(fields: [id], references: [id], onDelete: Cascade)
-  id          Int       @id
-  birthdate   DateTime  @default(now())
-  phoneNumber String
-  address     String
-  children    Student[]
+  profile         Profile          @relation(fields: [id], references: [id], onDelete: Cascade)
+  id              Int              @id
+  birthdate       DateTime         @default(now())
+  phoneNumber     String
+  address         String
+  children        Student[]
+  signatures      Signature[]
+  signatureTokens SignatureToken[]
 }
 
 model Teacher {
@@ -114,6 +119,7 @@ model Grade {
   subjects         Subject[]
   students         Student[]
   gradeReportCards GradeReportCards[]
+  attendanceData   AttendanceData[]
 }
 
 model Subject {
@@ -145,6 +151,9 @@ model Reprimand {
   teacher   Teacher   @relation(fields: [teacherId], references: [id])
   teacherId Int
   dateTime  DateTime  @default(now())
+
+  signature      Signature?
+  signatureToken SignatureToken?
 }
 
 model Exam {
@@ -156,13 +165,17 @@ model Exam {
 }
 
 model ExamMark {
+  id        Int     @id @default(autoincrement())
   Exam      Exam    @relation(fields: [examId], references: [id])
   examId    Int
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
   mark      Int
 
-  @@id([examId, studentId])
+  signature      Signature?
+  signatureToken SignatureToken?
+
+  @@unique([examId, studentId])
 }
 
 model ReportCard {
@@ -212,4 +225,63 @@ model FinalReportCardMark {
   mark         String
 
   @@id([reportCardId, subjectId])
+}
+
+model AttendanceData {
+  id        Int              @id @default(autoincrement())
+  date      DateTime
+  grade     Grade            @relation(fields: [gradeName], references: [name])
+  gradeName String
+  items     AttendanceItem[]
+
+  @@unique([gradeName, date])
+}
+
+model AttendanceItem {
+  AttendanceData   AttendanceData   @relation(fields: [attendanceDataid], references: [id])
+  attendanceDataid Int
+  student          Student          @relation(fields: [studentId], references: [id])
+  studentId        Int
+  status           AttendanceStatus
+
+  @@id([attendanceDataid, studentId])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+}
+
+model Signature {
+  id          Int        @id @default(autoincrement())
+  parent      Parent     @relation(fields: [parentId], references: [id])
+  parentId    Int
+  reprimand   Reprimand? @relation(fields: [reprimandId], references: [id])
+  reprimandId Int?       @unique
+  examMark    ExamMark?  @relation(fields: [examId], references: [id])
+  examId      Int?       @unique
+}
+
+model SignatureToken {
+  id          Int        @id @default(autoincrement())
+  token       Int
+  issued_at   DateTime   @default(now())
+  reprimand   Reprimand? @relation(fields: [reprimandId], references: [id])
+  reprimandId Int?       @unique
+  examMark    ExamMark?  @relation(fields: [examId], references: [id])
+  examId      Int?       @unique
+  parent      Parent     @relation(fields: [parentId], references: [id])
+  parentId    Int
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  sender    User     @relation("sender", fields: [senderDni], references: [dni])
+  recipient User     @relation("recipient", fields: [recipientDni], references: [dni])
+  date      DateTime @default(now())
+  message   String
+  isRead    Boolean  @default(false)
+
+  senderDni    Int
+  recipientDni Int
 }

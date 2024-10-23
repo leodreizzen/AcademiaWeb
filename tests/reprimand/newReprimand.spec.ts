@@ -21,7 +21,7 @@ test.describe('Testing new reprimand', () => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         await page.waitForURL('/');
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
         await page.getByTestId("add-reprimand").click();
         
         await page.getByText('Seleccionar el año').click();
@@ -49,7 +49,7 @@ test.describe('Testing new reprimand', () => {
 
         await page.waitForTimeout(1000);
 
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
 
         /**
          * 
@@ -90,7 +90,7 @@ test.describe('Testing new reprimand', () => {
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
         await page.waitForURL('/');
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
         await page.getByTestId("add-reprimand").click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
@@ -149,7 +149,7 @@ test.describe('Testing new reprimand', () => {
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
         await page.waitForURL('/');
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
         await page.getByTestId("add-reprimand").click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
@@ -163,8 +163,8 @@ test.describe('Testing new reprimand', () => {
         
         await page.locator('button[type="submit"]').click();
         await page.waitForTimeout(5000);
-        expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
-        expect(page.getByText('Escribe un mensaje')).toBeVisible();
+        await expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
+        await expect(page.getByText('Escribe un mensaje')).toBeVisible();
 
 
 
@@ -175,7 +175,7 @@ test.describe('Testing new reprimand', () => {
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
         await page.waitForURL('/');
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
         await page.getByTestId("add-reprimand").click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
@@ -195,7 +195,7 @@ test.describe('Testing new reprimand', () => {
         
         await page.locator('button[type="submit"]').click();
         await page.waitForTimeout(5000);
-        expect(page.getByText('Escribe un mensaje')).toBeVisible();
+        await expect(page.getByText('Escribe un mensaje')).toBeVisible();
 
 
 
@@ -205,7 +205,7 @@ test.describe('Testing new reprimand', () => {
         await login(page, teacher.dni.toString(), teacher.password);
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         await page.waitForURL('/');
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
         await page.getByTestId("add-reprimand").click();
         
         
@@ -214,8 +214,8 @@ test.describe('Testing new reprimand', () => {
         
         await page.locator('button[type="submit"]').click();
         await page.waitForTimeout(5000);
-        expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
-        expect(page.getByText('Selecciona un curso')).toBeVisible();
+        await expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
+        await expect(page.getByText('Selecciona un curso')).toBeVisible();
 
 
 
@@ -226,7 +226,7 @@ test.describe('Testing new reprimand', () => {
         (await request.newContext()).post('/api/internal/test-emails').then((response: APIResponse) => response.json());
         
         await page.waitForURL('/');
-        page.getByRole('navigation').getByRole('link', { name: 'Amonestaciones' }).click();
+        await page.getByRole('navigation').getByRole('link', {name: 'Amonestaciones'}).click();
         await page.getByTestId("add-reprimand").click();
         await page.getByText('Seleccionar el año').click();
         await page.getByText('5º año').click();
@@ -246,7 +246,7 @@ test.describe('Testing new reprimand', () => {
         await page.locator('button[type="submit"]').click();
         await page.waitForTimeout(5000);
 
-        expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
+        await expect(page.getByText('Selecciona al menos un estudiante')).toBeVisible();
 
 
 

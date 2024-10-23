@@ -67,6 +67,7 @@ export async function updateStudent(id: number, phoneNumber: string, address: st
 
             console.log(`Student updated with ID: ${updatedStudent.id}`);
             revalidatePath("/student");
+            revalidatePath("/api/internal/reprimand/student");
             revalidatePath(`/student/${updatedStudent.id}/edit`);
             revalidatePath(`/student/${updatedStudent.id}`);
             return {success: true}

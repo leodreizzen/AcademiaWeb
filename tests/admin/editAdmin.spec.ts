@@ -43,7 +43,7 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await searchAdminByDni(page, DNI);
 
-    await page.waitForTimeout(1000);
+    await page.locator(".test-admin-item", {hasText: DNI}).first().waitFor();
 
     await page.getByTestId("edit-admin-button").click();
 
@@ -62,15 +62,15 @@ test('Modificar admin nombre (CASO POSITIVO) ', async ({ page }) => {
 
     await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
 
-    await page.waitForTimeout(1000);
+    await page.locator(".test-admin-item").first().waitFor();
 
     await searchAdminByDni(page, DNI);
 
-    await page.waitForTimeout(1000);
+    await page.locator(".test-admin-item", {hasText: DNI}).first().waitFor();
 
     await page.getByTestId("view-admin-button").click();
 
-    await page.waitForTimeout(1000);
+    await page.getByText("Información del Administrador").waitFor();
 
     await expect(page.getByText(newName)).toBeVisible();
 
@@ -121,7 +121,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await searchAdminByDni(page, DNI);
 
-    await page.waitForTimeout(1000);
+    await page.locator(".test-admin-item", {hasText: DNI}).first().waitFor();
 
     await page.getByTestId("edit-admin-button").click();
 
@@ -139,7 +139,7 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     page.once('dialog',async dialog => {
         expect(dialog.message()).toBe('El admin se ha guardado correctamente');
-        dialog.dismiss();
+        await dialog.dismiss();
     }
     );
 
@@ -147,15 +147,15 @@ test('Modificar admin todos los campos menos DNI (CASO POSITIVO) ', async ({ pag
 
     await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
 
-    await page.waitForTimeout(1000);
+    await expect(page.locator(".test-admin-item").first()).toBeVisible();
 
     await searchAdminByDni(page, DNI);
 
-    await page.waitForTimeout(1000);
+    await page.locator(".test-admin-item", {hasText: DNI}).first().waitFor();
 
     await page.getByTestId("view-admin-button").click();
 
-    await page.waitForTimeout(1000);
+    await page.getByText("Información del Administrador").waitFor();
 
     await expect(page.getByText(newName)).toBeVisible();
     await expect(page.getByText(newLastName)).toBeVisible();
@@ -197,7 +197,7 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
 
     page.once('dialog',async dialog => {
         expect(dialog.message()).toBe('El admin se ha registrado correctamente');
-        dialog.dismiss();
+        await dialog.dismiss();
     }
     );
 
@@ -210,7 +210,7 @@ test('Modificar admin todos los campos menos DNI, todos los campos en nulo (CASO
 
     await searchAdminByDni(page, DNI);
 
-    await page.waitForTimeout(1000);
+    await page.locator(".test-admin-item", {hasText: DNI}).first().waitFor();
 
     await page.getByTestId("edit-admin-button").click();
 

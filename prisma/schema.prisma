@@ -260,6 +260,7 @@ model Signature {
   reprimandId Int?       @unique
   examMark    ExamMark?  @relation(fields: [examId], references: [id])
   examId      Int?       @unique
+  signedAt    DateTime   @default(now())
 }
 
 model SignatureToken {

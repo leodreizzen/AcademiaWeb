@@ -1,6 +1,7 @@
 import { Page, expect } from "@playwright/test";
 import { faker } from "@faker-js/faker/locale/es";
 import { searchParentByDni } from "./parentHelper";
+import {randomPhoneNumber} from "../../tests/testutils";
 
 
 export async function randomDNI() {
@@ -161,7 +162,7 @@ export async function createStudentWithOneParent(page: Page) {
     const dni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));

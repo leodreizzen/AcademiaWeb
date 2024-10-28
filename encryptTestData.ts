@@ -20,6 +20,9 @@ let encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
 const encryptedWithIv = Buffer.concat([iv, encrypted]);
 
 const outputFilePath = path.join(cwd, "prisma", "data.json.encrypted");
+const hash = crypto.createHash("sha256").update(encryptedWithIv).digest("hex");
+const dataLockFilePath = path.join(cwd, "prisma", "data.json.lock");
+fs.writeFileSync(dataLockFilePath, hash);
 fs.writeFileSync(outputFilePath, encryptedWithIv);
 console.log(`Encrypted file saved in  en: ${outputFilePath}`);
 

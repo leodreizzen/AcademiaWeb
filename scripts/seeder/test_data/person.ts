@@ -110,7 +110,7 @@ const AdminSchema = z.object({
 })
 
 export const UserSchema = z.object({
-    profiles: z.array(z.discriminatedUnion("role", [StudentSchema, ParentSchema, TeacherSchema, AdminSchema])),
+    profiles: z.array(z.discriminatedUnion("role", [StudentSchema, ParentSchema, TeacherSchema, AdminSchema])).nonempty("User must have at least one profile"),
     firstName: FirstNameSchema,
     lastName: LastNameSchema,
     dni: DniSchema,

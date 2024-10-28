@@ -16,11 +16,11 @@ test.describe('Testing info padre', () => {
     test('info correspondiente a un padre desde rol administrador', async ({page}) => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
         const result = await searchParentByDni(page, dniDefaultParent);
         expect(result).toBeTruthy();
 
-        const viewButton = page.locator('button:has-text("Ver")');
+        const viewButton = page.getByTestId('view-parent');
         await viewButton.click();
 
         await page.waitForSelector('div:has-text("DNI")');
@@ -32,10 +32,10 @@ test.describe('Testing info padre', () => {
 
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
-        await page.getByRole('link', {name: 'Padres'}).first().click();
+        await page.getByRole('link', {name: 'Responsables'}).first().click();
         await page.waitForTimeout(1000);
         const {name: expectedName, dni: expectedDNI} = await getFirstPersonDetails(page);
-        await page.locator('.rounded-xl button:has-text("Ver")').first().click();
+        await page.getByTestId('view-parent').first().click();
         const {fullName: resultFullName, dni: resultDni} = await getPersonDetails(page);
         await expect(resultFullName).toBe(expectedName);
         await expect(resultDni).toBe(expectedDNI);

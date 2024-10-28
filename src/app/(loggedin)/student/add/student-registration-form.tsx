@@ -7,8 +7,7 @@ import {Label} from "@/components/ui/label"
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {ParentWithUser} from "@/app/(loggedin)/student/add/types";
-import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentBack";
+import {addStudentToDataBase, addParentToDataBase} from "@/app/(loggedin)/student/add/studentParentBack";
 import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
 import PaginationControlsWithEndpoint from "@/app/(loggedin)/student/add/paginationControlsWithEndpoint";
 import {useRouter} from "next/navigation";
@@ -19,18 +18,21 @@ import {FieldForm} from "@/components/ui/FieldForm";
 import {ParentAPIResponse} from "@/app/api/internal/parent/types";
 import {Search} from "lucide-react";
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {FieldCalendar} from "@/components/ui/FieldCalendar";
+import {ParentWithUser} from "@/lib/definitions/parent";
+import {ParentCountAPIResponse} from "@/app/api/internal/parent/count/types";
 
 
 type PrincipalProps = {
     data: ParentWithUser[];
-    count: number;
+    numberPages: number;
 };
 
 
 
-export function StudentRegistrationFormComponent({data, count}: PrincipalProps) {
-    const {register, handleSubmit: handleSubmit1, formState, getValues} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
-    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
+export function StudentRegistrationFormComponent({data, numberPages}: PrincipalProps) {
+    const {register, handleSubmit: handleSubmit1, formState, getValues, control: control1} = useForm<StudentDataWithoutGrade>({resolver: zodResolver(StudentSchemaWithoutGrade), mode: "all", reValidateMode: "onChange"});
+    const {register: register2, handleSubmit: handleSubmit2, formState: formState2, getValues: getValues2 , resetField, control} = useForm<ParentData>({resolver: zodResolver(ParentSchema), mode: "all", reValidateMode: "onChange"});
     const [grade, setGrade] = useState("");
     const isValid = formState.isValid && grade !== "";
     const isValid2 = formState2.isValid
@@ -42,7 +44,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [parents, setParents] = useState<ParentWithUser[]>(data)
     const [selectedParents, setSelectedParents] = useState<ParentWithUser[]>([])
-
+    const [count, setCount] = useState(numberPages)
     const [grades, setGrades] = useState<string[]>([]);
     const router = useRouter();
 
@@ -66,6 +68,19 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
 
     }
 
+    async function pageCountParents(dni: string, lastName: string){
+        const searchParams = new URLSearchParams();
+        searchParams.set("dni", dni);
+        searchParams.set("lastName", lastName);
+        const res = await fetch(`/api/internal/parent/count?${searchParams.toString()}`);
+        if (res.ok) {
+            const respuestaJson = await res.json() as ParentCountAPIResponse;
+            return respuestaJson.pages;
+        } else {
+            throw new Error("Fallo al buscar los responsables");
+        }
+    }
+
 
     const continueNextStep = () => {
         if (step === 1 && isValid) {
@@ -78,7 +93,6 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
         e.preventDefault();
         if (step === 2 && selectedParents.length > 0) {
             const resul = await addStudentToDataBase({...getValues(), gradeName: grade}, selectedParents)
-            console.log("BUENAS", resul)
             if (!resul.success) {
                 alert(resul.error)
             } else {
@@ -97,8 +111,8 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
             setIsDialogOpen(false)
             resetField("dni")
             resetField("phoneNumber")
-            resetField("name")
-            resetField("surname")
+            resetField("firstName")
+            resetField("lastName")
             resetField("address")
             resetField("email")
 
@@ -112,8 +126,14 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
     }
 
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
         setPage(1);
+        try {
+            const pages = await pageCountParents(searchDNI, searchLastName);
+            setCount(pages);
+        } catch (error) {
+            alert((error as Error).message)
+        }
         fetchParents(1, searchDNI, searchLastName);
     }
 
@@ -165,7 +185,8 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                         <FieldForm label="Apellido" type="string" registerRes={register("lastName")} errors={formState.errors}/>
                                         <FieldForm label="Direccion" type="string" registerRes={register("address")} errors={formState.errors}/>
                                         <FieldForm label="Correo electrónico" type="string" registerRes={register("email")} errors={formState.errors}/>
-                                        <div className="space-y-2">
+                                        <FieldCalendar control={control1} label={"Fecha de nacimiento"} registerRes={register("birthDate")} errors={formState.errors}/>
+                                        <div className="space-y-2 flex flex-col">
                                             <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
                                             <Select
                                                 name="anio"
@@ -176,11 +197,11 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                                     className="bg-grey-700 text-gray-100 border-gray-600 focus:border-gray-500">
                                                     <SelectValue placeholder="Elija un año"/>
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="bg-gray-700">
                                                     {grades.map((grade) => (
                                                         <SelectItem
                                                             key={grade}
-                                                            className="bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500"
+                                                            className="bg-gray-700 text-gray-100 focus:border-gray-500"
                                                             value={grade}
                                                         >
                                                             {grade}
@@ -243,7 +264,7 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
 
                                     {
                                         noParents &&
-                                        <NoResultCard/>
+                                        <NoResultCard user="responsables"/>
                                     }
 
                                     {parents.map((parent) => (
@@ -283,10 +304,11 @@ export function StudentRegistrationFormComponent({data, count}: PrincipalProps) 
                                             <div className="space-y-4">
                                                 <FieldForm label="DNI" type="number" registerRes={register2("dni")} errors={formState2.errors}/>
                                                 <FieldForm label="Telefono" type="number" registerRes={register2("phoneNumber")} errors={formState2.errors}/>
-                                                <FieldForm label="Nombre" type="string" registerRes={register2("name")} errors={formState2.errors}/>
-                                                <FieldForm label="Apellido" type="string" registerRes={register2("surname")} errors={formState2.errors}/>
+                                                <FieldForm label="Nombre" type="string" registerRes={register2("firstName")} errors={formState2.errors}/>
+                                                <FieldForm label="Apellido" type="string" registerRes={register2("lastName")} errors={formState2.errors}/>
                                                 <FieldForm label="Direccion" type="string" registerRes={register2("address")} errors={formState2.errors}/>
                                                 <FieldForm label="Correo electrónico" type="string" registerRes={register2("email")} errors={formState2.errors}/>
+                                                <FieldCalendar control={control} label={"Fecha de nacimiento"} registerRes={register2("birthDate")} errors={formState2.errors}/>
                                                 <Button
                                                     onClick={handleSubmit2(handleCreateNewParent)}
                                                     disabled={!isValid2}

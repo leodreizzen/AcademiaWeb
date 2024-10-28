@@ -15,7 +15,7 @@ test.describe('Change password', () => {
             await page.getByRole('navigation').getByRole('link', {name: 'Administradores'}).click();
             await page.waitForURL('/admin', {waitUntil: 'domcontentloaded'});
 
-            await page.getByRole('button', {name: 'Nuevo administrador'}).click();
+            await page.getByTestId("add-admin-button").click();
 
             const DNI = await randomDNI();
             await page.fill('input[id="input-dni"]', DNI);

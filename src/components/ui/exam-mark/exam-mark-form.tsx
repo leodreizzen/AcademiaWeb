@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import {registerMarks, StudentWithUser, SubjectWithGrade} from "@/lib/actions/exam-mark";
+import {registerMarks, SubjectWithGrade} from "@/lib/actions/exam-mark";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ExamMarkAdd, ExamMarkAddModel} from "@/lib/models/examMarkAdd";
+import {StudentWithUser} from "@/lib/definitions/student";
 
 type ExamMarkFormProps = {
     subject: SubjectWithGrade,

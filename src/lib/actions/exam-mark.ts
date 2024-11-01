@@ -1,15 +1,12 @@
 "use server"
 
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {Grade, Prisma, Student, Subject, User} from "@prisma/client";
 import {StudentMark} from "@/lib/models/examMarkAdd";
+import prisma from "@/lib/prisma";
+import {mapStudentWithUser} from "@/lib/data/mappings";
 
 export interface SubjectWithGrade extends Subject {
     grade: Grade
-}
-
-export interface StudentWithUser extends Student {
-    user: User
 }
 
 type RegisterMarksResponse = {
@@ -22,7 +19,6 @@ export interface GradeWithSubjects extends Grade {
 }
 
 export async function fetchSubjectWithGrade(id: number) {
-    const prisma = await getCurrentProfilePrismaClient();
     const subject = await prisma.subject.findUnique({
         where: {
             id: id
@@ -35,8 +31,7 @@ export async function fetchSubjectWithGrade(id: number) {
 }
 
 export async function fetchStudentsForSubject(subjectId: number) {
-    const prisma = await getCurrentProfilePrismaClient();
-    return prisma.student.findMany({
+    const students = await prisma.student.findMany({
         where: {
             grade: {
                 subjects: {
@@ -47,13 +42,18 @@ export async function fetchStudentsForSubject(subjectId: number) {
             }
         },
         include: {
-            user: true
+            profile: {
+                include: {
+                    user: true
+                }
+            }
         }
     });
+
+    return students.map(mapStudentWithUser)
 }
 
 export async function registerMarks(subjectId: number, examDate: Date, students: StudentMark[]) {
-    const prisma = await getCurrentProfilePrismaClient();
     try{
         const res: RegisterMarksResponse = await prisma.$transaction(async tx => {
             const subject = await tx.subject.findUnique({
@@ -111,7 +111,6 @@ export async function registerMarks(subjectId: number, examDate: Date, students:
 }
 
 export async function fetchGradesWithSubjectsForTeacher(teacherId: number): Promise<GradeWithSubjects[]> {
-    const prisma = await getCurrentProfilePrismaClient();
     return prisma.grade.findMany({
         where: {
             subjects: {

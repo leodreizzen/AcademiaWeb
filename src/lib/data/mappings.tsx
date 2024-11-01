@@ -1,4 +1,4 @@
-import {Administrator, Parent, Profile, Reprimand, Student, Teacher} from "@prisma/client";
+import {Administrator, Exam, ExamMark, Parent, Profile, Reprimand, Student, Subject, Teacher} from "@prisma/client";
 import {StudentWithUser} from "@/lib/definitions/student";
 import {Optional} from "utility-types";
 import {ParentWithUser, ParentWithUserAndChildren, StudentWithUserAndParent} from "@/lib/definitions/parent";
@@ -7,6 +7,12 @@ import {UserWithoutPassword} from "@/lib/definitions";
 import {TeacherWithUser} from "@/lib/definitions/teacher";
 import {AdministratorWithUser} from "@/lib/definitions/administrator";
 import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
+import {
+    ExamMarkWithStudent,
+    ExamWithMarksAndStudents,
+    SubjectWithExamsAndStudents,
+    TeacherWithMarksPerSubject
+} from "@/app/api/internal/exam-marks/teacher/types";
 
 export interface PrismaProfileWithUser extends Profile{
     user : UserWithoutPassword
@@ -31,6 +37,22 @@ export type PrismaStudentWithUserAndParents = PrismaStudentWithUser & {
 }
 export type PrismaReprimandWithTeacher = Reprimand & {
     teacher: PrismaTeacherWithUser
+}
+
+export type PrismaExamMarkWithStudent = ExamMark & {
+    student: PrismaStudentWithUser
+}
+
+export type PrismaExamWithMarksAndStudents = Exam & {
+    marks: PrismaExamMarkWithStudent[]
+}
+
+export type PrismaSubjectWithExamsAndStudents = Subject & {
+    exams: PrismaExamWithMarksAndStudents[]
+}
+
+export type PrismaTeacherWithMarksPerSubject = Teacher & {
+    subjects: PrismaSubjectWithExamsAndStudents[]
 }
 
 export function expandProfile<T extends  {profile: PrismaProfileWithUser}>(specificProfile: T): Omit<T, 'profile'> & PrismaProfileWithUser{
@@ -78,5 +100,33 @@ export function mapReprimandWithTeacher(reprimand: PrismaReprimandWithTeacher): 
     return {
         ...reprimand,
         teacher: mapTeacherWithUser(reprimand.teacher)
+    }
+}
+
+export function mapExamMarkWithStudent(examMark: PrismaExamMarkWithStudent): ExamMarkWithStudent{
+    return {
+        ...examMark,
+        student: mapStudentWithUser(examMark.student)
+    }
+}
+
+export function mapExamWithMarksAndStudents(exam: PrismaExamWithMarksAndStudents): ExamWithMarksAndStudents{
+    return {
+        ...exam,
+        marks: exam.marks.map(mapExamMarkWithStudent)
+    }
+}
+
+export function mapSubjectWithExamsAndStudents(subject: PrismaSubjectWithExamsAndStudents): SubjectWithExamsAndStudents{
+    return {
+        ...subject,
+        exams: subject.exams.map(mapExamWithMarksAndStudents)
+    }
+}
+
+export function mapTeacherWithExamMarks(teacher: PrismaTeacherWithMarksPerSubject): TeacherWithMarksPerSubject{
+    return {
+        ...teacher,
+        subjects: teacher.subjects.map(mapSubjectWithExamsAndStudents)
     }
 }

@@ -1,5 +1,5 @@
 import {Exam, ExamMark, Subject, Teacher} from "@prisma/client";
-import {StudentWithUser} from "@/app/(loggedin)/student/data";
+import {StudentWithUser} from "@/lib/definitions/student";
 
 export interface TeacherWithMarksPerSubject extends Teacher {
     subjects: SubjectWithExamsAndStudents[]

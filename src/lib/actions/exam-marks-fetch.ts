@@ -1,8 +1,7 @@
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
-
+import prisma from "@/lib/prisma";
+import {mapTeacherWithExamMarks} from "@/lib/data/mappings";
 
 export async function fetchExamMarksForStudent(studentId: number) {
-    const prisma = await getCurrentProfilePrismaClient();
     const student = await prisma.student.findUnique({
         where: {id: studentId},
         include: {
@@ -41,7 +40,6 @@ export async function fetchExamMarksForStudent(studentId: number) {
 }
 
 export async function fetchExamMarksForTeacher(teacherId: number) {
-    const prisma = await getCurrentProfilePrismaClient();
     const teacher = await prisma.teacher.findUnique({
         where: {id: teacherId},
         include: {
@@ -53,7 +51,11 @@ export async function fetchExamMarksForTeacher(teacherId: number) {
                                 include: {
                                     student: {
                                         include: {
-                                            user: true
+                                            profile: {
+                                                include: {
+                                                    user: true
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -70,5 +72,5 @@ export async function fetchExamMarksForTeacher(teacherId: number) {
         throw new Error("Teacher not found");
     }
 
-    return teacher
+    return mapTeacherWithExamMarks(teacher);
 }

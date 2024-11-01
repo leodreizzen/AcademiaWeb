@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { Faker, es } from '@faker-js/faker'
-import { searchStudentByDni } from '@/helpersTest/studentHelper';
+import { newBirthDate, searchStudentByDni } from '@/helpersTest/studentHelper';
 import { getFirstPersonDetails } from '@/helpersTest/infoHelper';
 import {loginAsTestUser} from "../testutils";
 import {searchParentByDni} from '@/helpersTest/parentHelper';
+
 
 const faker = new Faker({ locale: [es] })
 
@@ -23,7 +24,7 @@ test.describe('Testing borrar alumno', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.locator('text="Nuevo Alumno"').click();
+        await page.getByTestId("create-button").click();
 
         const dniStudent = randomDNI();
 
@@ -34,21 +35,29 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
         await page.locator('input[id="input-email"]').fill(faker.internet.email());
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+        await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
-        await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+        await page.getByRole('button', { name: 'Seleccionar' }).last().click();
         await page.locator('button[type="submit"]').click();
-        await page.waitForTimeout(1000);
-        await expect(page).toHaveURL('http://localhost:3000/student');
+        await page.waitForURL('/student');
+        await expect(page).toHaveURL('/student');
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
 
-        const viewButton = page.locator('button:has-text("Borrar")');
+        const viewButton = page.getByTestId("remove-button");
+
+
+
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
+
         await viewButton.click();
         await page.waitForTimeout(10000);
 
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.waitForTimeout(1000);
         const resultAfterDelete = await searchStudentByDni(page,dniStudent);
         expect(resultAfterDelete).toBeFalsy();
     });
@@ -57,7 +66,7 @@ test.describe('Testing borrar alumno', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.locator('text="Nuevo Alumno"').click();
+        await page.getByTestId("create-button").click();
 
         const dniStudent = randomDNI();
         await page.locator('input[id="input-dni"]').fill(dniStudent);
@@ -67,16 +76,22 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
         await page.locator('input[id="input-email"]').fill(faker.internet.email());
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+        await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
-        await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+        await page.getByRole('button', { name: 'Seleccionar' }).last().click();
         await page.locator('button[type="submit"]').click();
-        await page.waitForTimeout(1000);
-        await expect(page).toHaveURL('http://localhost:3000/student');
+        await page.waitForURL('/student');
+        await expect(page).toHaveURL('/student');
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
 
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-button");
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
+
         await deleteButton.click();
         await page.waitForTimeout(10000);
 
@@ -99,7 +114,7 @@ test.describe('Testing borrar alumno', () => {
         await loginAsTestUser(page, 'administrator');
         await page.waitForURL('/');
         await page.getByRole('link', { name: 'Alumnos' }).first().click();
-        await page.locator('text="Nuevo Alumno"').click();
+        await page.getByTestId("create-button").click();
 
         const dniStudent = randomDNI();
 
@@ -110,18 +125,20 @@ test.describe('Testing borrar alumno', () => {
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
         await page.locator('input[id="input-email"]').fill(faker.internet.email());
         await page.getByText("Elija un año").click().then(() => page.getByLabel("2º año").click());
+        await newBirthDate(page);
         await page.locator('button[type="submit"]').click();
 
         const { name: nombrePadre, dni: dniPadre } = await getFirstPersonDetails(page);
         await page.getByRole('button', { name: 'Seleccionar' }).first().click();
         await page.locator('button[type="submit"]').click();
-        await page.waitForTimeout(1000);
 
-        await expect(page).toHaveURL('http://localhost:3000/student');
+        await page.waitForURL('/student');
+
+        await expect(page).toHaveURL('/student');
 
         const resultBeforeDelete = await searchStudentByDni(page, dniStudent);
         expect(resultBeforeDelete).toBeTruthy();
-        const deleteButton = page.locator('button:has-text("Borrar")');
+        const deleteButton = page.getByTestId("remove-button");
         await deleteButton.click();
         await page.waitForTimeout(10000);
 
@@ -130,7 +147,12 @@ test.describe('Testing borrar alumno', () => {
         const result = await searchParentByDni(page, dniPadre);
         expect(result).toBeTruthy();
 
-        const viewButton = page.locator('button:has-text("Ver")');
+        const viewButton = page.getByTestId("view-parent");
+        await page.once('dialog', async dialog => {
+            expect(dialog.message()).toBe('Alumno eliminado correctamente');
+            await dialog.dismiss();
+        });
+
         await viewButton.click();
         await page.waitForTimeout(10000);
 

@@ -1,3 +1,3 @@
-import {ParentWithUser} from "@/app/(loggedin)/parent/data";
+import {ParentWithUser} from "@/lib/definitions/parent";
 
 export type ParentAPIResponse = ParentWithUser[]

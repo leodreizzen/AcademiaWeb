@@ -2,8 +2,8 @@
 
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import AssignmentDetailsClient from "./AssignmentDetails";
+import prisma from "@/lib/prisma";
 
 export default async function AssignmentDetailsPage({
   params,
@@ -11,7 +11,6 @@ export default async function AssignmentDetailsPage({
   params: { id: string };
 }) {
   await assertPermission({ resource: Resource.ASSIGNMENT, operation: "READ" });
-  const prisma = await getCurrentProfilePrismaClient();
 
   const assignmentData = await prisma.assignment.findUnique({
     where: { id: Number(params.id) },

@@ -89,7 +89,6 @@ export default function AddAssignmentForm() {
       try {
         setUploading(true);
         const response = await submitAssignment(formData, file.name);
-        console.log(response);
         setUploading(false);
         if (response.success && response.validatedData) {
           const fileUrl = await uploadFile(file);

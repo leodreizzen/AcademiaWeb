@@ -1,10 +1,10 @@
 import {Button} from "@/components/ui/button";
-import {AdministatorUser} from "./types";
 import {Edit, Eye, Trash2} from "lucide-react";
 import {Tooltip} from "@nextui-org/tooltip";
+import {AdministratorWithUser} from "@/lib/definitions/administrator";
 
 interface AdminItemParams {
-    administrator: AdministatorUser;
+    administrator: AdministratorWithUser;
     onView: (id: number) => void;
     onEdit: (id: number) => void;
     onRemove: (id: number) => void;

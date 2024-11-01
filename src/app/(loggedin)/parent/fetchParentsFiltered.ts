@@ -1,49 +1,60 @@
 'use server';
 
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {PARENTS_PER_PAGE} from "@/lib/data/pagination";
-
-export async function fetchParentsFiltered({dni, lastName, exclude}: {dni?: number, lastName?: string, exclude?: number[]}, page: number) {
-    const prisma = await getCurrentProfilePrismaClient()
+import prisma from "@/lib/prisma";
+import {Prisma} from "@prisma/client";
+import {ParentWithUser} from "@/lib/definitions/parent";
+import {mapParentWithUser} from "@/lib/data/mappings";
+export async function fetchParentsFiltered({dni, lastName, exclude}: {dni?: number, lastName?: string, exclude?: number[]}, page: number): Promise<ParentWithUser[]> {
     try {
-        const filters = [];
+        const filters: Prisma.ParentWhereInput[] = [];
         if(dni !== undefined)
             filters.push({
-                user: {
-                    dni: dni
+                profile:{
+                    user: {
+                        dni: dni
+                    }
                 }
             })
 
         if(lastName !== undefined)
             filters.push({
-                user: {
-                    lastName: {
-                        contains: lastName,
-                        mode: 'insensitive',
-                    } as const
+                profile: {
+                    user: {
+                        lastName: {
+                            contains: lastName,
+                            mode: 'insensitive',
+                        } as const
+                    }
                 }
             })
         if(exclude !== undefined)
             filters.push({
-                user: {
-                    dni: {
-                        not: {
-                            in: exclude
+                profile: {
+                    user: {
+                        dni: {
+                            not: {
+                                in: exclude
+                            }
                         }
                     }
                 }
             })
-
-        return await prisma.parent.findMany({
+        const parents =  await prisma.parent.findMany({
                 skip: (page - 1) * PARENTS_PER_PAGE,
                 take: PARENTS_PER_PAGE,
                 where: {
                     AND: filters
                 },
                 include : {
-                    user: true
+                    profile: {
+                        include:{
+                            user: true
+                        }
+                    }
                 }
             })
+        return parents.map(mapParentWithUser)
     }
     catch(error)
     {
@@ -54,36 +65,41 @@ export async function fetchParentsFiltered({dni, lastName, exclude}: {dni?: numb
 
 
 export async function countParentsFiltered({dni, lastName, exclude}: {dni?: number, lastName?: string, exclude?: number[]}) {
-    const prisma = await getCurrentProfilePrismaClient()
     try {
-        const filters = [];
-        if (dni !== undefined)
+        const filters: Prisma.ParentWhereInput[] = [];
+        if(dni !== undefined)
             filters.push({
-                user: {
-                    dni: dni
-                }
-            })
-
-        if (lastName !== undefined)
-            filters.push({
-                user: {
-                    lastName: {
-                        contains: lastName,
-                        mode: 'insensitive',
-                    } as const
-                }
-            })
-        if (exclude !== undefined)
-            filters.push({
-                user: {
-                    dni: {
-                        not: {
-                            in: exclude
-                        }
+                profile:{
+                    user: {
+                        dni: dni
                     }
                 }
             })
 
+        if(lastName !== undefined)
+            filters.push({
+                profile: {
+                    user: {
+                        lastName: {
+                            contains: lastName,
+                            mode: 'insensitive',
+                        } as const
+                    }
+                }
+            })
+        if(exclude !== undefined)
+            filters.push({
+                profile: {
+                    user: {
+                        dni: {
+                            not: {
+                                in: exclude
+                            }
+                        }
+                    }
+                }
+            })
+        
         return await prisma.parent.count({
             where: {
                 AND: filters

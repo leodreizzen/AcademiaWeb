@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { AdministatorUser } from "./types";
 import { removeAdmin } from "./adminActions";
 import { ADMINS_PER_PAGE } from "@/lib/data/pagination";
 import AdminItem from "./adminItem";
@@ -11,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tooltip } from "@nextui-org/tooltip";
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {AdministratorWithUser} from "@/lib/definitions/administrator";
 
 interface AdminListProps {
-    administrators: AdministatorUser[];
+    administrators: AdministratorWithUser[];
     count: number;
 }
 

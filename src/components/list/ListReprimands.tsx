@@ -6,12 +6,12 @@ import {Input} from "@/components/ui/input"
 import {Card, CardContent} from "@/components/ui/card"
 import {Search, Eye, Plus} from "lucide-react"
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {ReprimandWithTeacherUser} from "@/app/(loggedin)/reprimand/data";
 import PaginationControls from "@/components/list/PaginationControls";
 import {Tooltip} from "@nextui-org/tooltip";
+import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
 
 type PrincipalProps = {
-    data: ReprimandWithTeacherUser[];
+    data: ReprimandWithTeacher[];
     count: number;
     defaultInitDate: string;
     defaultEndDate: string;

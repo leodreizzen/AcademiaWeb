@@ -23,7 +23,6 @@ export default async function ParentInfoPage({params}: {params: {id: string}}) {
         )
     }
 
-    console.log(JSON.stringify(parent))
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
             <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">

@@ -1,10 +1,8 @@
 "use server";
 
 import { deleteFileFromCloudinary } from "@/lib/cloudinary";
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
-
+import prisma from "@/lib/prisma";
 export async function deleteAssignment(assignmentId: number) {
-  const prisma = await getCurrentProfilePrismaClient();
   try {
     const assignmentUrl = await prisma.assignment.findUnique({
       where: { id: assignmentId },

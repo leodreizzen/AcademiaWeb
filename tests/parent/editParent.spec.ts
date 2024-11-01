@@ -18,19 +18,18 @@ test('Modificar padre con datos validos', async ({ page }) => {
     await loginAsTestUser(page, 'administrator');
     await page.waitForURL('/');
     const parentDni = await createParentWithoutChildren(page);
-    await page.waitForTimeout(1000);
 
-    await page.goto('/');
+    await page.getByTestId("home_button").click();
     await page.waitForURL('/');
     await page.getByRole('link', { name: 'Responsables' }).first().click();
 
-    await page.waitForTimeout(1000);
+    await expect(page.getByText("Listado de Responsables")).toBeVisible();
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
     await page.getByTestId('edit-parent').click();
     
 
-    await page.waitForTimeout(1000);
+    await expect(page.getByText("Editar responsable")).toBeVisible();
     const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
     const newFirstName = faker.person.firstName();
     const newLastName = faker.person.lastName();
@@ -77,18 +76,17 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
     await loginAsTestUser(page, 'administrator');
     await page.waitForURL('/');
     const parentDni = await createParentWithoutChildren(page);
-    await page.waitForTimeout(1000);
 
-    await page.goto('/');
+    await page.getByTestId("home_button").click();
     await page.waitForURL('/');
     await page.getByRole('link', { name: 'Responsables' }).first().click();
+    await expect(page.getByText("Listado de Responsables")).toBeVisible();
 
-    await page.waitForTimeout(1000);
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 
     await page.getByTestId('edit-parent').click();
 
-    await page.waitForTimeout(1000);
+    await expect(page.getByText("Editar responsable")).toBeVisible();
     const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
     const newFirstName = faker.person.firstName();
     const newLastName = faker.person.lastName();
@@ -110,9 +108,8 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
     expect (await page.locator(`text=Ingrese una dirección válida para el responsable`).isVisible()).toBe(true);
     expect (await page.locator(`text=El responsable debe ser mayor de 18 años`).isVisible()).toBe(true);
 
-    await page.goto('/parent');
-
-    await page.waitForURL('/parent');
+    await page.getByRole('link', { name: 'Responsables' }).first().click();
+    await expect(page.getByText("Listado de Responsables")).toBeVisible();
 
     expect(await searchParentByDni(page, parentDni)).toBeTruthy();
 

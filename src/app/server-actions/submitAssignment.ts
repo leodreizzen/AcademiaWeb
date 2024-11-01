@@ -1,8 +1,8 @@
 "use server";
 
 import { z } from "zod";
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
 import { assignmentSchema } from "@/lib/models/addAssignment";
+import prisma from "@/lib/prisma";
 
 export async function submitAssignment(formData: FormData, fileName: string) {
   try {
@@ -40,8 +40,6 @@ export async function submitAssignmentToDB(
   },
   fileUrl: string
 ) {
-  const prisma = await getCurrentProfilePrismaClient();
-
   await prisma.assignment.create({
     data: {
       title: validatedData.title,

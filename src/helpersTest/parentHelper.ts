@@ -39,7 +39,11 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 
 
 export async function createParentWithoutChildren(page: Page) {
-    await page.goto('/student/add');
+    await page.getByRole('link', { name: 'Alumnos' }).first().click();
+    await expect(page.getByText("Listado de Alumnos")).toBeVisible();
+
+    await page.getByTestId("create-button").click();
+    await expect(page.getByText("Registrar Alumno")).toBeVisible();
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();
@@ -65,6 +69,7 @@ export async function createParentWithoutChildren(page: Page) {
     await newBirthDateOverEighteen(page);
 
     await page.getByRole('button', { name: 'Agregar' }).click();
+    await expect((page.locator(".h2", {hasText: "Nuevo Reponsable"}))).toHaveCount(0);
 
     return parentDni;
 }
@@ -121,10 +126,6 @@ export async function createChildrenWithTwoParents(page: Page) {
     });
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-
-
-    
-
     await expect(page).toHaveURL('/student');
     return parentDni;
 }
@@ -180,7 +181,6 @@ export async function createParentWithOnlyOneChild(page: Page) {
     });
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-
     await expect(page).toHaveURL('/student');
 
     return { dni, parentDni };

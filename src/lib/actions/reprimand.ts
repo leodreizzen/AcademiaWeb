@@ -1,15 +1,14 @@
 "use server"
 import {ReprimandData, ReprimandModel} from "@/lib/models/reprimand";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {fetchCurrentUser} from "@/lib/data/users";
 import sendReprimandEmail from "@/lib/email/reprimand";
 import {fetchParentsByStudentId} from "@/lib/data/parent";
 import fetchStudentById from "@/lib/actions/student-info";
 import {Reprimand} from "@prisma/client";
+import prisma from "@/lib/prisma";
 
-
-export async function CreateReprimand(formData: ReprimandData): Promise<ActionResult> {
+export async function createReprimand(formData: ReprimandData): Promise<ActionResult> {
     const data = ReprimandModel.safeParse(formData);
     if (!data.success)
         return {success: false, error: "Datos inválidos"}
@@ -18,7 +17,6 @@ export async function CreateReprimand(formData: ReprimandData): Promise<ActionRe
         const user = await fetchCurrentUser();
         if (!user)
             return {success: false, error: "No se pudo obtener el usuario"}
-        const prisma = await getCurrentProfilePrismaClient();
         const res: {success: true, reprimand: Reprimand} | {success: false, error: string} = await prisma.$transaction(async tx => {
             const validStudents = await tx.student.count({
                 where: {

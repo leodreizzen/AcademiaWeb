@@ -1,8 +1,8 @@
 import {auth} from "@/auth";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import { Prisma } from "@prisma/client";
-import {EnhancedPrismaClient} from "@/lib/definitions";
-import {StudentWithUser} from "@/app/(loggedin)/student/data";
+import {StudentWithUser} from "@/lib/definitions/student";
+import prisma from "@/lib/prisma";
+import {mapStudentWithUser} from "@/lib/data/mappings";
 
 export async function fetchCurrentUserChildren() {
     const profile = (await auth())?.user;
@@ -14,35 +14,30 @@ export async function fetchCurrentUserChildren() {
     return fetchChildrenByParentDni(profile.dni);
 }
 
-export async function fetchChildrenByParentDni(dni: number, prisma?: EnhancedPrismaClient) {
-    if(!prisma)
-        prisma = await getCurrentProfilePrismaClient();
-    const res = await prisma.student.findMany({
+export async function fetchChildrenByParentDni(dni: number): Promise<StudentWithUser[]> {
+    const children = await prisma.student.findMany({
         where: {
             parents: {
                 some: {
-                    delegate_aux_profile: {
-                        dni: dni
+                    profile:{
+                        user:{
+                            dni: dni
+                        }
                     }
-                } as Prisma.ParentWhereInput
+                }
             }
         }, include: {
-            user: true
+            profile: {
+                include: {
+                    user: true
+                }
+            }
         }
     });
-
-    return res.map(student =>(
-        {
-            dni: student.dni,
-            id: student.id,
-            firstName: student.user.firstName,
-            lastName: student.user.lastName
-        }
-    ))
+    return children.map(mapStudentWithUser)
 }
 
 export async function fetchSelectedChild(): Promise<StudentWithUser | null> {
-    const prisma = await getCurrentProfilePrismaClient();
     const profile = (await auth())?.user;
     if (!profile || !profile.role || !profile.dni)
         throw new Error("User has no role or dni");
@@ -53,19 +48,23 @@ export async function fetchSelectedChild(): Promise<StudentWithUser | null> {
         throw new Error("User has no selected child");
     }
 
-    return prisma.student.findUnique({
+    const student = await prisma.student.findUnique({
         where: {
             id: profile.selectedChildId
         },
         include: {
-            user: true
+            profile: {
+                include: {
+                   user: true
+                }
+            }
         }
     });
+
+    return student ? mapStudentWithUser(student) : null;
 }
 
 export async function countCurrentUserChildren(){
-
-    const prisma = await getCurrentProfilePrismaClient();
     const profile = (await auth())?.user;
     if (!profile || !profile.role || !profile.dni)
         throw new Error("User has no role or dni");
@@ -76,10 +75,10 @@ export async function countCurrentUserChildren(){
         where: {
             parents: {
                 some: {
-                    delegate_aux_profile: {
+                    profile: {
                         dni: profile.dni
                     }
-                } as Prisma.ParentWhereInput
+                }
             }
         }
     });

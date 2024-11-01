@@ -20,7 +20,7 @@ test.describe('Testing delete parent', () => {
         const parentDni = await createParentWithoutChildren(page);
         await page.waitForTimeout(1000);
 
-        await page.goto('/');
+        await page.getByTestId("home_button").click();
         await page.waitForURL('/');
         await page.getByRole('link', {name: 'Responsables'}).first().click();
 
@@ -61,7 +61,7 @@ test.describe('Testing delete parent', () => {
         const parentDni = await createChildrenWithTwoParents(page);
         await page.waitForTimeout(1000);
 
-        await page.goto('/');
+        await page.getByTestId("home_button").click();
         await page.waitForURL('/');
 
         await page.getByRole('link', {name: 'Responsables'}).first().click();
@@ -102,7 +102,7 @@ test.describe('Testing delete parent', () => {
         const {dni,parentDni} = await createParentWithOnlyOneChild(page);
         await page.waitForTimeout(1000);
 
-        await page.goto('/');
+        await page.getByTestId("home_button").click();
         await page.waitForURL('/');
 
         await page.getByRole('link', {name: 'Responsables'}).first().click();

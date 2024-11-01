@@ -81,7 +81,7 @@ test.describe('Testing buscar docente', () => {
         const resultApellido = page.locator(`text=${apellido}`);
         await expect(resultApellido).not.toBeVisible();
 
-        expect (await page.isVisible(`text=${'No se encontraron docentes con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        await expect (page.locator(`text=${'No se encontraron docentes con esos filtros'}`)).toBeVisible();
     });
 
     test('Busqueda de dni no existente', async ({ page })=> {
@@ -104,7 +104,7 @@ test.describe('Testing buscar docente', () => {
     
         const resultDni = page.locator(`text=DNI: ${dni}`);
         await expect(resultDni).not.toBeVisible();
-        expect (await page.isVisible(`text=${'No se encontraron docentes con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        await expect (page.locator(`text=${'No se encontraron docentes con esos filtros'}`)).toBeVisible();
     });
     
     test('Busqueda unica por apellido apesar de escribir en dni ', async ({ page })=> {
@@ -256,7 +256,7 @@ test.describe('Testing buscar docente', () => {
     
         const resultDni = page.locator(`text=DNI: ${dni}`);
         await expect(resultDni).not.toBeVisible();
-        expect (await page.isVisible(`text=${'No se encontraron docentes con esos filtros'}`,{timeout:1000})).toBeTruthy();
+        await expect (page.locator(`text=${'No se encontraron docentes con esos filtros'}`)).toBeVisible();
     });
 
 });

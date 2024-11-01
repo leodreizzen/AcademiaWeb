@@ -32,7 +32,7 @@ export const { auth, signIn, signOut , unstable_update} = NextAuth({
             if(profiles.length === 1){
                 let selectedChildId = undefined;
                 if(profiles[0].role == "Parent"){
-                    const children = await fetchChildrenByParentDni(parsedCredentials.data.dni, getPrismaClient({id: 1, role: "Superuser"}));
+                    const children = await fetchChildrenByParentDni(parsedCredentials.data.dni);
                     if(children.length === 1){
                         selectedChildId = children[0].id
                     }

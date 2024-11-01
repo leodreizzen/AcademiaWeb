@@ -43,16 +43,16 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
                 <hr className={"bg-white h-0.5 mb-2"}/>
                 <Accordion type="single" collapsible className="w-full">
                     {teacher && teacher.subjects.map((subject) => (
-                        <AccordionItem key={subject.id} value={`item-${subject.id}`}>
-                            <AccordionTrigger className="hover:no-underline">
+                        <AccordionItem key={subject.id} value={`item-${subject.id}`} className="test-subject-item">
+                            <AccordionTrigger className="hover:no-underline !pb-2 exam-item">
                 <span className="text-left">
                   {subject.name} - {subject.gradeName}
                 </span>
                             </AccordionTrigger>
                             <AccordionContent>
-                                <div className="space-y-2">
+                                {subject.exams.length > 0 ? <div className="space-y-2">
                                     {subject.exams.map((exam) => (
-                                        <div key={exam.id} className="flex justify-between items-center">
+                                        <div key={exam.id} className="flex justify-between items-center test-exam-item">
                                             <span>Exámen del día {(new Date(exam.date)).toLocaleDateString()}:</span>
                                             <Dialog open={openDialog === `${subject.id}-${exam.id}`} onOpenChange={(isOpen) => setOpenDialog(isOpen ? `${subject.id}-${exam.id}` : null)}>
                                                 <DialogTrigger asChild>
@@ -83,12 +83,13 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
                                             </Dialog>
                                         </div>
                                     ))}
-                                </div>
+                                </div> : <div className="text-red-400">No hay exámenes registrados</div>
+                                }
                             </AccordionContent>
                         </AccordionItem>
                     ))}
                     {teacher && teacher.subjects.length === 0 && (
-                        <div className="text-center text-gray-200 bg-gray-700 p-7 rounded-lg">No hay notas de materias registradas</div>
+                        <div className="text-center text-gray-200 bg-gray-700 p-7 rounded-lg">No hay materias registradas</div>
                     )}
                 </Accordion>
             </div>

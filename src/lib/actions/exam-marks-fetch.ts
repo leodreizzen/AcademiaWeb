@@ -44,6 +44,11 @@ export async function fetchExamMarksForTeacher(teacherId: number) {
         where: {id: teacherId},
         include: {
             subjects: {
+                orderBy: [{
+                    gradeName: "asc"
+                }, {
+                    name: "asc"
+                }],
                 include: {
                     exams: {
                         include: {

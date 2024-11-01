@@ -16,9 +16,11 @@ test.describe('Ver notas de alumnos', () => {
         await firstButton.click();
         await page.waitForURL('/'); 
         await page.getByRole('navigation').getByRole('link', { name: 'Notas de exámenes' }).first().click();
-        await page.waitForTimeout(100);
-        const subjectWithYear = await page.locator(`span:has-text("${subjectAndYear}")`);
-        await expect(subjectWithYear).toBeVisible();
+        const subjectWithYear = page.locator(".test-subject-item",{hasText:subjectAndYear});
+        await subjectWithYear.locator("button").click();
+        const openAccordion = subjectWithYear.locator('div[data-state="open"]');
+        await expect(openAccordion).toBeVisible();
+        await expect(openAccordion.locator(".test-exam-item").first()).toBeVisible();
     });
  
     test('Coincidencia de fecha de examen con la fecha del listado de alumnos', async ({ page }) => {
@@ -30,13 +32,16 @@ test.describe('Ver notas de alumnos', () => {
         await firstButton.click();
   
         await page.getByRole('navigation').getByRole('link', { name: 'Notas de exámenes' }).first().click();
-        await page.waitForTimeout(1000);
-        const firstAccordionButton = page.locator('h3[data-orientation="vertical"] > button').first();
-        await expect(firstAccordionButton).toBeVisible();
-        await firstAccordionButton.click();
-        const firstOpenAccordion = page.locator('div[data-orientation="vertical"] > div[data-state="open"]').first();
-        await expect(firstOpenAccordion).toBeVisible();
-        const firstElement = firstOpenAccordion.locator('div.space-y-2 > div').first();
+
+        await page.getByRole('navigation').getByRole('link', { name: 'Notas de exámenes' }).first().click();
+        const subject = page.locator('.test-subject-item', {hasText: "Matemáticas - 1º año"});
+        await expect(subject).toBeVisible();
+        const accordionButton = subject.locator('button');
+        await expect(accordionButton).toBeVisible();
+        await accordionButton.click();
+        const openAccordion = subject.locator('div[data-state="open"]');
+        await expect(openAccordion).toBeVisible();
+        const firstElement = openAccordion.locator('.test-exam-item').first();
         await expect(firstElement).toBeVisible(); 
         const examDateBefore = await firstElement.locator('span').innerText(); 
         const verNotasButton = firstElement.locator('button:has-text("Ver Notas")');
@@ -59,7 +64,15 @@ test.describe('Ver notas de alumnos', () => {
         await firstButton.click();
         await page.getByRole('navigation').getByRole('link', { name: 'Notas de exámenes' }).first().click();
         await page.waitForTimeout(1000);
-        await expect(page.locator('text=No hay notas de materias registradas')).toBeVisible();
+        const subject = page.locator('.test-subject-item', {hasText: "Historia - 3º año"});
+        await expect(subject).toBeVisible();
+        const accordionButton = subject.locator('button');
+        await expect(accordionButton).toBeVisible();
+        await accordionButton.click();
+        const openAccordion = subject.locator('div[data-state="open"]');
+        await expect(openAccordion).toBeVisible();
+        const firstElement = openAccordion.locator('div').first();
+        await expect(firstElement).toContainText("No hay exámenes registrados");
     });
 
 });

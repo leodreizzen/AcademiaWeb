@@ -1,4 +1,15 @@
-import {Administrator, Exam, ExamMark, Parent, Profile, Reprimand, Student, Subject, Teacher} from "@prisma/client";
+import {
+    Administrator,
+    Exam,
+    ExamMark,
+    Parent,
+    Profile,
+    Reprimand,
+    Signature,
+    Student,
+    Subject,
+    Teacher
+} from "@prisma/client";
 import {StudentWithUser} from "@/lib/definitions/student";
 import {Optional} from "utility-types";
 import {ParentWithUser, ParentWithUserAndChildren, StudentWithUserAndParent} from "@/lib/definitions/parent";
@@ -13,6 +24,12 @@ import {
     SubjectWithExamsAndStudents,
     TeacherWithMarksPerSubject
 } from "@/app/api/internal/exam-marks/teacher/types";
+import {
+    ExamMarkWithExamStudentParentAndSignature,
+    ExamMarkWithStudentAndSignature,
+    ExamMarkWithStudentParentAndSignature, ExamWithSubject
+} from "@/lib/definitions/exam";
+import {SignatureWithParent} from "@/lib/definitions/signature";
 
 export interface PrismaProfileWithUser extends Profile{
     user : UserWithoutPassword
@@ -32,7 +49,7 @@ export type PrismaAdministratorWithUser = Administrator & {
 export type PrismaParentWithUserAndChildren = PrismaParentWithUser & {
     children: PrismaStudentWithUser[]
 }
-export type PrismaStudentWithUserAndParents = PrismaStudentWithUser & {
+export type PrismaStudentWithUserAndParent = PrismaStudentWithUser & {
     parents: PrismaParentWithUser[]
 }
 export type PrismaReprimandWithTeacher = Reprimand & {
@@ -59,6 +76,22 @@ export type PrismaTeacherWithMarksPerSubject = Teacher & {
     subjects: PrismaSubjectWithExamsAndStudents[]
 }
 
+export type PrismaSignatureWithParent = Signature & {
+    parent: PrismaParentWithUser
+}
+export type PrismaExamMarkWithStudentAndSignature = PrismaExamMarkWithStudent & {
+    signature: PrismaSignatureWithParent | null
+}
+
+export type PrismaExamMarkWithStudentParentAndSignature = ExamMark & {
+    student: PrismaStudentWithUserAndParent
+} & {
+    signature: PrismaSignatureWithParent | null
+}
+
+export type PrismaExamMarkWithExamStudentParentAndSignature = PrismaExamMarkWithStudentParentAndSignature & {
+    Exam: ExamWithSubject
+}
 
 export function expandProfile<T extends  {profile: PrismaProfileWithUser}>(specificProfile: T): Omit<T, 'profile'> & PrismaProfileWithUser{
     const specificProfileWithoutProfile: Optional<typeof specificProfile, "profile"> = {...specificProfile};
@@ -94,7 +127,7 @@ export function mapParentWithUserAndChildren(parent: PrismaParentWithUserAndChil
     }
 }
 
-export function mapStudentWithUserAndParent(student: PrismaStudentWithUserAndParents): StudentWithUserAndParent{
+export function mapStudentWithUserAndParent(student: PrismaStudentWithUserAndParent): StudentWithUserAndParent{
     return {
         ...mapStudentWithUser(student),
         parents: student.parents.map(mapParentWithUser)
@@ -140,5 +173,34 @@ export function mapTeacherWithExamMarks(teacher: PrismaTeacherWithMarksPerSubjec
     return {
         ...teacher,
         subjects: teacher.subjects.map(mapSubjectWithExamsAndStudents)
+    }
+}
+
+export function mapSignatureWithParent(signature: PrismaSignatureWithParent): SignatureWithParent{
+    return {
+        ...signature,
+        parent: mapParentWithUser(signature.parent)
+    }
+}
+
+export function mapExamMarkWithStudentAndSignature(examMark: PrismaExamMarkWithStudentAndSignature): ExamMarkWithStudentAndSignature{
+    return {
+        ...mapExamMarkWithStudent(examMark),
+        signature: examMark.signature ? mapSignatureWithParent(examMark.signature): null
+    }
+}
+
+export function mapExamMarkWithStudentParentsAndSignature(examMark: PrismaExamMarkWithStudentParentAndSignature): ExamMarkWithStudentParentAndSignature{
+    return {
+        ...examMark,
+        student: mapStudentWithUserAndParent(examMark.student),
+        signature: examMark.signature ? mapSignatureWithParent(examMark.signature): null,
+    }
+}
+
+export function mapExamMarkWithExamStudentParentAndSignature(examMark: PrismaExamMarkWithExamStudentParentAndSignature): ExamMarkWithExamStudentParentAndSignature{
+    return {
+        ...mapExamMarkWithStudentParentsAndSignature(examMark),
+        exam: examMark.Exam
     }
 }

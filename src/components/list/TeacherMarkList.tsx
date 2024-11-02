@@ -31,8 +31,6 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
             .then((data) => setTeacher(data))
     }, [teacherId])
 
-    console.log(teacher)
-
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex">
             <div className="container mx-auto p-4 max-w-4xl">

@@ -9,14 +9,14 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import PaginationControls from "@/components/list/PaginationControls";
 import {Tooltip} from "@nextui-org/tooltip";
 import {ReprimandWithTeacherAndStudents} from "@/lib/definitions/reprimand";
-import {ProfileWithUser} from "@/lib/actions/fetch-student-mark-by-parent";
+import {PrismaProfileWithUser} from "@/lib/data/mappings";
 
 type PrincipalProps = {
     data: ReprimandWithTeacherAndStudents[];
     count: number;
     defaultInitDate: string;
     defaultEndDate: string;
-    profile: ProfileWithUser | null;
+    profile: PrismaProfileWithUser | null;
 }
 
 export default function ListReprimands({data, count, defaultInitDate, defaultEndDate, profile}: PrincipalProps) {

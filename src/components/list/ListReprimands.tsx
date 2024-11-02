@@ -8,15 +8,15 @@ import {Search, Eye, Plus} from "lucide-react"
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import PaginationControls from "@/components/list/PaginationControls";
 import {Tooltip} from "@nextui-org/tooltip";
-import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
-import {fetchCurrentUser} from "@/lib/data/users";
+import {ReprimandWithTeacherAndStudents} from "@/lib/definitions/reprimand";
+import {ProfileWithUser} from "@/lib/actions/fetch-student-mark-by-parent";
 
 type PrincipalProps = {
-    data: ReprimandWithTeacher[];
+    data: ReprimandWithTeacherAndStudents[];
     count: number;
     defaultInitDate: string;
     defaultEndDate: string;
-    profile: ProfileWithRoleAndUser | null;
+    profile: ProfileWithUser | null;
 }
 
 export default function ListReprimands({data, count, defaultInitDate, defaultEndDate, profile}: PrincipalProps) {

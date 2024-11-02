@@ -6,7 +6,7 @@ import {UserWithoutPassword} from "@/lib/definitions";
 
 import {TeacherWithUser} from "@/lib/definitions/teacher";
 import {AdministratorWithUser} from "@/lib/definitions/administrator";
-import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
+import {ReprimandWithTeacher, ReprimandWithTeacherAndStudents} from "@/lib/definitions/reprimand";
 import {
     ExamMarkWithStudent,
     ExamWithMarksAndStudents,
@@ -39,6 +39,10 @@ export type PrismaReprimandWithTeacher = Reprimand & {
     teacher: PrismaTeacherWithUser
 }
 
+export type PrismaReprimandWithTeacherAndStudents = PrismaReprimandWithTeacher & {
+    students: PrismaStudentWithUser[]
+}
+
 export type PrismaExamMarkWithStudent = ExamMark & {
     student: PrismaStudentWithUser
 }
@@ -54,6 +58,7 @@ export type PrismaSubjectWithExamsAndStudents = Subject & {
 export type PrismaTeacherWithMarksPerSubject = Teacher & {
     subjects: PrismaSubjectWithExamsAndStudents[]
 }
+
 
 export function expandProfile<T extends  {profile: PrismaProfileWithUser}>(specificProfile: T): Omit<T, 'profile'> & PrismaProfileWithUser{
     const specificProfileWithoutProfile: Optional<typeof specificProfile, "profile"> = {...specificProfile};
@@ -100,6 +105,13 @@ export function mapReprimandWithTeacher(reprimand: PrismaReprimandWithTeacher): 
     return {
         ...reprimand,
         teacher: mapTeacherWithUser(reprimand.teacher)
+    }
+}
+
+export function mapReprimandWithTeacherAndStudents(reprimand: PrismaReprimandWithTeacherAndStudents): ReprimandWithTeacherAndStudents{
+    return {
+        ...mapReprimandWithTeacher(reprimand),
+        students: reprimand.students.map(mapStudentWithUser)
     }
 }
 

@@ -2,10 +2,10 @@
 import {fetchCurrentUser} from "@/lib/data/users";
 import {fetchSelectedChild} from "@/lib/data/children";
 import prisma from "@/lib/prisma";
-import {mapReprimandWithTeacher} from "@/lib/data/mappings";
-import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
+import {mapReprimandWithTeacher, mapReprimandWithTeacherAndStudents} from "@/lib/data/mappings";
+import {ReprimandWithTeacher, ReprimandWithTeacherAndStudents} from "@/lib/definitions/reprimand";
 
-export async function fetchReprimands({page, init, end}: { page: number, init?: Date, end?: Date }): Promise<ReprimandWithTeacher[]> {
+export async function fetchReprimands({page, init, end}: { page: number, init?: Date, end?: Date }): Promise<ReprimandWithTeacherAndStudents[]> {
     const NUMBER_OF_REPRIMANDS = 5;
     const profile = await fetchCurrentUser();
     try {
@@ -63,7 +63,11 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                     },
                     students: {
                         include : {
-                            user: true
+                            profile: {
+                                include: {
+                                    user: true
+                                }
+                            }
                         }
                     }
                 },
@@ -72,7 +76,7 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                 }
 
             });
-            return reprimands.map(mapReprimandWithTeacher)
+            return reprimands.map(mapReprimandWithTeacherAndStudents)
         } else {
             return [];
         }

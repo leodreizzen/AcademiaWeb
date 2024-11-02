@@ -260,18 +260,20 @@ model Signature {
   reprimandId Int?       @unique
   examMark    ExamMark?  @relation(fields: [examId], references: [id])
   examId      Int?       @unique
+  signedAt    DateTime   @default(now())
 }
 
 model SignatureToken {
-  id          Int        @id @default(autoincrement())
-  token       Int
-  issued_at   DateTime   @default(now())
-  reprimand   Reprimand? @relation(fields: [reprimandId], references: [id])
-  reprimandId Int?       @unique
-  examMark    ExamMark?  @relation(fields: [examId], references: [id])
-  examId      Int?       @unique
-  parent      Parent     @relation(fields: [parentId], references: [id])
-  parentId    Int
+  id               Int        @id @default(autoincrement())
+  token            Int
+  issued_at        DateTime   @default(now())
+  reprimand        Reprimand? @relation(fields: [reprimandId], references: [id])
+  reprimandId      Int?       @unique
+  examMark         ExamMark?  @relation(fields: [examMarkId], references: [id])
+  examMarkId       Int?       @unique
+  parent           Parent     @relation(fields: [parentId], references: [id])
+  parentId         Int
+  sentSuccessfully Boolean    @default(false)
 }
 
 model Message {

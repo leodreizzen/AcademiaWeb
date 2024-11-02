@@ -291,6 +291,18 @@ function validateExams(exams: z.infer<typeof ExamSchema>[], users: Map<number, z
             const issue = checkRole(mark.studentDni, "Student", users);
             if (issue)
                 return {...issue, message: issue.message + ` in exam with subject ${exam.subject}`};
+
+
+            for(const mark of exam.marks){
+                const grade = users.get(mark.studentDni)?.profiles.find(p => p.role === "Student")?.grade as string
+                if(grade !== exam.subject[0]){
+                    return {
+                        code: "custom",
+                        message: `Student with dni ${mark.studentDni} is not in the same grade as the exam with subject ${exam.subject}. Student is in ${grade}`
+                    }
+                }
+            }
+
             if(mark.signature){
                 const issue = checkRole(mark.signature.signedByDni, "Parent", users);
                 if (issue)

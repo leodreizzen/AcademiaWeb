@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardContent } from "@/components/ui/card"
 import {StudentWithMarksPerSubject, SubjectWithExams} from "@/app/api/internal/exam-marks/types";
+import Link from "next/link";
+import {format} from "date-fns";
 
 
 
@@ -22,9 +24,12 @@ function NotasDialog({ subject }: { subject: SubjectWithExams }) {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     {subject.exams.map((exam) => (
-                        <div key={exam.id} className="flex items-center justify-between">
-                            <span className="font-medium text-gray-200">Exámen del día {(new Date(exam.date)).toLocaleDateString()}:</span>
-                            <span className="text-gray-300">{exam.marks[0].mark}</span>
+                        <div key={exam.id} className="flex items-center justify-between test-exam-item">
+                            <span className="font-medium text-gray-200">Exámen del día {format(exam.date, "dd/MM/yyyy")}:</span>
+                            <span className="text-gray-300 test-mark">{exam.marks[0].mark}</span>
+                            <Link href={`/exam-mark/exam/${exam.marks[0].id}`}>
+                                <Button variant="outline" className="text-gray-200">Ver Detalles</Button>
+                            </Link>
                         </div>
                     ))}
                     {subject.exams.length === 0 && (

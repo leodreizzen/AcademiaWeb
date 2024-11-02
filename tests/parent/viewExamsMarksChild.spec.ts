@@ -25,7 +25,19 @@ test.describe('Ver notas de hijos', () => {
         await expect(modal).toBeVisible();
         const subjectNameAfter = await modal.locator('h2').innerText();
         expect(subjectNameAfter).toContain(subjectWithExams);
-        await expect (modal.locator('text=Exámen del día').first()).toBeVisible();
+        const firstExam = await modal.locator('.test-exam-item').first();
+        const examText = await firstExam.locator('text=Exámen del día').innerText();
+        const mark = await firstExam.locator(".test-mark").innerText();
+
+        const examDateMatch = examText.match(/\d{2}\/\d{2}\/\d{4}/)
+        expect(examDateMatch).not.toBeNull();
+        const date = (examDateMatch as RegExpMatchArray)[0];
+        await firstExam.getByText("Ver detalles").click();
+        await expect(page.getByText("Información del examen")).toBeVisible();
+        await expect(page.getByTestId("subject")).toHaveText(subjectWithExams);
+        await expect(page.getByTestId("student")).toHaveText(`${child.firstName} ${child.lastName}`);
+        await expect(page.getByTestId("date")).toHaveText(date);
+        await expect(page.getByTestId("mark")).toHaveText(mark);
     });
 
     test('Seleccionar hijo sin notas.', async ({ page }) => {

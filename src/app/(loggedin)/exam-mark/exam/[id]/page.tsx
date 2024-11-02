@@ -3,6 +3,7 @@ import {Resource} from "@/lib/operation_list";
 import {fetchCurrentUser} from "@/lib/data/users";
 import {fetchStudentMarkByParent} from "@/lib/actions/fetch-student-mark-by-parent";
 import {redirect} from "next/navigation";
+import {format} from "date-fns";
 
 
 export default async function ExamMarkByExamIDPage({params: {id}}: { params: { id: string } }) {
@@ -32,19 +33,19 @@ export default async function ExamMarkByExamIDPage({params: {id}}: { params: { i
                     <div className="flex flex-col w-full max-w-2xl p-4">
                         <div className="flex justify-between">
                             <span className="font-medium">Materia:</span>
-                            <span>{examMark.Exam.subject.name}</span>
+                            <span data-testid="subject">{examMark.Exam.subject.name}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium">Alumno/a:</span>
-                            <span>{examMark.student.profile.user.firstName} {examMark.student.profile.user.lastName}</span>
+                            <span data-testid="student">{examMark.student.profile.user.firstName} {examMark.student.profile.user.lastName}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium">Fecha:</span>
-                            <span>{examMark.Exam.date.toLocaleDateString()}</span>
+                            <span data-testid="date">{format(examMark.Exam.date, "dd/MM/yyyy")}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium">Nota:</span>
-                            <span>{examMark.mark}</span>
+                            <span data-testid="mark">{examMark.mark}</span>
                         </div>
                     </div>
                 </div>

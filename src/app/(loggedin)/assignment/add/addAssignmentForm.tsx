@@ -11,7 +11,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TextArea } from "@/components/ui/textarea";
-import { submitAssignment } from "@/app/server-actions/submitAssignment";
+import {
+  submitAssignment,
+  submitAssignmentToDB,
+} from "@/app/server-actions/submitAssignment";
 import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
 import Link from "next/link";
 import { generateSignature, uploadFileToCloudinary } from "@/lib/cloudinary";
@@ -69,63 +72,33 @@ export default function AddAssignmentForm() {
     setSelectedSubjectId(null);
   };
 
-  const uploadFile = async () => {
-    if (!file) return null;
-    const { apiKey, signature, timestamp } = await generateSignature();
-
-    const originalFileName = file.name;
-    const cleanFileName = originalFileName
-      .normalize("NFD") // Elimina acentos y caracteres especiales
-      .replace(/[\u0300-\u036f]/g, "") // Remueve los diacríticos
-      .replace(/\s+/g, "_"); // Reemplaza espacios por guiones bajos
-    const cleanFile = new File([file], cleanFileName, { type: file.type });
-    
-    const formData = new FormData();
-    formData.append("file", cleanFile);
-    formData.append(
-      "upload_preset",
-      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"
-    );
-    formData.append("api_key", apiKey);
-    formData.append("signature", signature);
-    formData.append("timestamp", timestamp.toString());
-    formData.append("use_filename", "true");
-
-    setUploading(true);
-    try {
-      const responseData = await uploadFileToCloudinary(formData);
-      if (!responseData.secure_url) {
-        throw new Error(
-          `Cloudinary upload failed: ${
-            responseData.error?.message || "Unknown error"
-          }`
-        );
-      }
-      setUploading(false);
-      return responseData.secure_url;
-    } catch (error) {
-      console.error("Upload failed:", error);
-      setUploading(false);
-      return null;
-    }
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrors(null);
     setSuccessMessage(null);
-
     const formData = new FormData(event.currentTarget);
-    const fileUrl = await uploadFile();
 
-    if (fileUrl && selectedGradeId !== null && selectedSubjectId !== null) {
-      formData.append("fileUrl", fileUrl);
+    if (selectedGradeId !== null && selectedSubjectId !== null) {
       formData.append("subject", selectedSubjectId.toString());
       formData.append("grade", selectedGradeId.toString());
-
+      if (!file) {
+        setErrors({ file: ["Debes subir un archivo"] });
+        setSuccessMessage(null);
+        return;
+      }
       try {
-        const response = await submitAssignment(formData);
-        if (response.success) {
+        setUploading(true);
+        const response = await submitAssignment(formData, file.name);
+        setUploading(false);
+        if (response.success && response.validatedData) {
+          const fileUrl = await uploadFile(file);
+          if (!fileUrl) {
+            setErrors({ file: ["Error al subir el archivo"] });
+            setSuccessMessage(null);
+            return;
+          }
+
+          submitAssignmentToDB(response.validatedData, fileUrl);
           setSuccessMessage("¡El archivo se ha subido correctamente!");
           setErrors(null);
 
@@ -140,7 +113,11 @@ export default function AddAssignmentForm() {
             const fieldErrors = response.errors.fieldErrors;
             const errorMessages = Object.keys(fieldErrors).reduce(
               (acc, key) => {
-                return { ...acc, [key]: fieldErrors[key] };
+                const errorMessage = fieldErrors[key];
+                if (key === "fileName") {
+                  key = "file";
+                }
+                return { ...acc, [key]: errorMessage };
               },
               {}
             );
@@ -153,6 +130,7 @@ export default function AddAssignmentForm() {
       } catch (error) {
         setErrors({ file: ["Error al subir el archivo"] });
         setSuccessMessage(null);
+        setUploading(false);
       }
     } else {
       setErrors({
@@ -311,4 +289,40 @@ export default function AddAssignmentForm() {
       </div>
     </form>
   );
+}
+
+async function uploadFile(file: File): Promise<string | null> {
+  const { apiKey, signature, timestamp } = await generateSignature();
+
+  const originalFileName = file.name;
+  const cleanFileName = originalFileName
+    .normalize("NFD") // Elimina acentos y caracteres especiales
+    .replace(/[\u0300-\u036f]/g, "") // Remueve los diacríticos
+    .replace(/\s+/g, "_"); // Reemplaza espacios por guiones bajos
+  const cleanFile = new File([file], cleanFileName, { type: file.type });
+
+  const formData = new FormData();
+  formData.append("file", cleanFile);
+  formData.append(
+    "upload_preset",
+    process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "ml_default"
+  );
+  formData.append("api_key", apiKey);
+  formData.append("signature", signature);
+  formData.append("timestamp", timestamp.toString());
+  formData.append("use_filename", "true");
+
+  try {
+    const responseData = await uploadFileToCloudinary(formData);
+    if (!responseData.secure_url) {
+      throw new Error(
+        `Cloudinary upload failed: ${
+          responseData.error?.message || "Unknown error"
+        }`
+      );
+    }
+    return responseData.secure_url;
+  } catch (error) {
+    return null;
+  }
 }

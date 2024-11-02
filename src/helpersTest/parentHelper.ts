@@ -3,6 +3,8 @@ import {  faker } from "@faker-js/faker/locale/es";
 import { newBirthDate, randomDNI } from "./studentHelper";
 import exp from "constants";
 
+
+
 export async function searchParentByDni(page: Page, Dni: string) {
     await page.getByPlaceholder('DNI').click();
     await page.getByPlaceholder('DNI').fill(Dni);
@@ -37,7 +39,11 @@ export async function searchParentByLastName(page: Page, LastName: string) {
 
 
 export async function createParentWithoutChildren(page: Page) {
-    await page.goto('/student/add');
+    await page.getByRole('link', { name: 'Alumnos' }).first().click();
+    await expect(page.getByText("Listado de Alumnos")).toBeVisible();
+
+    await page.getByTestId("create-button").click();
+    await expect(page.getByText("Registrar Alumno")).toBeVisible();
 
     const dni = await randomDNI();
     const parentDni = await randomDNI();
@@ -52,8 +58,6 @@ export async function createParentWithoutChildren(page: Page) {
     await newBirthDate(page);
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
-
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
@@ -65,8 +69,8 @@ export async function createParentWithoutChildren(page: Page) {
     await newBirthDateOverEighteen(page);
 
     await page.getByRole('button', { name: 'Agregar' }).click();
+    await expect((page.locator(".h2", {hasText: "Nuevo Reponsable"}))).toHaveCount(0);
 
-    console.log("Parent created with DNI: " + parentDni);
     return parentDni;
 }
 
@@ -88,7 +92,7 @@ export async function createChildrenWithTwoParents(page: Page) {
 
     await page.locator('button[type="submit"]').click();
 
-    await page.getByRole('button', { name: 'Seleccionar' }).first().click();
+    await page.getByRole('button', { name: 'Seleccionar' }).last().click();
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
@@ -122,12 +126,7 @@ export async function createChildrenWithTwoParents(page: Page) {
     });
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-
-
-    
-
     await expect(page).toHaveURL('/student');
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     return parentDni;
 }
 
@@ -182,11 +181,9 @@ export async function createParentWithOnlyOneChild(page: Page) {
     });
 
     await page.getByRole('button', { name: 'Registrar' }).click();
-
     await expect(page).toHaveURL('/student');
-    await expect(page.locator('text="Nuevo Alumno"')).toBeVisible();
 
-    return parentDni;
+    return { dni, parentDni };
 }
 
 
@@ -211,8 +208,10 @@ export async function newBirthDateOverEighteen(page: Page) {
     await page.locator('#dob').click();
     await page.waitForTimeout(500);
     
+
     while (await page.getByRole('dialog').nth(1).isVisible() === false) {
         await page.locator('#dob').click();
+        
         await page.waitForTimeout(500);
     }
 

@@ -11,7 +11,7 @@ import {Grade} from "@prisma/client";
 import {FieldNullable} from "@/lib/definitions";
 import {ReprimandStudentApiResponse} from "@/app/api/internal/reprimand/student/types";
 import {ReprimandData, ReprimandModel} from "@/lib/models/reprimand";
-import {CreateReprimand} from "@/lib/actions/reprimand";
+import {createReprimand} from "@/lib/actions/reprimand";
 
 interface StudentOptionType {
     value: number;
@@ -74,7 +74,7 @@ export default function AddReprimandForm({grades}: { grades: Grade[] }) {
     async function onSubmit(data: FormData) {
         if(!isValidReprimandData(data))
             return;
-        const res = await CreateReprimand(data)
+        const res = await createReprimand(data)
         if(res.success) {
             alert("Amonestación creada con éxito")
             reset({students: [], grade: null, message: ""});

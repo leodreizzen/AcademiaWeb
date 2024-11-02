@@ -1,27 +1,36 @@
 'use server';
-
-import { getCurrentProfilePrismaClient } from "@/lib/prisma_utils";
-import { Student } from "@prisma/client";
-import { StudentWithUser } from "../student/data";
 import {revalidatePath} from "next/cache";
+import prisma from "@/lib/prisma";
 
 
 export async function removeParent(id: number): Promise<string | null> {
     try {
-        const prisma = await getCurrentProfilePrismaClient();
         const parent = await prisma.parent.findUnique({
             where: {
                 id
             },
             include: {
-                children: true
+                children: true,
+                profile: {
+                    include: {
+                        user: {
+                            include: {
+                                profiles: true
+                            }
+                        }
+                    }
+                }
             }
         });
+        if(!parent) {
+            console.error("Error fetching parent");
+            return "El padre no existe";
+        }
         const students = await prisma.student.findMany({
             where: {
                 parents: {
                     some: {
-                        id: parent!.id
+                        id: parent.id
                     }
                 }
             },
@@ -32,27 +41,31 @@ export async function removeParent(id: number): Promise<string | null> {
         if (students.some((x: any) => x.parents.length === 1)) {
             return "No se puede eliminar, hay estudiantes con un solo padre";
         }
+
+
         await prisma.parent.delete({
             where: {
                 id
             }
         });
-        const user = await prisma.user.findUnique({
+
+        await prisma.profile.delete({
             where: {
-                dni: parent!.dni
-            },
-            include: {
-                profiles: true
+                id: parent.id
             }
-        });
-        if (user?.profiles.length === 0) {
+        })
+
+
+        if (parent.profile.user.profiles.length === 1) {
             await prisma.user.delete({
                 where: {
-                    dni: parent!.dni
+                    dni: parent.profile.user.dni
                 }
             });
         }
         revalidatePath("/parent");
+        revalidatePath("/api/internal/parent")
+        revalidatePath("/api/internal/parent/count")
         return null;
     } catch (error: any) {
         console.error("Error fetching parent:", error);

@@ -6,13 +6,13 @@ import {Input} from "@/components/ui/input"
 import {Card, CardContent} from "@/components/ui/card"
 import {Search, Eye, Plus} from "lucide-react"
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {ReprimandWithTeacherUser} from "@/app/(loggedin)/reprimand/data";
 import PaginationControls from "@/components/list/PaginationControls";
+import {Tooltip} from "@nextui-org/tooltip";
+import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
 import {fetchCurrentUser} from "@/lib/data/users";
-import {ProfileWithRoleAndUser} from "@/lib/definitions";
 
 type PrincipalProps = {
-    data: ReprimandWithTeacherUser[];
+    data: ReprimandWithTeacher[];
     count: number;
     defaultInitDate: string;
     defaultEndDate: string;
@@ -32,7 +32,7 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
         init.setMinutes(init.getMinutes() + init.getTimezoneOffset())
         const end = new Date(endDate);
         end.setMinutes(init.getMinutes() + init.getTimezoneOffset())
-        end.setHours(23,59,59,999)
+        end.setHours(23, 59, 59, 999)
 
         const params = new URLSearchParams({
             initDate: init.toISOString(),
@@ -43,11 +43,11 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
         replace(`${pathname}?${params.toString()}`);
     };
 
-    const toggleDetalle = (id : number | null) => {
+    const toggleDetalle = (id: number | null) => {
         setDetalleVisible(detalleVisible === id ? null : id)
     }
 
-    const renderDetalle = (message : string) => {
+    const renderDetalle = (message: string) => {
         return message.split('\n').map((parrafo, index) => (
             <p key={index} className="mt-2 text-white">
                 {parrafo}
@@ -65,9 +65,13 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl text-white font-bold">Buscador de Sanciones</h2>
-                        <Button onClick={() => handleAdd()} className="bg-green-600 hover:bg-green-700">
-                            <Plus className="mr-2 h-4 w-4"/> Agregar Amonestación
-                        </Button>
+                        <Tooltip content=" Agregar Amonestación" classNames={{content: "text-white"}}>
+                            <Button onClick={() => handleAdd()}
+                                data-testid="add-reprimand"
+                                className="bg-green-600 hover:bg-green-700">
+                                <Plus className="h-4 w-4"/>
+                            </Button>
+                        </Tooltip>
                     </div>
                     <div className="flex flex-col space-y-4 mb-6">
                         <div className="flex space-x-4">
@@ -93,10 +97,13 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                     className="bg-gray-700 text-white border-gray-600 w-full"
                                 />
                             </div>
+
+                            <Tooltip content="Buscar" classNames={{content: "text-white"}}>
+                                <Button onClick={handleSearch} data-testid="search-button" className="bg-blue-600 hover:bg-blue-700 self-end">
+                                    <Search className="h-4 w-4"/>
+                                </Button>
+                            </Tooltip>
                         </div>
-                        <Button onClick={handleSearch} className="bg-blue-600 hover:bg-blue-700">
-                            <Search className="mr-2 h-4 w-4"/> Buscar
-                        </Button>
                     </div>
                     {profile !== null && profile.role === "Teacher" ? (
                         data.length > 0 ? (

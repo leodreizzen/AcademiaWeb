@@ -1,10 +1,11 @@
 'use server';
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
 import {fetchCurrentUser} from "@/lib/data/users";
 import {fetchSelectedChild} from "@/lib/data/children";
+import prisma from "@/lib/prisma";
+import {mapReprimandWithTeacher} from "@/lib/data/mappings";
+import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
 
-export async function fetchReprimands({page, init, end}: { page: number, init?: Date, end?: Date }) {
-    const prisma = await getCurrentProfilePrismaClient()
+export async function fetchReprimands({page, init, end}: { page: number, init?: Date, end?: Date }): Promise<ReprimandWithTeacher[]> {
     const NUMBER_OF_REPRIMANDS = 5;
     const profile = await fetchCurrentUser();
     try {
@@ -43,7 +44,7 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
             };
 
 
-            return await prisma.reprimand.findMany({
+            const reprimands = await prisma.reprimand.findMany({
                 skip: (page - 1) * NUMBER_OF_REPRIMANDS,
                 take: NUMBER_OF_REPRIMANDS,
                 where: {
@@ -52,8 +53,12 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                 },
                 include: {
                     teacher: {
-                        include: {
-                            user: true
+                        include:{
+                            profile: {
+                                include: {
+                                    user: true
+                                }
+                            }
                         }
                     },
                     students: {
@@ -67,6 +72,7 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                 }
 
             });
+            return reprimands.map(mapReprimandWithTeacher)
         } else {
             return [];
         }
@@ -78,7 +84,6 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
 }
 
 export async function countReprimands(init?: Date, end?: Date) {
-    const prisma = await getCurrentProfilePrismaClient()
     const profile = await fetchCurrentUser();
     try {
         if (profile != null) {

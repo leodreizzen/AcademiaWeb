@@ -1,10 +1,8 @@
-import getPrismaClient, {getRawPrismaClient} from "@/lib/prisma";
 import {compare} from "bcryptjs";
-import {Profile, Superuser} from "@prisma/client";
-import {ProfileRole, ProfileWithRole, ProfileWithRoleAndUser} from "@/lib/definitions";
-import {User} from "next-auth";
+import {Profile} from "@prisma/client";
 import {auth} from "@/auth";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import prisma from "@/lib/prisma";
+import {PrismaProfileWithUser} from "@/lib/data/mappings";
 
 export enum LoginError {
     USER_NOT_FOUND,
@@ -19,10 +17,12 @@ export type CheckLoginResult = {
 }
 
 export async function checkLogin(dni: number, password: string): Promise<CheckLoginResult> {
-    const prisma = getRawPrismaClient();
     const user = await prisma.user.findUnique({
         where: {
             dni: dni
+        },
+        omit: {
+            passwordHash: false
         }
     })
     if (!user)
@@ -31,7 +31,7 @@ export async function checkLogin(dni: number, password: string): Promise<CheckLo
             error: LoginError.USER_NOT_FOUND
         }
 
-    const passwordCorrect = await compare(password, user.password)
+    const passwordCorrect = await compare(password, user.passwordHash)
     if(!passwordCorrect)
         return {
             success: false,
@@ -43,23 +43,20 @@ export async function checkLogin(dni: number, password: string): Promise<CheckLo
     }
 }
 
-export async function fetchUserProfiles(dni: number): Promise<ProfileWithRole[]> {
-    const prisma = getRawPrismaClient();
-    const profiles = await prisma.profile.findMany({
+export async function fetchUserProfiles(dni: number): Promise<Profile[]> {
+    return prisma.profile.findMany({
         where: {
             dni: dni
         }
     });
-    return profiles as (Profile & {role: ProfileRole})[]
 }
 
-export async function fetchCurrentUser(): Promise<ProfileWithRoleAndUser | null> {
+export async function fetchCurrentUser(): Promise<PrismaProfileWithUser | null> {
     const session = await auth();
     if(!session || !session.user?.role || !session.user?.dni)
         return null;
 
-    const prisma = await getCurrentProfilePrismaClient();
-    const user = await prisma.profile.findUnique({
+    return prisma.profile.findUnique({
         where: {
             dni_role: {
                 dni: session.user.dni,
@@ -70,5 +67,4 @@ export async function fetchCurrentUser(): Promise<ProfileWithRoleAndUser | null>
             user: true,
         }
     });
-    return user as Exclude<typeof user, { role: "Superuser" }>;
 }

@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { Faker, es } from '@faker-js/faker'
 import { login } from '@/helpersTest/loginHelper';
-import { searchStudentByDni, searchStudentByLastName, newBirthDate } from '@/helpersTest/studentHelper';
-import { newBirthDateOverEighteen } from '@/helpersTest/parentHelper';
+import { searchStudentByDni, searchStudentByLastName, newBirthDate, removeStudent, removeStudentAndParent } from '@/helpersTest/studentHelper';
+import { newBirthDateOverEighteen, searchParentByDni } from '@/helpersTest/parentHelper';
 import { getTestUser } from "../testdata";
 
 
@@ -29,7 +29,7 @@ test('Datos validos alumno', async ({ page }) => {
     await page.waitForURL('/')
 
     await page.getByRole('navigation').getByRole('link', { name: 'Alumnos' }).click();
-    await page.locator('text="Nuevo Alumno"').click();
+    await page.getByTestId("create-button").click();
 
 
     await page.locator('input[id="input-dni"]').fill(randomDNI());
@@ -138,11 +138,14 @@ test('Asignacion de padres con padres ya registrados', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('/student/add');
+    await page.waitForURL('/student');
 
-    await expect(page.getByText("Nuevo Alumno")).toBeVisible();
+    await expect(page).toHaveURL('/student');
+
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
+
+    await removeStudent(page, dni);
 
 });
 
@@ -151,7 +154,7 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
     await page.waitForURL('/')
     await page.goto('/student/add');
 
-    var dni = randomDNI();
+    const dni = randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
@@ -167,7 +170,9 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
-    await page.locator('input[id="input-dni"]').fill(randomDNI());
+    const parentDni = await randomDNI();
+
+    await page.locator('input[id="input-dni"]').fill(parentDni);
     await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
@@ -182,14 +187,16 @@ test('Asignacion de padres con padre registrado y creado', async ({ page }) => {
 
     await page.getByRole('button', { name: 'Seleccionar' }).last().click(); //como el creado es el ultimo, selecciono este para asignarle al alumno
 
-
-
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
 
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
+
+    await removeStudentAndParent(page, dni, parentDni);
+
 });
 
 
@@ -216,10 +223,13 @@ test('Asignacion de padres con un solo padre', async ({ page }) => {
 
     await page.locator('button[type="submit"]').click();
 
+    await page.waitForURL('/student');
+
     await expect(page).toHaveURL('/student');
 
-    expect(await page.locator('text="Nuevo Alumno"')).toBeVisible();
     expect(await searchStudentByDni(page, dni.toString())).toBe(true);
+
+    await removeStudent(page, dni);
 
 });
 

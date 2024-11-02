@@ -2,8 +2,9 @@
 
 
 import {TeacherRegistrationData} from "@/lib/models/teacher-registration";
-import {Prisma} from "@prisma/client";
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+import prisma from "@/lib/prisma";
+import {hashPassword} from "@/lib/data/passwords";
+import { Prisma } from "@prisma/client";
 
 type SuccessResponse = {
     success: true
@@ -19,7 +20,6 @@ export type TeacherRegistrationResponse = SuccessResponse | ErrorResponse
 type TeacherRegistrationDataWithGrades = TeacherRegistrationData & {assignedGrades: {[key: string]: string[]}}
 
 export async function obtainGradesWithSubjects() {
-    const prisma = await getCurrentProfilePrismaClient();
     try {
         return await prisma.grade.findMany({
             select: {name: true, subjects: {select: {name: true}}}
@@ -31,7 +31,6 @@ export async function obtainGradesWithSubjects() {
 }
 
 export async function createTeacherRegistration(data: TeacherRegistrationDataWithGrades) {
-    const prisma = await getCurrentProfilePrismaClient();
     try {
         const res: TeacherRegistrationResponse = await prisma.$transaction(async tx => {
                 const {assignedGrades, ...teacherData} = data
@@ -53,15 +52,20 @@ export async function createTeacherRegistration(data: TeacherRegistrationDataWit
                         data: {
                             phoneNumber: teacherData.phoneNumber,
                             address: teacherData.address,
-                            email: teacherData.email,
-                            user: {
+                            profile: {
                                 create: {
-                                    dni: teacherData.dni,
-                                    firstName: teacherData.name,
-                                    lastName: teacherData.lastName,
-                                    password: teacherData.dni.toString()
+                                    user: {
+                                        create: {
+                                            dni: teacherData.dni,
+                                            firstName: teacherData.name,
+                                            lastName: teacherData.lastName,
+                                            passwordHash: await hashPassword(teacherData.dni.toString())
+                                        }
+                                    },
+                                    role: "Teacher",
+                                    email: teacherData.email
                                 }
-                            },
+                            }
                         }
                     }
                 )
@@ -88,7 +92,7 @@ export async function createTeacherRegistration(data: TeacherRegistrationDataWit
                 return {success: true}
             },
             {
-                isolationLevel: Prisma.TransactionIsolationLevel.Serializable, maxWait: 5000, timeout: 15000
+                isolationLevel: Prisma.TransactionIsolationLevel.Serializable
             })
             return res
     } catch (e) {

@@ -65,7 +65,7 @@ export async function sendExamMarkToken(examMarkId: number): Promise<SendTokenRe
             errorMessage: "La nota ya está firmada"
         };
 
-    const saveResult = await saveSignatureToken(token, currentParent, {
+    const saveResult = await saveSignatureToken(token, mark.student, currentParent, {
         type: "examMark",
         examMarkId: examMarkId,
     })

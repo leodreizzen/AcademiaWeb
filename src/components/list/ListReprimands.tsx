@@ -118,8 +118,8 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                                 <p>Estudiantes:</p>
                                                 <ul>
                                                     {sancion.students.map((student) => (
-                                                        <li key={student.id}>
-                                                            {student.user.firstName} {student.user.lastName}
+                                                        <li key={student.student.id}>
+                                                            {student.student.user.firstName} {student.student.user.lastName}
                                                         </li>
                                                     ))}
                                                 </ul>

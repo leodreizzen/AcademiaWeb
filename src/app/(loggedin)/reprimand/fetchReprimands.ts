@@ -65,9 +65,13 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                     },
                     students: {
                         include : {
-                            profile: {
-                                include: {
-                                    user: true
+                            student: {
+                                include:{
+                                    profile: {
+                                        include: {
+                                            user: true
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -5,6 +5,7 @@ import {TransactionPrismaClient} from "@/lib/definitions";
 import {SendTokenResult} from "@/lib/actions/signatures";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {tokenCooldownTimeRemaining, tokenOnCooldown} from "@/lib/signatureTokens";
+import {StudentWithUser} from "@/lib/definitions/student";
 
 export type SignatureTokenContext = {
     type: "examMark"
@@ -51,7 +52,7 @@ export async function confirmSignatureTokenSent(token: number, parent: ParentWit
 }
 
 
-export async function saveSignatureToken(token: number, parent: ParentWithUser, context: SignatureTokenContext): Promise<SaveTokenResult> {
+export async function saveSignatureToken(token: number, student: StudentWithUser, parent: ParentWithUser, context: SignatureTokenContext): Promise<SaveTokenResult> {
     try{
         return prisma.$transaction(async tx => {
             const existingToken = await getExistingSignatureToken(context, parent, tx)
@@ -92,7 +93,10 @@ export async function saveSignatureToken(token: number, parent: ParentWithUser, 
                         }: undefined,
                         reprimand: context.type == "reprimand" ? {
                             connect: {
-                                id: context.reprimandId
+                                studentId_reprimandId: {
+                                    reprimandId: context.reprimandId,
+                                    studentId: student.id
+                                }
                             }
                         }: undefined,
                     }
@@ -133,7 +137,9 @@ export async function getExistingSignatureToken(context: SignatureTokenContext, 
                     id: parent.id
                 },
                 reprimand: {
-                    id: context.reprimandId
+                    reprimand: {
+                        id: context.reprimandId
+                    }
                 }
             }
         })

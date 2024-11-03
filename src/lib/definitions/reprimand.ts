@@ -7,5 +7,7 @@ export interface ReprimandWithTeacher extends Reprimand {
 }
 
 export interface ReprimandWithTeacherAndStudents extends ReprimandWithTeacher {
-    students: StudentWithUser[]
+    students: {
+        student: StudentWithUser
+    }[]
 }

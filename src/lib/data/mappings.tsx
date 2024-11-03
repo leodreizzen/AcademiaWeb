@@ -56,8 +56,11 @@ export type PrismaReprimandWithTeacher = Reprimand & {
     teacher: PrismaTeacherWithUser
 }
 
+
 export type PrismaReprimandWithTeacherAndStudents = PrismaReprimandWithTeacher & {
-    students: PrismaStudentWithUser[]
+    students: {
+        student: PrismaStudentWithUser
+    }[]
 }
 
 export type PrismaExamMarkWithStudent = ExamMark & {
@@ -90,7 +93,7 @@ export type PrismaExamMarkWithStudentParentAndSignature = ExamMark & {
 }
 
 export type PrismaExamMarkWithExamStudentParentAndSignature = PrismaExamMarkWithStudentParentAndSignature & {
-    Exam: ExamWithSubject
+    exam: ExamWithSubject
 }
 
 export function expandProfile<T extends  {profile: PrismaProfileWithUser}>(specificProfile: T): Omit<T, 'profile'> & PrismaProfileWithUser{
@@ -144,7 +147,7 @@ export function mapReprimandWithTeacher(reprimand: PrismaReprimandWithTeacher): 
 export function mapReprimandWithTeacherAndStudents(reprimand: PrismaReprimandWithTeacherAndStudents): ReprimandWithTeacherAndStudents{
     return {
         ...mapReprimandWithTeacher(reprimand),
-        students: reprimand.students.map(mapStudentWithUser)
+        students: reprimand.students.map(s => ({student: mapStudentWithUser(s.student)}))
     }
 }
 
@@ -201,6 +204,6 @@ export function mapExamMarkWithStudentParentsAndSignature(examMark: PrismaExamMa
 export function mapExamMarkWithExamStudentParentAndSignature(examMark: PrismaExamMarkWithExamStudentParentAndSignature): ExamMarkWithExamStudentParentAndSignature{
     return {
         ...mapExamMarkWithStudentParentsAndSignature(examMark),
-        exam: examMark.Exam
+        exam: examMark.exam
     }
 }

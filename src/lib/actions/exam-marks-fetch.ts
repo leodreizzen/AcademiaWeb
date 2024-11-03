@@ -89,7 +89,7 @@ export async function fetchExamMarkById(examMarkId: number): Promise<ExamMarkWit
     const mark = await prisma.examMark.findUnique({
         where: {id: examMarkId},
         include: {
-            Exam: {
+            exam: {
                 include: {
                     subject: true
                 }

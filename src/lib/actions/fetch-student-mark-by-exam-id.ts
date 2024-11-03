@@ -8,7 +8,7 @@ export async function fetchStudentMarkByExamId(examMarkId: string): Promise<Exam
             id: parseInt(examMarkId)
         },
         include: {
-            Exam: {
+            exam: {
                 include: {
                     subject: true
                 }
@@ -47,6 +47,6 @@ export async function fetchStudentMarkByExamId(examMarkId: string): Promise<Exam
     });
     return mark ? {
         ...mapExamMarkWithStudentParentsAndSignature(mark),
-        exam: mark.Exam
+        exam: mark.exam
     }: null
 }

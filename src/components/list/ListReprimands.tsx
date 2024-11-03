@@ -1,15 +1,16 @@
 'use client'
 
-import {useState} from 'react'
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {Card, CardContent} from "@/components/ui/card"
-import {Search, Eye, Plus} from "lucide-react"
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import PaginationControls from "@/components/list/PaginationControls";
-import {Tooltip} from "@nextui-org/tooltip";
-import {ReprimandWithTeacherAndStudents} from "@/lib/definitions/reprimand";
-import {PrismaProfileWithUser} from "@/lib/data/mappings";
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Search, Eye, Plus } from "lucide-react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import PaginationControls from "@/components/list/PaginationControls"
+import { Tooltip } from "@nextui-org/tooltip"
+import { ReprimandWithTeacherAndStudents } from "@/lib/definitions/reprimand"
+import { PrismaProfileWithUser } from "@/lib/data/mappings"
+import Link from 'next/link'
 
 type PrincipalProps = {
     data: ReprimandWithTeacherAndStudents[];
@@ -19,19 +20,17 @@ type PrincipalProps = {
     profile: PrismaProfileWithUser | null;
 }
 
-export default function ListReprimands({data, count, defaultInitDate, defaultEndDate, profile}: PrincipalProps) {
-    const [initDate, setinitDate] = useState(defaultInitDate);
-    const [endDate, setendDate] = useState(defaultEndDate);
-    const [detalleVisible, setDetalleVisible] = useState<number | null>(null)
-    const {replace, push} = useRouter();
+export default function ListReprimands({ data, count, defaultInitDate, defaultEndDate, profile }: PrincipalProps) {
+    const [initDate, setInitDate] = useState(defaultInitDate);
+    const [endDate, setEndDate] = useState(defaultEndDate);
+    const { replace, push } = useRouter();
     const pathname = usePathname();
-
 
     const handleSearch = () => {
         const init = new Date(initDate);
         init.setMinutes(init.getMinutes() + init.getTimezoneOffset())
         const end = new Date(endDate);
-        end.setMinutes(init.getMinutes() + init.getTimezoneOffset())
+        end.setMinutes(end.getMinutes() + end.getTimezoneOffset())
         end.setHours(23, 59, 59, 999)
 
         const params = new URLSearchParams({
@@ -43,32 +42,18 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
         replace(`${pathname}?${params.toString()}`);
     };
 
-    const toggleDetalle = (id: number | null) => {
-        setDetalleVisible(detalleVisible === id ? null : id)
-    }
-
-    const renderDetalle = (message: string) => {
-        return message.split('\n').map((parrafo, index) => (
-            <p key={index} className="mt-2 text-white">
-                {parrafo}
-            </p>
-        ))
-    }
-
     const handleAdd = () => {
         push('/reprimand/add');
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
+        <div className="min-h-full bg-gray-900 text-white p-8">
             <Card className="bg-gray-800 border-gray-700">
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl text-white font-bold">Buscador de Sanciones</h2>
-                        <Tooltip content=" Agregar Amonestación" classNames={{content: "text-white"}}>
-                            <Button onClick={() => handleAdd()}
-                                data-testid="add-reprimand"
-                                className="bg-green-600 hover:bg-green-700">
+                        <Tooltip content="Agregar Amonestación" classNames={{content: "text-white"}}>
+                            <Button onClick={handleAdd} data-testid="add-reprimand" className="bg-green-600 hover:bg-green-700">
                                 <Plus className="h-4 w-4"/>
                             </Button>
                         </Tooltip>
@@ -76,28 +61,25 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                     <div className="flex flex-col space-y-4 mb-6">
                         <div className="flex space-x-4">
                             <div className="flex-1">
-                                <label htmlFor="initDate" className="text-white block text-sm font-medium mb-1">Fecha de
-                                    inicio</label>
+                                <label htmlFor="initDate" className="text-white block text-sm font-medium mb-1">Fecha de inicio</label>
                                 <Input
                                     id="initDate"
                                     type="date"
                                     value={initDate}
-                                    onChange={(e) => setinitDate(e.target.value)}
+                                    onChange={(e) => setInitDate(e.target.value)}
                                     className="bg-gray-700 text-white border-gray-600 w-full"
                                 />
                             </div>
                             <div className="flex-1">
-                                <label htmlFor="endDate" className="text-white block text-sm font-medium mb-1">Fecha de
-                                    fin</label>
+                                <label htmlFor="endDate" className="text-white block text-sm font-medium mb-1">Fecha de fin</label>
                                 <Input
                                     id="endDate"
                                     type="date"
                                     value={endDate}
-                                    onChange={(e) => setendDate(e.target.value)}
+                                    onChange={(e) => setEndDate(e.target.value)}
                                     className="bg-gray-700 text-white border-gray-600 w-full"
                                 />
                             </div>
-
                             <Tooltip content="Buscar" classNames={{content: "text-white"}}>
                                 <Button onClick={handleSearch} data-testid="search-button" className="bg-blue-600 hover:bg-blue-700 self-end">
                                     <Search className="h-4 w-4"/>
@@ -113,8 +95,7 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                         <div className="flex justify-between items-center">
                                             <div className="text-white">
                                                 <p className="font-semibold">Fecha: {sancion.dateTime.toLocaleDateString()}</p>
-                                                <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>
-                                                {/* Mostramos los estudiantes solo si el rol es 'teacher' */}
+                                                {profile.role !== "Teacher" && <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>}
                                                 <p>Estudiantes:</p>
                                                 <ul>
                                                     {sancion.students.map((student) => (
@@ -124,18 +105,12 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                                     ))}
                                                 </ul>
                                             </div>
-                                            <Button
-                                                onClick={() => toggleDetalle(sancion.id)}
-                                                className="bg-green-600 hover:bg-green-700"
-                                            >
-                                                <Eye className="mr-2 h-4 w-4" /> Ver Detalle
-                                            </Button>
+                                            <Link href={`/reprimand/${sancion.id}`} passHref>
+                                                <Button className="bg-green-600 hover:bg-green-700">
+                                                    <Eye className="mr-2 h-4 w-4" /> Ver Detalle
+                                                </Button>
+                                            </Link>
                                         </div>
-                                        {detalleVisible === sancion.id && (
-                                            <div className="mt-2">
-                                                {renderDetalle(sancion.message)}
-                                            </div>
-                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -143,7 +118,6 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                             <p className="text-white">No se encontraron sanciones para la fecha seleccionada.</p>
                         )
                     ) : (
-                        /* Si el rol no es 'teacher', mostramos el código anterior */
                         data.length > 0 ? (
                             <ul className="space-y-4">
                                 {data.map((sancion) => (
@@ -153,18 +127,12 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                                                 <p className="font-semibold">Fecha: {sancion.dateTime.toLocaleDateString()}</p>
                                                 <p>Docente: {sancion.teacher.user.firstName} {sancion.teacher.user.lastName}</p>
                                             </div>
-                                            <Button
-                                                onClick={() => toggleDetalle(sancion.id)}
-                                                className="bg-green-600 hover:bg-green-700"
-                                            >
-                                                <Eye className="mr-2 h-4 w-4"/> Ver Detalle
-                                            </Button>
+                                            <Link href={`/reprimand/${sancion.id}`} passHref>
+                                                <Button className="bg-green-600 hover:bg-green-700">
+                                                    <Eye className="mr-2 h-4 w-4"/> Ver Detalle
+                                                </Button>
+                                            </Link>
                                         </div>
-                                        {detalleVisible === sancion.id && (
-                                            <div className="mt-2">
-                                                {renderDetalle(sancion.message)}
-                                            </div>
-                                        )}
                                     </li>
                                 ))}
                             </ul>
@@ -178,6 +146,5 @@ export default function ListReprimands({data, count, defaultInitDate, defaultEnd
                 <PaginationControls cantPages={count}/>
             </div>
         </div>
-
     )
 }

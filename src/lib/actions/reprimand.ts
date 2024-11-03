@@ -17,7 +17,10 @@ export async function createReprimand(formData: ReprimandData): Promise<ActionRe
         const user = await fetchCurrentUser();
         if (!user)
             return {success: false, error: "No se pudo obtener el usuario"}
-        const res: {success: true, reprimand: Reprimand} | {success: false, error: string} = await prisma.$transaction(async tx => {
+        const res: { success: true, reprimand: Reprimand } | {
+            success: false,
+            error: string
+        } = await prisma.$transaction(async tx => {
             const validStudents = await tx.student.count({
                 where: {
                     id: {
@@ -37,13 +40,19 @@ export async function createReprimand(formData: ReprimandData): Promise<ActionRe
                         }
                     },
                     students: {
-                        connect: data.data.students.map(id => ({id}))
+                        create: data.data.students.map(id => ({
+                            student: {
+                                connect: {
+                                    id: id
+                                }
+                            }
+                        }))
                     },
                 }
             })
             return {success: true, reprimand: reprimand}
         });
-        if(!res.success)
+        if (!res.success)
             return res
 
         try {
@@ -51,9 +60,9 @@ export async function createReprimand(formData: ReprimandData): Promise<ActionRe
                 const student = await fetchStudentById(studentId)
                 const parents = await fetchParentsByStudentId(studentId);
 
-                if(!student)
+                if (!student)
                     throw new Error("No se pudo obtener la información del alumno con id " + studentId)
-                if(!parents)
+                if (!parents)
                     throw new Error("No se pudo obtener la información de los padres del alumno con id " + studentId)
 
                 for (const parent of parents) {

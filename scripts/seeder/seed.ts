@@ -262,13 +262,7 @@ async function createReprimands() {
     console.log(`Progress: 0%`)
     for (let i = 0; i < data.reprimands.length; i++) {
         const reprimand = data.reprimands[i];
-        const studentIds = reprimand.studentDnis.map(getStudentId);
         const teacherId = getTeacherId(reprimand.teacherDni);
-
-        let signatureParentId;
-        if (reprimand.signature) {
-            signatureParentId = getParentId(reprimand.signature.signedByDni);
-        }
 
         await prisma.reprimand.create({
             data: {
@@ -280,18 +274,26 @@ async function createReprimands() {
                     }
                 },
                 students: {
-                    connect: studentIds.map((id) => ({id: id}))
+                        create: reprimand.students.map(student => ({
+                            student: {
+                                connect: {
+                                    id: getStudentId(student.dni)
+                                }
+                            },
+                            signature: (student.signature) ? {
+                                create: {
+                                    parent: {
+                                        connect: {
+                                            id: getParentId(student.signature.signedByDni)
+                                        }
+                                    },
+                                    signedAt: student.signature.dateTime
+                                }
+                            } : undefined
+                        }))
+
                 },
-                signature: (reprimand.signature && signatureParentId) ? {
-                    create: {
-                        parent: {
-                            connect: {
-                                id: signatureParentId
-                            }
-                        },
-                        signedAt: reprimand.signature.date
-                    }
-                } : undefined
+
             }
         })
         console.log(`Progress: ${((i + 1) / data.reprimands.length * 100).toFixed(2)}%`)
@@ -322,7 +324,7 @@ async function createExams() {
                             mark: mark.mark,
                             signature: mark.signature ? {
                                 create: {
-                                    signedAt: mark.signature.date,
+                                    signedAt: mark.signature.dateTime,
                                     parent: {
                                         connect: {
                                             id: getParentId(mark.signature.signedByDni)

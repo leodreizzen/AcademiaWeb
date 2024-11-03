@@ -74,16 +74,20 @@ export const DateTimeSchema =  z.string().transform((value, ctx) => {
 
 const SignatureSchema = z.object({
     signedByDni: DniSchema,
-    date: DateSchema,
+    dateTime: DateTimeSchema,
 })
 
 
+const ReprimandStudentSchema = z.object({
+    dni: DniSchema,
+    signature: SignatureSchema.optional()
+})
+
 const ReprimandSchema = z.object({
-    studentDnis: z.array(DniSchema),
+    students: uniqueBy(listSchema(ReprimandStudentSchema, "reprimand student"), value => value.dni, "student dni"),
     teacherDni: DniSchema,
     message: z.string(),
     date: DateSchema,
-    signature: SignatureSchema.optional()
 });
 
 const ExamMarkSchema = z.object({
@@ -255,32 +259,32 @@ function checkRole(dni: number, role: z.infer<typeof UserSchema>["profiles"][0][
 
 function validateReprimands(reprimands: z.infer<typeof ReprimandSchema>[], users: Map<number, z.infer<typeof UserSchema>>): IssueData | undefined {
     for (const reprimand of reprimands) {
-        for (const studentDni of reprimand.studentDnis) {
-            const issue = checkRole(studentDni, "Student", users);
+        for (const student of reprimand.students) {
+            const issue = checkRole(student.dni, "Student", users);
             if (issue)
                 return {...issue, message: issue.message + ` in reprimand with message ${reprimand.message}`};
+            if(student.signature){
+                const signature = student.signature;
+                const issue = checkRole(signature.signedByDni, "Parent", users);
+                if (issue)
+                    return {...issue, message: issue.message + ` in reprimand with message ${reprimand.message}`};
+                if(!users.get(student.dni)?.profiles.find(p => p.role === "Student")?.parentDnis.includes(signature.signedByDni)){
+                    return {
+                        code: "custom",
+                        message: `Parent with dni ${student.signature.signedByDni} is not a parent of any of the students in the reprimand with message ${reprimand.message}`
+                    }
+                }
+                if(signature.dateTime < reprimand.date){
+                    return {
+                        code: "custom",
+                        message: `Signature date is before reprimand date in reprimand with message ${reprimand.message}`
+                    }
+                }
+            }
         }
         const issue = checkRole(reprimand.teacherDni, "Teacher", users);
         if (issue)
             return {...issue, message: issue.message + ` in reprimand with message ${reprimand.message}`};
-        if(reprimand.signature){
-            const signature = reprimand.signature;
-            const issue = checkRole(signature.signedByDni, "Parent", users);
-            if (issue)
-                return {...issue, message: issue.message + ` in reprimand with message ${reprimand.message}`};
-            if(!reprimand.studentDnis.some ( student => users.get(student)?.profiles.find(p => p.role === "Student")?.parentDnis.includes(signature.signedByDni))){
-                return {
-                    code: "custom",
-                    message: `Parent with dni ${reprimand.signature.signedByDni} is not a parent of any of the students in the reprimand with message ${reprimand.message}`
-                }
-            }
-            if(signature.date < reprimand.date){
-                return {
-                    code: "custom",
-                    message: `Signature date is before reprimand date in reprimand with message ${reprimand.message}`
-                }
-            }
-        }
     }
     return undefined;
 }
@@ -313,7 +317,7 @@ function validateExams(exams: z.infer<typeof ExamSchema>[], users: Map<number, z
                         message: `Parent with dni ${mark.signature.signedByDni} is not a parent of student with dni ${mark.studentDni} in exam with subject ${exam.subject}`
                     }
                 }
-                if(mark.signature.date < exam.date) {
+                if(mark.signature.dateTime < exam.date) {
                     return {
                         code: "custom",
                         message: `Signature date is before exam date in exam with subject ${exam.subject}`

@@ -176,6 +176,10 @@
                       "additionalProperties": false
                     }
                   ]
+                },
+                "minItems": 1,
+                "errorMessage": {
+                  "minItems": "User must have at least one profile"
                 }
               },
               "firstName": {
@@ -251,10 +255,35 @@
           "items": {
             "type": "object",
             "properties": {
-              "studentDnis": {
+              "students": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                  "type": "object",
+                  "properties": {
+                    "dni": {
+                      "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                    },
+                    "signature": {
+                      "type": "object",
+                      "properties": {
+                        "signedByDni": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                        },
+                        "dateTime": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "signedByDni",
+                        "dateTime"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "dni"
+                  ],
+                  "additionalProperties": false
                 }
               },
               "teacherDni": {
@@ -265,26 +294,10 @@
               },
               "date": {
                 "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
-              },
-              "signature": {
-                "type": "object",
-                "properties": {
-                  "signedByDni": {
-                    "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
-                  },
-                  "date": {
-                    "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
-                  }
-                },
-                "required": [
-                  "signedByDni",
-                  "date"
-                ],
-                "additionalProperties": false
               }
             },
             "required": [
-              "studentDnis",
+              "students",
               "teacherDni",
               "message",
               "date"
@@ -321,7 +334,7 @@
                       "maximum": 10
                     },
                     "signature": {
-                      "$ref": "#/definitions/test data/properties/reprimands/items/properties/signature"
+                      "$ref": "#/definitions/test data/properties/reprimands/items/properties/students/items/properties/signature"
                     }
                   },
                   "required": [
@@ -568,7 +581,7 @@
                 "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
               },
               "dateTime": {
-                "type": "string"
+                "$ref": "#/definitions/test data/properties/reprimands/items/properties/students/items/properties/signature/properties/dateTime"
               },
               "message": {
                 "type": "string",

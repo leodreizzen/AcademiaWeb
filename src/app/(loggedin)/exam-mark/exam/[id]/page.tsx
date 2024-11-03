@@ -33,7 +33,7 @@ export default async function ExamMarkByExamIDPage({params: {id}}: { params: { i
                     <div className="flex flex-col w-full max-w-2xl p-4">
                         <div className="flex justify-between">
                             <span className="font-medium">Materia:</span>
-                            <span data-testid="subject">{examMark.Exam.subject.name}</span>
+                            <span data-testid="subject">{examMark.exam.subject.name}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium">Alumno/a:</span>
@@ -41,7 +41,7 @@ export default async function ExamMarkByExamIDPage({params: {id}}: { params: { i
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium">Fecha:</span>
-                            <span data-testid="date">{format(examMark.Exam.date, "dd/MM/yyyy")}</span>
+                            <span data-testid="date">{format(examMark.exam.date, "dd/MM/yyyy")}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="font-medium">Nota:</span>

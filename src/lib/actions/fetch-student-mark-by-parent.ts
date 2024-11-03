@@ -3,7 +3,7 @@ import {Exam, ExamMark, Parent, Profile, Student, Subject} from "@prisma/client"
 
 export interface ExamMarkWithStudentAndExam extends ExamMark {
     student: StudentWithProfileAndParents
-    Exam: ExamWithSubject
+    exam: ExamWithSubject
 }
 
 export interface StudentWithProfileAndParents extends Student {
@@ -33,7 +33,7 @@ export async function fetchStudentMarkByParent(examMarkId: string): Promise<Exam
             id: parseInt(examMarkId)
         },
         include: {
-            Exam: {
+            exam: {
                 include: {
                     subject: true
                 }

@@ -36,7 +36,9 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
             const idFilter = id !== undefined ? {
                 students: {
                     some: {
-                        id: id
+                        student: {
+                            id: id
+                        }
                     }
                 }
             } : {};
@@ -104,7 +106,9 @@ export async function countReprimands(init?: Date, end?: Date) {
             const idFilter = id !== undefined ? {
                 students: {
                     some: {
-                        id: id
+                        student: {
+                            id: id
+                        }
                     }
                 }
             } : {};

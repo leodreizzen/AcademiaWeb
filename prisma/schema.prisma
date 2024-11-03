@@ -53,11 +53,11 @@ model Student {
   parents               Parent[]
   grade                 Grade                  @relation(fields: [gradeName], references: [name])
   gradeName             String
-  reprimands            Reprimand[]
   examMarks             ExamMark[]
   assignmentSubmissions AssignmentSubmission[]
   reportCards           ReportCard[]
   attendanceItems       AttendanceItem[]
+  reprimands            ReprimandStudent[]
 }
 
 model Parent {
@@ -116,6 +116,7 @@ model AssignmentSubmission {
 
 model Grade {
   name             String             @id
+  id               Int                @unique @default(autoincrement())
   subjects         Subject[]
   students         Student[]
   gradeReportCards GradeReportCards[]
@@ -145,15 +146,13 @@ model PasswordResetToken {
 }
 
 model Reprimand {
-  id        Int       @id @default(autoincrement())
-  students  Student[]
+  id        Int      @id @default(autoincrement())
   message   String
-  teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
   teacherId Int
-  dateTime  DateTime  @default(now())
+  dateTime  DateTime @default(now())
 
-  signature      Signature?
-  signatureToken SignatureToken?
+  students ReprimandStudent[]
 }
 
 model Exam {
@@ -166,7 +165,7 @@ model Exam {
 
 model ExamMark {
   id        Int     @id @default(autoincrement())
-  Exam      Exam    @relation(fields: [examId], references: [id])
+  exam      Exam    @relation(fields: [examId], references: [id])
   examId    Int
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
@@ -253,26 +252,45 @@ enum AttendanceStatus {
 }
 
 model Signature {
-  id          Int        @id @default(autoincrement())
-  parent      Parent     @relation(fields: [parentId], references: [id])
-  parentId    Int
-  reprimand   Reprimand? @relation(fields: [reprimandId], references: [id])
-  reprimandId Int?       @unique
-  examMark    ExamMark?  @relation(fields: [examId], references: [id])
-  examId      Int?       @unique
-  signedAt    DateTime   @default(now())
+  id                   Int               @id @default(autoincrement())
+  parent               Parent            @relation(fields: [parentId], references: [id])
+  parentId             Int
+  examMark             ExamMark?         @relation(fields: [examId], references: [id])
+  examId               Int?              @unique
+  signedAt             DateTime          @default(now())
+  reprimand            ReprimandStudent? @relation(fields: [reprimandStudentId, reprimandReprimandId], references: [studentId, reprimandId])
+  reprimandStudentId   Int?
+  reprimandReprimandId Int?
+
+  @@unique([reprimandStudentId, reprimandReprimandId])
+}
+
+model ReprimandStudent {
+  student        Student         @relation(fields: [studentId], references: [id])
+  reprimand      Reprimand       @relation(fields: [reprimandId], references: [id])
+  signature      Signature?
+  signatureToken SignatureToken?
+  studentId      Int
+  reprimandId    Int
+  signatureId    Int?
+
+  @@id([studentId, reprimandId])
 }
 
 model SignatureToken {
-  id          Int        @id @default(autoincrement())
-  token       Int
-  issued_at   DateTime   @default(now())
-  reprimand   Reprimand? @relation(fields: [reprimandId], references: [id])
-  reprimandId Int?       @unique
-  examMark    ExamMark?  @relation(fields: [examId], references: [id])
-  examId      Int?       @unique
-  parent      Parent     @relation(fields: [parentId], references: [id])
-  parentId    Int
+  id                   Int               @id @default(autoincrement())
+  token                Int
+  issued_at            DateTime          @default(now())
+  reprimand            ReprimandStudent? @relation(fields: [reprimandStudentId, reprimandReprimandId], references: [studentId, reprimandId])
+  examMark             ExamMark?         @relation(fields: [examMarkId], references: [id])
+  examMarkId           Int?              @unique
+  parent               Parent            @relation(fields: [parentId], references: [id])
+  parentId             Int
+  sentSuccessfully     Boolean           @default(false)
+  reprimandStudentId   Int?
+  reprimandReprimandId Int?
+
+  @@unique([reprimandStudentId, reprimandReprimandId])
 }
 
 model Message {

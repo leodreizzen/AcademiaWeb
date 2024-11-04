@@ -39,7 +39,6 @@ export default function StudentAttendance({student}: StudentAttendanceProps) {
         return acc
     }, {} as Record<string, boolean>)
 
-    console.log(attendanceFormatted)
 
     function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
         const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;

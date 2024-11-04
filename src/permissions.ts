@@ -31,7 +31,8 @@ const parentPrivileges: PermissionList[] = [
     {resource: Resource.EXAM_MARK, operations: ["LIST"]},
     {resource: Resource.REPORT_CARD, operations: ["LIST", "READ"]},
     {resource: Resource.REPRIMAND, operations: ["LIST", "CREATE", "READ"]},
-    {resource: Resource.USER, operations: ["SELECT_CHILD"]}
+    {resource: Resource.USER, operations: ["SELECT_CHILD"]},
+    {resource: Resource.ATTENDANCE, operations: ["READ"]},
 ];
 
 const studentPrivileges: PermissionList[] = [

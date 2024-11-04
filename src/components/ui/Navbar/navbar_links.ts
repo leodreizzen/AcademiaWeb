@@ -43,7 +43,10 @@ export const navbarItems: Record<ProfileRole, NavbarItem[]> = {
     }, {
         name: "Boletines",
         href: "/reportcard"
-    }],
+    }, {
+        name: "Asistencia",
+        href: "/attendance"
+        }],
     Administrator: [{
         name: "Alumnos",
         href: "/student"

@@ -298,7 +298,8 @@ test('Crear examen sin notas', async ({page}) => {
     await expect(studentsLocator.first()).toBeVisible(); // at least one student
     await fillDate(page, format(date, "yyyy", {locale: es}), format(date, "MMMM", {locale: es}), format(date, "d", {locale: es}));
 
-    await page.getByRole('button', {name: 'Cargar'}).click();
+    await page.keyboard.press("Escape");
+
     let dialogShown = false;
     page.on('dialog', dialog => {
             expect(dialog.message()).toBe('Debes ingresar al menos una nota');
@@ -306,6 +307,7 @@ test('Crear examen sin notas', async ({page}) => {
             dialogShown = true;
         }
     );
+    await page.getByRole('button', {name: 'Cargar'}).click();
 
     await expect.poll(async () => {
         return dialogShown;

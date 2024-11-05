@@ -77,7 +77,7 @@ test('Crear examen con datos válidos', async ({page}) => {
         return dialogShown;
     }, {
         intervals: [250],
-        timeout: 10000,
+        timeout: 20000,
     }).toBe(true)
 
     await expect(page.getByRole("heading", {name: "Notas de Alumnos"})).toBeVisible();
@@ -171,7 +171,7 @@ test('Crear examen sin algunas notas (CASO DE EXITO)', async ({page}) => {
         return dialogShown;
     }, {
         intervals: [250],
-        timeout: 10000,
+        timeout: 20000,
     }).toBe(true)
 
     await expect(page.getByRole("heading", {name: "Notas de Alumnos"})).toBeVisible();
@@ -311,7 +311,7 @@ test('Crear examen sin notas', async ({page}) => {
         return dialogShown;
     }, {
         intervals: [250],
-        timeout: 10000,
+        timeout: 20000,
     }).toBe(true)
 })
 

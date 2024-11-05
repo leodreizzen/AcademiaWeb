@@ -4,6 +4,7 @@ import {Grade, Prisma, Subject, Teacher} from "@prisma/client";
 import {StudentMark} from "@/lib/models/examMarkAdd";
 import prisma from "@/lib/prisma";
 import {mapStudentWithUser} from "@/lib/data/mappings";
+import {localDayStart} from "@/lib/dateUtils";
 
 export interface SubjectWithGradeAndTeachers extends Subject {
     grade: Grade
@@ -72,7 +73,7 @@ export async function registerMarks(subjectId: number, examDate: Date, students:
 
             const exam = await tx.exam.create({
                 data: {
-                    date: examDate,
+                    date: localDayStart(examDate),
                     subject: {
                         connect: {
                             id: subjectId

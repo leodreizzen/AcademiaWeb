@@ -15,8 +15,6 @@ export default async function ExamMarkAddPage() {
 
     const grades = await fetchGradesWithSubjectsForTeacher(user.id);
 
-    console.log(grades);
-
     return (
         <div>
             <SubjectSelectionForm grades={grades} />

@@ -11,6 +11,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {ExamMarkAdd, ExamMarkAddModel} from "@/lib/models/examMarkAdd";
 import {StudentWithUser} from "@/lib/definitions/student";
 import {useRouter} from "next/navigation";
+import {FieldCalendar} from "@/components/ui/FieldCalendar";
 
 type ExamMarkFormProps = {
     subject: SubjectWithGradeAndTeachers,
@@ -23,7 +24,7 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
         name: student.user.firstName + ' ' + student.user.lastName,
         grade: null
     }))
-    const { register, handleSubmit, formState } = useForm<ExamMarkAdd>({
+    const { register, handleSubmit, formState, control } = useForm<ExamMarkAdd>({
         defaultValues: {
             examDate: undefined,
             examMarks: _students
@@ -35,9 +36,8 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
 
      async function onSubmit (data: ExamMarkAdd){
         if(!data.examMarks.some(student => student.grade != null)){
-            alert("Debe ingresar al menos una nota")
+            alert("Debes ingresar al menos una nota")
         } else {
-            console.log(data)
             const res = await registerMarks(subject.id, data.examDate, data.examMarks)
             if (res.success) {
                 alert("Notas cargadas exitosamente")
@@ -52,7 +52,7 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
         <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
             <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-center">Registrar Nota Examen</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-center">Registrar Examen</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -68,14 +68,15 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
                                 </div>
                             </div>
                             <div>
-                                <Label htmlFor="examDate">Examen realizado:</Label>
-                                <Input
-                                    id="examDate"
-                                    type="date"
-                                    className="bg-gray-700 text-gray-100"
-                                    {...register("examDate", {valueAsDate: true})}
-                                />
-                                {formState.errors.examDate && <p className="text-red-500 text-sm mt-1">{formState.errors.examDate.message}</p>}
+
+                                {/*<Label htmlFor="examDate">Examen realizado:</Label>*/}
+                                {/*<Input*/}
+                                {/*    id="examDate"*/}
+                                {/*    type="date"*/}
+                                {/*    className="bg-gray-700 text-gray-100"*/}
+                                {/*    {...register("examDate", {valueAsDate: true})}*/}
+                                {/*/>*/}
+                                <FieldCalendar control={control} label={"Examen realizado:"} registerRes={register("examDate")} errors={formState.errors}/>
                             </div>
                         </div>
                         <div>
@@ -83,7 +84,7 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
                             <div className="space-y-4">
                                 {students.map((student, index) => (
                                     <div key={index}
-                                         className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+                                         className="flex items-center justify-between p-3 bg-gray-700 rounded-lg" data-testid="student-mark">
                                         <span
                                             className="font-medium">{student.user.firstName} {student.user.lastName}</span>
                                         <div className={"flex-col space-y-2"}>

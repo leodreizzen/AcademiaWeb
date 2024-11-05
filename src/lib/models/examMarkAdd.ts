@@ -13,9 +13,11 @@ export const StudentMarkModel = z.object({
 })
 
 export const ExamMarkAddModel = z.object({
-    examDate: z.date({errorMap: (issue, {defaultError}) => ({
-        message: issue.code === "invalid_date" ? "Ingrese una fecha válida" : defaultError,
-        }), message: "Ingrese una fecha válida."}).max(new Date(), "La fecha no puede ser mayor a la actual"),
+    examDate: z.date({errorMap: (issue, {defaultError}) => {
+            return {
+                message: issue.code === "invalid_date" ? "Ingresa una fecha válida" :issue.code === "invalid_type" ? "Ingresa una fecha": defaultError,
+            }
+        }, message: "Ingrese una fecha válida."}).max(new Date(), "La fecha no puede ser mayor a la actual"),
 
     examMarks: z.array(StudentMarkModel),
 })

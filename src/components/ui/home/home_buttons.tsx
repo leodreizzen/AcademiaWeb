@@ -1,4 +1,14 @@
-import {AlertTriangle, BookOpen, CheckSquare, FileText, GraduationCap, UserCog, Users, Users2} from "lucide-react";
+import {
+    AlertTriangle,
+    BookOpen,
+    CalendarCheck2,
+    CheckSquare,
+    FileText,
+    GraduationCap,
+    UserCog,
+    Users,
+    Users2
+} from "lucide-react";
 import {ReactComponentLike} from "prop-types";
 import {ProfileRole} from "@/lib/definitions";
 
@@ -17,10 +27,11 @@ const assignmentsButton: HomeButton = { name: "Trabajos Prácticos", Icon: BookO
 const reprimandsButton: HomeButton = { name: "Amonestaciones", Icon: AlertTriangle, href: "/reprimand" }
 const reportCardsButton: HomeButton = { name: "Boletines", Icon: FileText, href: "/reportcard" }
 const examMarksButton: HomeButton = { name: "Notas de exámenes", Icon: CheckSquare, href: "/exam-mark" }
+const attendanceButton: HomeButton = {name: "Asistencia", Icon: CalendarCheck2, href: "/attendance"}
 
 export const homeButtonsByRole: Record<ProfileRole, HomeButton[]> = {
     "Student": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton],
-    "Teacher": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton],
+    "Teacher": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton, attendanceButton],
     "Parent": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton],
     "Administrator": [studentsButton, teachersButton, parentsButton, adminsButton]
 }

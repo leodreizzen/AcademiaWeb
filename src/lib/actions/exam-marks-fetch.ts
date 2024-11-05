@@ -28,8 +28,11 @@ export async function fetchExamMarksForStudent(studentId: number) {
                                             studentId: studentId
                                         }
                                     }
+                                },
+                                orderBy: {
+                                    date: "desc"
                                 }
-                            }
+                            },
                         }
                     }
                 }
@@ -70,6 +73,9 @@ export async function fetchExamMarksForTeacher(teacherId: number) {
                                     }
                                 }
                             }
+                        },
+                        orderBy: {
+                            date: "desc"
                         }
                     },
                     grade: true

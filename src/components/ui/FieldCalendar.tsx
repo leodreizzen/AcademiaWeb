@@ -1,7 +1,16 @@
 "use client"
 import React from "react";
 import clsx from "clsx";
-import {FieldErrors, FieldName, FieldValues, UseFormRegisterReturn, Controller, Control} from "react-hook-form";
+import {
+    FieldErrors,
+    FieldName,
+    FieldValues,
+    UseFormRegisterReturn,
+    Controller,
+    Control,
+    Path,
+    UseFormRegister, useForm
+} from "react-hook-form";
 import {ErrorMessage, FieldValuesFromFieldErrors} from "@hookform/error-message";
 import {Label} from "@/components/ui/label";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
@@ -19,18 +28,17 @@ interface FormFieldProps<T extends FieldValues> {
     label: string;
     required?: boolean;
     className?: string;
-    registerRes:  UseFormRegisterReturn<FieldName<FieldValuesFromFieldErrors<FieldErrors<T>>>>
-    errors: FieldErrors<T>
-    control: Control<ParentData> | Control<StudentDataWithoutGrade>
+    registerRes: ReturnType<UseFormRegister<T>> & {name: FieldName<FieldValuesFromFieldErrors<FieldErrors<T>>>}
+    errors: ReturnType<typeof useForm<T>>["formState"]["errors"]
+    control: Control<T>
 }
 
 export function FieldCalendar<T extends FieldValues>({label, className, control, registerRes, errors}: FormFieldProps<T>) {
-    const inputId = `input-${registerRes.name}`
     return (
         <div className={clsx("space-y-2 flex flex-col", className)}>
-            <Label htmlFor={inputId} className="text-gray-300 mb-1">{label}</Label>
+            <Label className="text-gray-300 mb-1">{label}</Label>
             <Controller
-                name="birthDate"
+                name={registerRes.name}
                 control={control}
                 render={({ field }) => (
                     <Popover>

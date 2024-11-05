@@ -2,7 +2,6 @@
 
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {revalidatePath} from "next/cache";
-import {ParentWithUser} from "@/lib/definitions/parent";
 import prisma from "@/lib/prisma";
 import {Subject} from "@prisma/client";
 
@@ -60,7 +59,7 @@ export async function updateTeacher(id: number, phoneNumber: string, address: st
                 }
             });
 
-            console.log(`Student updated with ID: ${updateTeacher.id}`);
+            console.log(`Teacher updated with ID: ${updateTeacher.id}`);
             revalidatePath("/teacher");
             revalidatePath(`/teacher/${updateTeacher.id}/edit`);
             revalidatePath(`/teacher/${updateTeacher.id}`);

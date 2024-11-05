@@ -2,35 +2,40 @@
 import prisma from "@/lib/prisma";
 import {AttendanceStatus} from "@prisma/client";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
+import {localDayEnd, localDayStart} from "@/lib/dateUtils";
 
-export async function registerAttendance(attendance: Record<number, AttendanceStatus>, gradeName: string, date: Date, init: Date, end: Date): Promise<ActionResult> {
-    try {
-
-        const dateFilter = init && end ? {
-            date: {
-                gte: init,
-                lte: end
-            }
-        } : {};
-
-
-        const checkIfPreviousAttendance = await prisma.attendanceData.findFirst({
-            where: {
-                gradeName,
-                ...dateFilter,
+export async function hasPreviousAttendace(gradeId:number, date: Date){
+    return await prisma.attendanceData.findFirst({
+        where: {
+            grade: {
+                id: gradeId
             },
-        });
-        if(checkIfPreviousAttendance){
+            date: {
+                gte: localDayStart(date),
+                lte: localDayEnd(date)
+            }
+        },
+    }) !== null;
+}
+
+export async function registerAttendance(attendance: Record<number, AttendanceStatus>, gradeId: number, _date: Date): Promise<ActionResult> {
+    const date = new Date(); // ignore date for now
+    try {
+        const hasPreviousAttendance = await hasPreviousAttendace(gradeId, date);
+        if(hasPreviousAttendance){
             return {
                 success: false,
                 error: "Ya existe una asistencia registrada para esta fecha"
             }
         }
 
-
         await prisma.attendanceData.create({
             data: {
-                gradeName,
+                grade: {
+                    connect: {
+                        id: gradeId
+                    }
+                },
                 date,
                 items: {
                     create: Object.entries(attendance).map(([studentId, status]) => ({

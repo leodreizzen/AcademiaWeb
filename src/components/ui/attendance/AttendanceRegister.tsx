@@ -2,7 +2,7 @@
 import {PrismaStudentWithUser} from "@/lib/data/mappings";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import React, {useState} from "react";
-import {AttendanceStatus} from "@prisma/client";
+import {AttendanceStatus, Grade} from "@prisma/client";
 import {Label} from "@/components/ui/label";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
@@ -16,7 +16,7 @@ import dayjs, {Dayjs} from "dayjs";
 import {registerAttendance} from "@/lib/actions/registerAttendance";
 import {useRouter} from "next/navigation";
 
-export function AttendanceRegister({students, gradeName, id}: {students: PrismaStudentWithUser[], gradeName: string, id: number}) {
+export function AttendanceRegister({students, grade, id}: {students: PrismaStudentWithUser[], grade: Grade, id: number}) {
 
     const [attendance, setAttendance] = useState<Record<number, AttendanceStatus>>(Object.fromEntries(students.map(s => ([s.id, "ABSENT"]))))
     const [field, setField] = useState<Date>(new Date());
@@ -30,11 +30,7 @@ export function AttendanceRegister({students, gradeName, id}: {students: PrismaS
     }
 
     const handleContinue = async () => {
-        const init = new Date(field);
-        const end = new Date(field);
-        init.setHours(0,0,0,0);
-        end.setHours(23,59,59,999);
-        const result = await registerAttendance(attendance, gradeName, field, init, end);
+        const result = await registerAttendance(attendance, grade.id, field);
         if(result.success){
             alert("Asistencia registrada correctamente")
             router.push(`/attendance/${id}`)
@@ -51,7 +47,7 @@ export function AttendanceRegister({students, gradeName, id}: {students: PrismaS
             <Card className="w-full max-w-4xl mx-auto bg-gray-800 text-gray-100">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-gray-100">
-                       Registro de asistencia para {gradeName}
+                       Registro de asistencia para {grade.name}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import {expect, Page, test} from "@playwright/test";
 import {loginAsTestUser} from "../testutils";
 test.beforeEach(async ({page}) => {
     await page.goto('/');
 });
 
 
-async function contarDíasEnRojo(page) {
+async function contarDíasEnRojo(page: Page) {
     let totalDíasEnRojoCount = 0;
 
     const meses = 12; 
@@ -55,8 +55,7 @@ test.describe('Ver asistencia de hijos', () => {
         await childButton.click();
         await page.waitForURL('/'); 
         await page.getByRole('navigation').getByRole('link', { name: 'Asistencia' }).first().click();
-        const dia4 = page.locator('button[role="gridcell"][data-timestamp="1730689200000"]');
-        await page.waitForSelector('button[role="gridcell"][data-timestamp="1730689200000"]');
+        const dia4 = page.locator('button[role="gridcell"]:not([disabled])', {hasText: new RegExp("^4$")});
         await expect(dia4).toBeVisible();
         const backgroundColor = await dia4.evaluate((element) => window.getComputedStyle(element).backgroundColor);
         expect(backgroundColor).toBe('rgb(0, 128, 0)');
@@ -78,11 +77,10 @@ test.describe('Ver asistencia de hijos', () => {
         await previousMonthButton.click();
         await expect(monthLabel).toHaveText('octubre 2024');
 
-        const dia4 = page.locator('button[role="gridcell"][data-timestamp="1730084400000"]');
-        await page.waitForSelector('button[role="gridcell"][data-timestamp="1730084400000"]');
-        await expect(dia4).toBeVisible();
+        const dia28 = page.locator('button[role="gridcell"]:not([disabled])', {hasText: new RegExp("^28$")});
+        await expect(dia28).toBeVisible();
        
-        const backgroundColor = await dia4.evaluate((element) => window.getComputedStyle(element).backgroundColor);
+        const backgroundColor = await dia28.evaluate((element) => window.getComputedStyle(element).backgroundColor);
         expect(backgroundColor).toBe('rgb(255, 0, 0)');
     });
 
@@ -102,8 +100,7 @@ test.describe('Ver asistencia de hijos', () => {
         await previousMonthButton.click();
         await expect(monthLabel).toHaveText('octubre 2024');
 
-        const dia30 = page.locator('button[role="gridcell"][data-timestamp="1730257200000"]');
-        await page.waitForSelector('button[role="gridcell"][data-timestamp="1730257200000"]');
+        const dia30 = page.locator('button[role="gridcell"]:not([disabled])', {hasText: '30'});
         await expect(dia30).toBeVisible();
        
         const backgroundColor = await dia30.evaluate((element) => window.getComputedStyle(element).backgroundColor);
@@ -123,6 +120,8 @@ test.describe('Ver asistencia de hijos', () => {
         const totalDíasAusentesCount = await contarDíasEnRojo(page);
         const totalFaltas = await page.locator('h6:has-text("Total de faltas:")');
         const textoTotalFaltas = await totalFaltas.innerText();
+        if(textoTotalFaltas == null)
+            throw new Error("No se encontró el texto 'Total de faltas:'");
         const faltasCount = parseInt(textoTotalFaltas.match(/\d+/)[0]);
         expect(totalDíasAusentesCount).toBe(faltasCount);
     });

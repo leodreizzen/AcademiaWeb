@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -53,7 +53,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         await page.getByLabel('DNI').click({delay: 100});
         await page.getByLabel('DNI').type('',{delay: 1000});
@@ -76,7 +76,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -99,7 +99,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -122,7 +122,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -145,7 +145,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);
@@ -168,7 +168,7 @@ test.beforeEach(async ({ page }) => {
         await page.getByRole('navigation').getByRole('link', { name: 'Administradores' }).click();
         await page.waitForURL('/admin', { waitUntil: 'domcontentloaded' });
         //await page.locator('a:has-text("Nuevo")').click(); deberia de cambiarse cuando se agregue el boton de nuevo
-        await page.getByRole('button', { name: 'Nuevo administrador' }).click();
+        await page.getByTestId("add-admin-button").click();
         //await page.waitForURL('/admin/new',{waitUntil: 'domcontentloaded'});
         const DNI = await randomDNI();
         await page.fill('input[id="input-dni"]', DNI);

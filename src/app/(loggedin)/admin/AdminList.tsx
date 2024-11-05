@@ -1,52 +1,38 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import { AdministatorUser, AdminQuery } from "./types";
-import { getAdmins, getTotalAdmins, removeAdmin } from "./adminActions";
-import { ADMINS_PER_PAGE } from "./adminConstants";
+import { removeAdmin } from "./adminActions";
+import { ADMINS_PER_PAGE } from "@/lib/data/pagination";
 import AdminItem from "./adminItem";
 import { usePathname, useRouter } from "next/navigation";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tooltip } from "@nextui-org/tooltip";
 import {NoResultCard} from "@/components/list/NoResultCard";
+import {AdministratorWithUser} from "@/lib/definitions/administrator";
 
 interface AdminListProps {
-    pageQuery?: number;
-    dniQuery?: string;
-    lastNameQuery?: string;
+    administrators: AdministratorWithUser[];
+    count: number;
 }
 
-export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminListProps) {
-    const [page, setPage] = useState(pageQuery ?? 1);
-    const [dni, setDni] = useState<string | undefined>(dniQuery ?? undefined);
-    const [lastName, setLastName] = useState<string | undefined>(dniQuery != null ? undefined : (lastNameQuery ?? undefined));
-    const [administrators, setAdministrators] = useState<AdministatorUser[]>([]);
-    const [totalPages, setTotalPages] = useState(0);
-    const [searchQuery, setSearchQuery] = useState<AdminQuery>({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
-    const { replace, push } = useRouter();
+export default function AdminList({ administrators, count }: AdminListProps) {
+    const [page, setPage] = useState(1);
+    const [dni, setDni] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [totalPages] = useState(Math.ceil(count / ADMINS_PER_PAGE));
+    const { replace, push, refresh } = useRouter();
     const pathname = usePathname();
     const [noResults, setNoResults] = useState(false);
 
     useEffect(() => {
-        const fetchTotalAdministrators = async () => {
-            const countAdministrators = await getTotalAdmins();
-            setTotalPages(Math.ceil(countAdministrators / ADMINS_PER_PAGE));
-        };
-        fetchTotalAdministrators();
-    }, [])
-    useEffect(() => {
-        const fetchAdministrators = async () => {
-            const administratorsFromDB = await getAdmins({...searchQuery, page});
-            administratorsFromDB.length===0 ? setNoResults(true) : setNoResults(false);
-            setAdministrators(administratorsFromDB);
-        };
-        fetchAdministrators();
-    }, [searchQuery, page]);
+        administrators.length === 0 ? setNoResults(true) : setNoResults(false);
+    }, [administrators])
 
-    const searchAdministrator = () => {
-        setSearchQuery({ page, dni: dni == undefined ? undefined : parseInt(dni), lastName });
+    const searchAdministrator = (page: number = 1) => {
         const params = new URLSearchParams({
+            page: page.toString(),
             dni: dni ?? '',
             lastName: lastName ?? ''
         });
@@ -69,22 +55,39 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
         push(`/admin/${id}/edit`);
     };
     const handleRemove = async (id: number) => {
+        const mustRemove = confirm("¿Esta seguro que quiere eliminar el administrador?");
+        if (!mustRemove) {
+            return;
+        }
         const isRemove = await removeAdmin(id);
         if (isRemove) {
-            setAdministrators(administrators.filter(admin => admin.id !== id));
+            refresh();
         }
     };
     const handleAdd = () => {
         push('/admin/add');
+    };
+    const handlePreviousPage = () => {
+        setPage(page - 1);
+        searchAdministrator(page - 1);
+    };
+    const handleNextPage = () => {
+        setPage(page + 1);
+        searchAdministrator(page + 1);
     };
     return (
         <div className="w-full flex flex-col items-center justify-center min-h-screen text-white bg-gray-900">
             <div className="p-8 bg-[#212937] rounded-lg">
                 <div className="flex justify-between">
                     <h2 className="font-extrabold text-2xl">Busqueda de administradores</h2>
-                    <Button onClick={handleAdd} variant="secondary" className="bg-green-600 hover:bg-green-500 text-white">
-                        <Plus className="mr-2 h-4 w-4" /> Nuevo administrador
-                    </Button>
+
+                    <Tooltip content="Nuevo administrador" classNames={{ content: "text-white" }}>
+                        <Button onClick={handleAdd} variant="secondary"
+                            data-testid="add-admin-button"
+                            className="bg-green-600 hover:bg-green-500 text-white">
+                            <Plus className="h-4 w-4" />
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className="mt-8">
                     <Input
@@ -103,9 +106,13 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                         onChange={e => handleChangeLastname(e.target.value)}
                         className="bg-gray-700 text-white placeholder-gray-400 border-gray-600 flex-grow text-lg py-2 sm:py-5"
                     />
-                    <Button onClick={searchAdministrator} variant="secondary" className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
-                        <Search className="h-5 w-5" />
-                    </Button>
+                    <Tooltip content="Buscar" classNames={{ content: "text-white" }}>
+                        <Button onClick={()=>searchAdministrator()} variant="secondary"
+                            data-testid="search-button"
+                            className="bg-gray-600 hover:bg-gray-500 px-5 w-full sm:w-auto">
+                            <Search className="h-5 w-5" />
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className="flex flex-col mt-8 gap-4">
                     {noResults && <NoResultCard user={"administradores"}/>}
@@ -121,7 +128,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                         className='bg-[#59999C] hover:bg-[#5FC8CD]'
                         size="lg"
                         disabled={page == 1}
-                        onClick={() => setPage(page - 1)}
+                        onClick={handlePreviousPage}
                     >
                         Anterior
                     </Button>
@@ -132,7 +139,7 @@ export default function AdminList({ pageQuery, dniQuery, lastNameQuery }: AdminL
                         className='bg-[#59999C] hover:bg-[#5FC8CD]'
                         size="lg"
                         disabled={page == totalPages}
-                        onClick={() => setPage(page + 1)}
+                        onClick={handleNextPage}
                     >
                         Siguiente
                     </Button>

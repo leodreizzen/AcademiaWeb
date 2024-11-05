@@ -1,4 +1,6 @@
 import {Profile, Prisma, User} from "@prisma/client";
+import * as runtime from "@prisma/client/runtime/library";
+import prisma from "@/lib/prisma";
 type DelegateKeys<T> = {
     [K in keyof T]: K extends `delegate${string}` ? K : never;
 }[keyof T];
@@ -6,20 +8,13 @@ type DelegateNames<T> = {
     [K in DelegateKeys<T>]: NonNullable<T[K]> extends { name: infer N } ? N : never;
 }[DelegateKeys<T>];
 
-export type ProfileRole = Exclude<DelegateNames<Prisma.$ProfilePayload["objects"]>, "Superuser">;
+export type ProfileRole = Profile["role"];
 
-export interface ProfileWithRole extends Profile {
-    role: ProfileRole
-}
+export type FieldNullable<T, K extends keyof T> = Omit<T, K> & {
+    [P in K]: T[P] | null;
+};
 
-export interface ProfileWithRoleAndUser extends ProfileWithRole{
-    user : User
-}
-import getPrismaClient from "./prisma";
-
-export type EnhancedPrismaClient = ReturnType<typeof getPrismaClient>;
+export interface UserWithoutPassword extends Omit<User, "passwordHash"> {}
 
 
-type ExtractFnType<T> = T extends (fn: (arg: infer A, ...args: any[]) => any, options?: any) => any ? A : never;
-
-export type TransactionPrismaClient = ExtractFnType<EnhancedPrismaClient['$transaction']>;
+export type TransactionPrismaClient = Omit<typeof prisma, runtime.ITXClientDenyList>

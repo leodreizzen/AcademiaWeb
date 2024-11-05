@@ -16,6 +16,18 @@ function PaginationControlsWithEndpoint({onAction, currentPage, lastPage}: Pagin
         <div className='bg-inherit m-5 text-gray-100 flex items-center justify-center overflow-hidden'>
             <Button
                 type="button"
+                className='!w-[revert] !px-2 bg-gray-700 text-gray-100 hover:bg-gray-600 mr-5'
+                size="lg"
+                disabled={currentPage <= 1} // Deshabilitar el botón si estamos en la primera página
+                onClick={() => {
+                    onAction(1);
+                }}
+            >
+                Volver al inicio
+            </Button>
+
+            <Button
+                type="button"
                 className='bg-gray-700 text-gray-100 hover:bg-gray-600'
                 size="lg"
                 disabled={currentPage <= 1} // Deshabilitar el botón si estamos en la primera página
@@ -24,7 +36,7 @@ function PaginationControlsWithEndpoint({onAction, currentPage, lastPage}: Pagin
                     onAction(newPage);
                 }}
             >
-                Prev Page
+                Anterior
             </Button>
 
             <div className="mx-4 text-[#76ABAE]">
@@ -43,7 +55,7 @@ function PaginationControlsWithEndpoint({onAction, currentPage, lastPage}: Pagin
                     }
                 }}
             >
-                Next Page
+                Siguiente
             </Button>
         </div>
     );

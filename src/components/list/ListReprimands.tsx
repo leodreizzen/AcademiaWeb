@@ -106,7 +106,7 @@ export default function ListReprimands({ data, count, defaultInitDate, defaultEn
                                                 </ul>
                                             </div>
                                             <Link href={`/reprimand/${sancion.id}`} passHref>
-                                                <Button className="bg-green-600 hover:bg-green-700">
+                                                <Button className="bg-green-600 hover:bg-green-700" data-testid="show-reprimand">
                                                     <Eye className="mr-2 h-4 w-4" /> Ver Detalle
                                                 </Button>
                                             </Link>

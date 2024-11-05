@@ -52,11 +52,12 @@ export default function ListReprimands({ data, count, defaultInitDate, defaultEn
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl text-white font-bold">Buscador de Sanciones</h2>
-                        <Tooltip content="Agregar Amonestación" classNames={{content: "text-white"}}>
+                        { profile?.role === "Teacher" && <Tooltip content="Agregar Amonestación" classNames={{content: "text-white"}}>
                             <Button onClick={handleAdd} data-testid="add-reprimand" className="bg-green-600 hover:bg-green-700">
                                 <Plus className="h-4 w-4"/>
                             </Button>
                         </Tooltip>
+                        }
                     </div>
                     <div className="flex flex-col space-y-4 mb-6">
                         <div className="flex space-x-4">

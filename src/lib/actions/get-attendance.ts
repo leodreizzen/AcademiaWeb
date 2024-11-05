@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import {$Enums, AttendanceData, Student} from "@prisma/client";
-import {ProfileWithUser} from "@/lib/actions/fetch-student-mark-by-parent";
 import AttendanceStatus = $Enums.AttendanceStatus;
+import {PrismaProfileWithUser} from "@/lib/data/mappings";
 
 export interface AttendanceResponse {
     attendance: AttendanceDataWithItems[]
@@ -18,7 +18,7 @@ interface AttendanceItemsWithStudentAndStatus {
 }
 
 interface StudentWithProfile extends Student {
-    profile: ProfileWithUser
+    profile: PrismaProfileWithUser
 }
 
 export async function getAttendanceForStudent(studentId: number): Promise<AttendanceResponse | null> {

@@ -120,9 +120,12 @@ test.describe('Ver asistencia de hijos', () => {
         const totalDíasAusentesCount = await contarDíasEnRojo(page);
         const totalFaltas = await page.locator('h6:has-text("Total de faltas:")');
         const textoTotalFaltas = await totalFaltas.innerText();
-        if(textoTotalFaltas == null)
+        if(textoTotalFaltas === null)
             throw new Error("No se encontró el texto 'Total de faltas:'");
-        const faltasCount = parseInt(textoTotalFaltas.match(/\d+/)[0]);
+        const match = textoTotalFaltas.match(/\d+/)
+        if(match === null)
+            throw new Error("No se encontró un número en el texto 'Total de faltas:'");
+        const faltasCount = parseInt(match[0]);
         expect(totalDíasAusentesCount).toBe(faltasCount);
     });
 });

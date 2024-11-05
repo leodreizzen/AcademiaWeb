@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import {registerMarks, SubjectWithGrade} from "@/lib/actions/exam-mark";
+import {registerMarks, SubjectWithGradeAndTeachers} from "@/lib/actions/exam-mark";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ExamMarkAdd, ExamMarkAddModel} from "@/lib/models/examMarkAdd";
 import {StudentWithUser} from "@/lib/definitions/student";
 
 type ExamMarkFormProps = {
-    subject: SubjectWithGrade,
+    subject: SubjectWithGradeAndTeachers,
     students: StudentWithUser[]
 }
 
@@ -31,12 +31,16 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
     })
 
      async function onSubmit (data: ExamMarkAdd){
-        console.log(data)
-        const res = await registerMarks(subject.id, data.examDate, data.examMarks)
-        if (res.success) {
-            alert("Notas cargadas exitosamente")
+        if(!data.examMarks.some(student => student.grade != null)){
+            alert("Debe ingresar al menos una nota")
         } else {
-            alert(res.message)
+            console.log(data)
+            const res = await registerMarks(subject.id, data.examDate, data.examMarks)
+            if (res.success) {
+                alert("Notas cargadas exitosamente")
+            } else {
+                alert(res.message)
+            }
         }
     }
 
@@ -84,9 +88,9 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
                                                        className="text-sm">Nota:</Label>
                                                 <Input
                                                     id={`examMarks.${index}.grade`}
-                                                    type="text"
+                                                    type="number"
                                                     placeholder="Agregar"
-                                                    className="w-20 bg-gray-600 text-gray-100"
+                                                    className="w-20 bg-gray-600 text-gray-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                     aria-label={`Nota para ${student.user.firstName} ${student.user.lastName}`}
                                                     {...register(`examMarks.${index}.grade`, {setValueAs: v => v === '' ? null : v})}
                                                 />

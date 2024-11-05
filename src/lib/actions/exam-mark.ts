@@ -1,12 +1,13 @@
 "use server"
 
-import {Grade, Prisma, Student, Subject, User} from "@prisma/client";
+import {Grade, Prisma, Subject, Teacher} from "@prisma/client";
 import {StudentMark} from "@/lib/models/examMarkAdd";
 import prisma from "@/lib/prisma";
 import {mapStudentWithUser} from "@/lib/data/mappings";
 
-export interface SubjectWithGrade extends Subject {
+export interface SubjectWithGradeAndTeachers extends Subject {
     grade: Grade
+    teachers: Teacher[]
 }
 
 type RegisterMarksResponse = {
@@ -24,10 +25,11 @@ export async function fetchSubjectWithGrade(id: number) {
             id: id
         },
         include: {
-            grade: true
+            grade: true,
+            teachers: true
         }
     })
-    return subject as SubjectWithGrade
+    return subject as SubjectWithGradeAndTeachers
 }
 
 export async function fetchStudentsForSubject(subjectId: number) {

@@ -1,7 +1,6 @@
 "use client";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import React, {useState} from "react";
-import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
@@ -13,7 +12,7 @@ export function AttendanceChooseYear({grades} : {grades: { name: string, id: num
     const router = useRouter();
 
     const handleContinue = () => {
-        router.push(`/attendance/${gradeNumber}`);
+        router.push(`/attendance/${gradeNumber}/add`);
     }
 
     const handleGradeChange = (e: string) => {
@@ -29,13 +28,12 @@ export function AttendanceChooseYear({grades} : {grades: { name: string, id: num
             <Card className="w-full max-w-4xl mx-auto bg-gray-800 text-gray-100">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-gray-100">
-                       Seleccione el año para el cual va a registrar asistencia
+                       Selecciona el año para el cual quiere visualizar la asistencia
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
 
                     <div className="space-y-2 flex flex-col">
-                        <Label htmlFor="orden" className="text-gray-300">Año asociado</Label>
                         <Select
                             name="anio"
                             value={gradeName}
@@ -61,7 +59,7 @@ export function AttendanceChooseYear({grades} : {grades: { name: string, id: num
                     <Button
                         onClick={handleContinue}
                         disabled={!grades.find(g => g.name === gradeName)}
-                        className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
+                        className="mt-6 bg-blue-600 text-white hover:bg-blue-500 disabled:bg-gray-500"
                     >
                         Siguiente
                     </Button>

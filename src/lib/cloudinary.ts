@@ -45,3 +45,7 @@ export async function uploadFileToCloudinary(formData: FormData): Promise<any> {
 export async function deleteFileFromCloudinary(public_id: string): Promise<any>{
   return cloudinary.v2.uploader.destroy(public_id);
 }
+
+export async function getPublicIdFromURL(url: string): Promise<string | undefined> {
+  return url.split("/").pop()?.split(".")[0];
+}

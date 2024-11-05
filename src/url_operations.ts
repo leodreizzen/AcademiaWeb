@@ -48,9 +48,11 @@ const routeList:{path: string, handler: Permission}[] = [
     {path: "/reprimand/:id", handler: {resource: Resource.REPRIMAND, operation: "READ"}},
     {path: "/reprimand/add", handler: {resource: Resource.REPRIMAND, operation: "CREATE"}},
     {path: "/api/reprimand/student", handler: {resource: Resource.REPRIMAND, operation: "CREATE"}},
-    {path: "/attendance", handler: {resource: Resource.ATTENDANCE, operation: "LIST"}},
+    {path: "/attendance", handler: {resource: Resource.ATTENDANCE, operation: "READ"}},
     {path: "/attendance/:id", handler: {resource: Resource.ATTENDANCE, operation: "READ"}},
     {path: "/attendance/:id/add", handler: {resource: Resource.ATTENDANCE, operation: "CREATE"}},
+    {path: "/attendance/student/:id", handler: {resource: Resource.ATTENDANCE, operation: "READ"}},
+    {path: "/attendance/student", handler: {resource: Resource.ATTENDANCE, operation: "READ"}},
 ]
 routeList.forEach(route => recognizer.add([route]));
 

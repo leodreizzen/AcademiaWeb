@@ -10,6 +10,7 @@ import {registerMarks, SubjectWithGradeAndTeachers} from "@/lib/actions/exam-mar
 import {zodResolver} from "@hookform/resolvers/zod";
 import {ExamMarkAdd, ExamMarkAddModel} from "@/lib/models/examMarkAdd";
 import {StudentWithUser} from "@/lib/definitions/student";
+import {useRouter} from "next/navigation";
 
 type ExamMarkFormProps = {
     subject: SubjectWithGradeAndTeachers,
@@ -30,6 +31,8 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
         resolver: zodResolver(ExamMarkAddModel)
     })
 
+    const router = useRouter()
+
      async function onSubmit (data: ExamMarkAdd){
         if(!data.examMarks.some(student => student.grade != null)){
             alert("Debe ingresar al menos una nota")
@@ -38,6 +41,7 @@ export default function ExamMarkForm({ subject, students }: ExamMarkFormProps) {
             const res = await registerMarks(subject.id, data.examDate, data.examMarks)
             if (res.success) {
                 alert("Notas cargadas exitosamente")
+                router.push("/exam-mark")
             } else {
                 alert(res.message)
             }

@@ -15,6 +15,9 @@ if(!globalWithTesting.testingEmails){
     globalWithTesting.testingEmails = []
 }
 
+export function randomBetween(min: number, max: number) {
+    return (Math.floor(Math.random() * (max - min + 1)) + min).toString()
+}
 
 export function saveTestingEmail(email: TestingEmail){
     globalWithTesting.testingEmails.push(email)

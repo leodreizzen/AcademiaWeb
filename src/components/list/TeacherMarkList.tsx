@@ -18,6 +18,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {TeacherWithMarksPerSubject} from "@/app/api/internal/exam-marks/teacher/types";
 import {useRouter} from "next/navigation";
+import {format} from "date-fns";
 
 
 export default function TeacherMarkList({teacherId}: {teacherId: number}) {
@@ -51,7 +52,7 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
                                 {subject.exams.length > 0 ? <div className="space-y-2">
                                     {subject.exams.map((exam) => (
                                         <div key={exam.id} className="flex justify-between items-center test-exam-item">
-                                            <span>Exámen del día {(new Date(exam.date)).toLocaleDateString()}:</span>
+                                            <span>Exámen del día {format(exam.date, "dd/MM/yyyy")}:</span>
                                             <Dialog open={openDialog === `${subject.id}-${exam.id}`} onOpenChange={(isOpen) => setOpenDialog(isOpen ? `${subject.id}-${exam.id}` : null)}>
                                                 <DialogTrigger asChild>
                                                     <Button variant="default" className="text-black">Ver Notas</Button>
@@ -59,7 +60,7 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
                                                 <DialogContent className="sm:max-w-[425px] bg-gray-800 text-gray-100">
                                                     <DialogHeader>
                                                         <DialogTitle className="text-gray-100 mb-2">{`Notas - ${subject.name} - ${subject.gradeName}`}</DialogTitle>
-                                                        <DialogTitle className="text-gray-100">{`Exámen del día ${(new Date(exam.date)).toLocaleDateString()}:`}</DialogTitle>
+                                                        <DialogTitle className="text-gray-100">{`Exámen del día ${format(exam.date, "dd/MM/yyyy")}:`}</DialogTitle>
                                                     </DialogHeader>
                                                     <Table>
                                                         <TableHeader>

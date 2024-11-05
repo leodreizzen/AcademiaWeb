@@ -47,6 +47,7 @@ function randomYear() {
     return (Math.floor(Math.random() * (MAX - MIN + 1)) + MIN).toString()
 }
 
+
 function randomDay() {
     const MAX = 28
     const MIN = 1

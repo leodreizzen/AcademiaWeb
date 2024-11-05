@@ -2,10 +2,18 @@
 import {fetchCurrentUser} from "@/lib/data/users";
 import {fetchSelectedChild} from "@/lib/data/children";
 import prisma from "@/lib/prisma";
-import {mapReprimandWithTeacher} from "@/lib/data/mappings";
-import {ReprimandWithTeacher} from "@/lib/definitions/reprimand";
+import {
+    mapReprimandWithTeacher,
+    mapReprimandWithTeacherAndStudents,
+    mapReprimandWithTeacherStudentsAndSignature
+} from "@/lib/data/mappings";
+import {
+    ReprimandWithTeacher,
+    ReprimandWithTeacherAndStudents,
+    ReprimandWithTeacherStudentsAndSignature
+} from "@/lib/definitions/reprimand";
 
-export async function fetchReprimands({page, init, end}: { page: number, init?: Date, end?: Date }): Promise<ReprimandWithTeacher[]> {
+export async function fetchReprimands({page, init, end}: { page: number, init?: Date, end?: Date }): Promise<ReprimandWithTeacherAndStudents[]> {
     const NUMBER_OF_REPRIMANDS = 5;
     const profile = await fetchCurrentUser();
     try {
@@ -41,7 +49,9 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                         }
                     }
                 }
-            } : {};
+            } : {
+                teacherId: profile.id
+            };
 
 
             const reprimands = await prisma.reprimand.findMany({
@@ -61,13 +71,26 @@ export async function fetchReprimands({page, init, end}: { page: number, init?: 
                             }
                         }
                     },
+                    students: {
+                        include : {
+                            student: {
+                                include:{
+                                    profile: {
+                                        include: {
+                                            user: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
                 orderBy: {
                     dateTime: "desc"
                 }
 
             });
-            return reprimands.map(mapReprimandWithTeacher)
+            return reprimands.map(mapReprimandWithTeacherAndStudents)
         } else {
             return [];
         }
@@ -91,9 +114,6 @@ export async function countReprimands(init?: Date, end?: Date) {
                     id = selectedChild.id;
                 else
                     return 0;
-            } else {
-                console.error("Error counting reprimands: User is not a student or parent");
-                return 0;
             }
 
             const dateFilter = init && end ? {
@@ -111,7 +131,9 @@ export async function countReprimands(init?: Date, end?: Date) {
                         }
                     }
                 }
-            } : {};
+            } : {
+                teacherId: profile.id
+            };
 
 
             return await prisma.reprimand.count({
@@ -128,4 +150,51 @@ export async function countReprimands(init?: Date, end?: Date) {
         console.error("Error counting reprimands:", error);
         return 0;
     }
+}
+
+
+export async function fetchReprimandById(id: number): Promise<ReprimandWithTeacherStudentsAndSignature | null>{
+    const reprimand = await prisma.reprimand.findUnique({
+        where: {
+            id
+        },
+        include: {
+            teacher: {
+                include:{
+                    profile: {
+                        include: {
+                            user: true
+                        }
+                    }
+                }
+            },
+            students: {
+                include : {
+                    student: {
+                        include:{
+                            profile: {
+                                include: {
+                                    user: true
+                                }
+                            }
+                        }
+                    },
+                    signature: {
+                        include: {
+                            parent: {
+                                include: {
+                                    profile: {
+                                        include: {
+                                            user: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return reprimand ? mapReprimandWithTeacherStudentsAndSignature(reprimand): null;
 }

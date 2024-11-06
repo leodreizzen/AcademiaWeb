@@ -7,13 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "secrets": "tsx secrets.tsx",
+    "secrets": "tsx scripts/secrets.ts",
     "postinstall": "npm run secrets && npx prisma generate",
     "email": "email dev",
     "savetestdata": "tsx encryptTestData.ts",
     "testdev": "cross-env TESTING=true npm run dev -- -p 4000",
     "teststart": "cross-env TESTING=true npm run start -- -p 4000",
-    "testbuild": "cross-env TESTING=true npm run build"
+    "testbuild": "cross-env TESTING=true npm run build",
+    "testdataschema": "tsx scripts/data_schema.ts",
+    "checktestdata": "tsx scripts/check_test_data.ts"
   },
   "dependencies": {
     "@1password/sdk": "^0.1.1",
@@ -74,7 +76,8 @@
     "tsx": "^4.19.1",
     "utility-types": "^3.11.0",
     "uuid": "^10.0.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.23.5"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.3",
@@ -97,6 +100,6 @@
     "typescript": "^5"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx scripts/seeder/seed.ts"
   }
 }

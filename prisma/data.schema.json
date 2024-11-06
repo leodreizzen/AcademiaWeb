@@ -440,13 +440,13 @@
                             "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
                           },
                           "mark": {
-                            "type": "integer",
-                            "minimum": 1,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1,
+                            "pattern": "[A-D]",
                             "errorMessage": {
-                              "minimum": "mark must be betweeen 1 and 10",
-                              "maximum": "mark must be betweeen 1 and 10"
-                            },
-                            "maximum": 10
+                              "pattern": "mark must be between A and D"
+                            }
                           }
                         },
                         "required": [
@@ -487,9 +487,13 @@
                             "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
                           },
                           "mark": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 1
+                            "type": "integer",
+                            "minimum": 1,
+                            "errorMessage": {
+                              "minimum": "mark must be betweeen 1 and 10",
+                              "maximum": "mark must be betweeen 1 and 10"
+                            },
+                            "maximum": 10
                           }
                         },
                         "required": [

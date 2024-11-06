@@ -377,14 +377,12 @@ async function createAssignments() {
 }
 
 async function createReportCards() {
-    console.log("Creating report cards")
-    console.log(`Progress: 0%`)
     for (let i = 0; i < data.reportCards.length; i++) {
         const reportCard = data.reportCards[i];
         const byStudentDni: Map<number, {
-            firstSemesterMarks: { subject: string, mark: number }[],
-            secondSemesterMarks: { subject: string, mark: number }[],
-            finalMarks: { subject: string, mark: string }[]
+            firstSemesterMarks: { subject: string, mark: string }[],
+            secondSemesterMarks: { subject: string, mark: string }[],
+            finalMarks: { subject: string, mark: number }[]
         }> = new Map();
 
         const studentDnis = reportCard.firstSemesterMarks.map(subjectMark => subjectMark.marks.map(mark => mark.studentDni)).flat();

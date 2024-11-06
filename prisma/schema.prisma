@@ -190,6 +190,8 @@ model ReportCard {
 
   year      Int
   gradeName String
+
+  @@unique([studentId, year])
 }
 
 model GradeReportCards {
@@ -211,7 +213,7 @@ model SemesterReportCardMark {
   reportCardSecondSemesterId Int?
   subject                    Subject     @relation(fields: [subjectId], references: [id])
   subjectId                  Int
-  mark                       Int
+  mark                       String
 
   @@unique([reportCardFirstSemesterId, reportCardSecondSemesterId, subjectId])
 }
@@ -221,7 +223,7 @@ model FinalReportCardMark {
   reportCardId Int
   subject      Subject    @relation(fields: [subjectId], references: [id])
   subjectId    Int
-  mark         String
+  mark         Int
 
   @@id([reportCardId, subjectId])
 }

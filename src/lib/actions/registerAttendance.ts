@@ -5,6 +5,7 @@ import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {localDayEnd, localDayStart} from "@/lib/dateUtils";
 import {AttendanceCheckSchema} from "@/lib/actions/attendanceCheck";
 import {fetchCurrentUser} from "@/lib/data/users";
+import {DateTime} from "luxon";
 
 export async function hasPreviousAttendace(gradeId:number, date: Date){
     return await prisma.attendanceData.findFirst({
@@ -21,7 +22,8 @@ export async function hasPreviousAttendace(gradeId:number, date: Date){
 }
 
 export async function isItWeekend(date: Date){
-    return date.getDay() === 0 || date.getDay() === 6;
+    const fecha = DateTime.fromJSDate(date).setZone(process.env.SERVER_TIMEZONE);
+    return fecha.weekday === 6 || fecha.weekday === 7;
 }
 
 export async function teacherCanRegisterAttendance(grade: Grade){

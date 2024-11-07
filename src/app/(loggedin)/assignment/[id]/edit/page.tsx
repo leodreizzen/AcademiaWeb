@@ -3,6 +3,9 @@ import { Resource } from "@/lib/operation_list";
 import { getAssignmentById } from "@/app/(loggedin)/assignment/add/fetchAssignments";
 import EditAssignmentForm from "@/app/(loggedin)/assignment/[id]/edit/editAssignmentForm";
 import { notFound } from "next/navigation";
+import {fetchGradesWithSubjectsForTeacher} from "@/lib/actions/exam-mark";
+import {fetchCurrentUser} from "@/lib/data/users";
+import {AssignmentWithSubject} from "@/lib/definitions/assignment";
 
 export default async function EditAssignmentPage({
   params,
@@ -13,18 +16,31 @@ export default async function EditAssignmentPage({
 
   const assignmentId = Number(params.id);
 
-  const assignment = await getAssignmentById(assignmentId);
+  const assignment : AssignmentWithSubject | null = await getAssignmentById(assignmentId);
 
   if (!assignment) {
     notFound();
   }
+  const teacher = await fetchCurrentUser();
+  if(!teacher)
+    return (
+        <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
+          <div className="w-full
+                    max-w-2xl bg-gray-800 text-gray-100">
+            <h1 className="text-2xl font-bold text-center">Usuario no encontrado</h1>
+            <p className="text-center">El usuario no existe.</p>
+          </div>
+        </div>
+    )
+  const grades = await fetchGradesWithSubjectsForTeacher(teacher.id);
+
   return (
     <div className="min-h-full bg-gray-900 flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-lg bg-gray-800 border border-gray-600 p-6 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-white mb-6 text-center">
           Editar Trabajo Práctico
         </h1>
-        <EditAssignmentForm assignment={assignment} />
+        <EditAssignmentForm assignment={assignment} grades={grades} />
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 "use server";
 
-import { deleteFileFromCloudinary } from "@/lib/cloudinary";
+import { deleteFileFromCloudinary } from "@/lib/cloudinary/cloudinary_server";
 import prisma from "@/lib/prisma";
 export async function deleteAssignment(assignmentId: number) {
   try {

@@ -1,5 +1,4 @@
-'use server'
-
+import "server-only";
 import cloudinary from 'cloudinary';
 
 cloudinary.v2.config({
@@ -8,7 +7,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-type SignatureData = {
+export type SignatureData = {
   apiKey: string;
   signature: string;
   timestamp: number;
@@ -29,17 +28,6 @@ export async function generateSignature(): Promise<SignatureData> {
 
   const apiKey = process.env.CLOUDINARY_API_KEY || '';
   return { apiKey, signature, timestamp };
-};
-
-export async function uploadFileToCloudinary(formData: FormData): Promise<any> {
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/auto/upload`,
-    {
-      method: 'POST',
-      body: formData,
-    }
-  );
-  return response.json();
 }
 
 export async function deleteFileFromCloudinary(public_id: string): Promise<any>{

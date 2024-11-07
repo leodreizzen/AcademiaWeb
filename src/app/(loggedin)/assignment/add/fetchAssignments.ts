@@ -1,6 +1,7 @@
 "use server";
 import { AssignmentType } from "@/types/assignment";
 import prisma from "@/lib/prisma";
+import {revalidatePath} from "next/cache";
 
 export async function fetchAssignments(page: number): Promise<AssignmentType[]> {
   const NUMBER_OF_PRODUCTS = 10;
@@ -35,6 +36,13 @@ export async function getAssignmentById(assignmentId: number) {
       where: {
         id: assignmentId,
       },
+      include: {
+        subject: {
+          include: {
+            grade: true
+          }
+        }
+      }
     });
   } catch (error) {
     console.error("Error fetching assignment by id:", error);
@@ -42,7 +50,7 @@ export async function getAssignmentById(assignmentId: number) {
   }
 }
 
-export async function updateAssignment(assignmentId: number, data: any) {
+export async function updateAssignment(assignmentId: number, data: { title: string, description: string, subjectId: number }) {
   try {
     await prisma.assignment.update({
       where: {
@@ -54,7 +62,11 @@ export async function updateAssignment(assignmentId: number, data: any) {
         subjectId: data.subjectId,
       },
     });
+    revalidatePath("/assignment");
+    revalidatePath(`/assignment/${assignmentId}`);
+    revalidatePath(`/assignment/${assignmentId}/edit`);
   } catch (error) {
     console.error("Error updating assignment:", error);
+    throw error;
   }
 }

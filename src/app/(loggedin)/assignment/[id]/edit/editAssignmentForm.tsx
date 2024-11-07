@@ -16,6 +16,8 @@ import Link from "next/link";
 import { Assignment } from "@prisma/client";
 import { updateAssignment } from "@/app/(loggedin)/assignment/add/fetchAssignments";
 import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
+import {GradeWithSubjects} from "@/lib/definitions/grade";
+import {AssignmentWithSubject} from "@/lib/definitions/assignment";
 
 interface Subject {
   id: number;
@@ -35,66 +37,31 @@ interface FormErrors {
 }
 
 export default function EditAssignmentForm({
-  assignment,
+  assignment, grades
 }: {
-  assignment?: Assignment;
+  assignment: AssignmentWithSubject;
+  grades: GradeWithSubjects[]
 }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedGradeName, setSelectedGradeName] = useState<string | null>(null);
-  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null);
-  const [grades, setGrades] = useState<Grade[]>([]);
+  const [title, setTitle] = useState(assignment.title);
+  const [description, setDescription] = useState(assignment.description || "");
+  const [selectedGrade, setSelectedGrade] = useState<GradeWithSubjects | null>(grades.find(grade => grade.name == assignment.subject.gradeName) ?? null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(assignment.subject);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const router = useRouter();
 
-  useEffect(() => {
-    async function fetchGradesAndSubjects() {
-      try {
-        const data = await getGradesAndSubjects();
-        const processedGrades = data.grades.map((grade: any) => ({
-          name: grade.name || "Unnamed Grade",
-          subjects: (grade.subjects || []).map((subject: any) => ({
-            id: Number(subject.id) || Math.floor(Math.random() * 1000000),
-            name: subject.name || "Unnamed Subject",
-          })),
-        }));
-        setGrades(processedGrades);
-      } catch (error) {
-        console.error("Error fetching grades and subjects:", error);
-        setError("Error fetching grades and subjects");
-      }
-    }
-
-    fetchGradesAndSubjects();
-  }, []);
-
-  useEffect(() => {
-    if (assignment) {
-      setTitle(assignment.title);
-      setDescription(assignment.description || "");
-      const grade = grades.find((grade) =>
-        grade.subjects.some((subject) => subject.id === assignment.subjectId)
-      );
-      if (grade) {
-        setSelectedGradeName(grade.name);
-      }
-      setSelectedSubjectId(assignment.subjectId);
-    }
-  }, [assignment, grades]);
-
   const handleGradeChange = (gradeName: string) => {
-    setSelectedGradeName(gradeName);
-    setSelectedSubjectId(null);
+    setSelectedGrade(grades.find(grade => grade.name == gradeName) ?? null);
+    setSelectedSubject(null);
     setFormErrors((prev) => ({ ...prev, gradeName: undefined, subjectId: undefined }));
   };
 
   const validateForm = (): boolean => {
     const errors: FormErrors = {};
     if (!title.trim()) errors.title = "El título es requerido";
-    if (!selectedGradeName) errors.gradeName = "Debes seleccionar un curso";
-    if (!selectedSubjectId) errors.subjectId = "Debes seleccionar una materia";
+    if (!selectedGrade) errors.gradeName = "Debes seleccionar un curso";
+    if (!selectedSubject) errors.subjectId = "Debes seleccionar una materia";
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -109,17 +76,16 @@ export default function EditAssignmentForm({
       return;
     }
 
-    if (assignment && selectedGradeName && selectedSubjectId) {
+    if (assignment && selectedGrade && selectedSubject) {
       try {
         await updateAssignment(assignment.id, {
           title: title,
           description: description,
-          gradeName: selectedGradeName,
-          subjectId: selectedSubjectId,
+          subjectId: selectedSubject.id,
         });
         router.push("/assignment");
       } catch (error) {
-        console.error("Error updating assignment:", error);
+        console.error("Error editando trabajo práctico:", error);
         setError("Error updating assignment");
       }
     }
@@ -144,7 +110,6 @@ export default function EditAssignmentForm({
               setTitle(e.target.value);
               setFormErrors((prev) => ({ ...prev, title: undefined }));
             }}
-            placeholder={assignment.title}
             className={`bg-gray-700 text-white border-gray-600 rounded-md w-full ${
               formErrors.title ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
             }`}
@@ -160,7 +125,7 @@ export default function EditAssignmentForm({
           </label>
           <Select
             name="grade"
-            value={selectedGradeName || ""}
+            value={selectedGrade?.name || ""}
             onValueChange={handleGradeChange}
           >
             <SelectTrigger className={`bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500 ${
@@ -191,9 +156,9 @@ export default function EditAssignmentForm({
           </label>
           <Select
             name="subject"
-            value={selectedSubjectId?.toString() || ""}
+            value={selectedSubject?.id.toString() || ""}
             onValueChange={(e) => {
-              setSelectedSubjectId(Number(e));
+              setSelectedSubject(selectedGrade?.subjects.find((subject) => subject.id === Number(e)) ?? null);
               setFormErrors((prev) => ({ ...prev, subjectId: undefined }));
             }}
           >
@@ -203,8 +168,7 @@ export default function EditAssignmentForm({
               <SelectValue placeholder="Selecciona una materia" />
             </SelectTrigger>
             <SelectContent className="bg-gray-700">
-              {grades
-                .find((grade) => grade.name === selectedGradeName)
+              {selectedGrade
                 ?.subjects.map((subject) => (
                   <SelectItem
                     key={subject.id}

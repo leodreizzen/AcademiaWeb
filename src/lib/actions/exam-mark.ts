@@ -1,10 +1,11 @@
 "use server"
 
-import {Grade, Prisma, Subject, Teacher} from "@prisma/client";
+import {ExamMark, Grade, Prisma, Subject, Teacher} from "@prisma/client";
 import {StudentMark} from "@/lib/models/examMarkAdd";
 import prisma from "@/lib/prisma";
 import {mapStudentWithUser} from "@/lib/data/mappings";
 import {localDayStart} from "@/lib/dateUtils";
+import { ExamMarkEdit } from "../models/examMark";
 
 export interface SubjectWithGradeAndTeachers extends Subject {
     grade: Grade
@@ -138,4 +139,26 @@ export async function fetchGradesWithSubjectsForTeacher(teacherId: number): Prom
             }
         }
     })
+}
+
+export async function updateMarks(marks: { id: number, mark: number }[]) {
+    try{
+        const updatePromises = marks.map((item) =>
+            prisma.examMark.update({
+                where: { id: item.id },
+                data: { mark: item.mark },
+            })
+        );
+
+        await prisma.$transaction(updatePromises);
+        return {
+            success: true,
+            message: "Notas registradas"
+        }
+    } catch (e: any){
+        return {
+            success: false,
+            message: e.message
+        }
+    }
 }

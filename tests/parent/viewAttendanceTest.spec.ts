@@ -8,9 +8,11 @@ test.beforeEach(async ({page}) => {
 async function contarDíasEnRojo(page: Page) {
     let totalDíasEnRojoCount = 0;
 
-    const meses = 12; 
+    const meses = 12;
+    const currentMonth = new Date().getMonth();
     for (let i = 0; i < meses; i++) {
-        const monthLabel = page.locator('.MuiPickersCalendarHeader-label');
+        const monthName = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(new Date(2024, currentMonth - i + 12 % 12, 1));
+        const monthLabel = page.locator('.MuiPickersCalendarHeader-label', {hasText: monthName});
 
         await expect(monthLabel).toBeVisible();
 
@@ -117,7 +119,7 @@ test.describe('Ver asistencia de hijos', () => {
         await page.waitForURL('/'); 
         await page.getByRole('navigation').getByRole('link', { name: 'Asistencia' }).first().click();
     
-        const totalDíasAusentesCount = await contarDíasEnRojo(page);
+        const totalDiasAusentesCount = await contarDíasEnRojo(page);
         const totalFaltas = await page.locator('h6:has-text("Total de faltas:")');
         const textoTotalFaltas = await totalFaltas.innerText();
         if(textoTotalFaltas === null)
@@ -126,6 +128,6 @@ test.describe('Ver asistencia de hijos', () => {
         if(match === null)
             throw new Error("No se encontró un número en el texto 'Total de faltas:'");
         const faltasCount = parseInt(match[0]);
-        expect(totalDíasAusentesCount).toBe(faltasCount);
+        expect(totalDiasAusentesCount).toBe(faltasCount);
     });
 });

@@ -1,5 +1,10 @@
 import prisma from "@/lib/prisma";
-import {mapTeacherWithExamMarks} from "@/lib/data/mappings";
+import {mapExamMarkWithExamStudentParentAndSignature, mapTeacherWithExamMarks} from "@/lib/data/mappings";
+import {
+    ExamMarkWithExamStudentAndParent,
+    ExamMarkWithExamStudentParentAndSignature,
+    ExamMarkWithStudentAndParent
+} from "@/lib/definitions/exam";
 
 export async function fetchExamMarksForStudent(studentId: number) {
     const student = await prisma.student.findUnique({
@@ -23,8 +28,11 @@ export async function fetchExamMarksForStudent(studentId: number) {
                                             studentId: studentId
                                         }
                                     }
+                                },
+                                orderBy: {
+                                    date: "desc"
                                 }
-                            }
+                            },
                         }
                     }
                 }
@@ -65,6 +73,9 @@ export async function fetchExamMarksForTeacher(teacherId: number) {
                                     }
                                 }
                             }
+                        },
+                        orderBy: {
+                            date: "desc"
                         }
                     },
                     grade: true
@@ -78,4 +89,49 @@ export async function fetchExamMarksForTeacher(teacherId: number) {
     }
 
     return mapTeacherWithExamMarks(teacher);
+}
+
+export async function fetchExamMarkById(examMarkId: number): Promise<ExamMarkWithExamStudentParentAndSignature | null> {
+    const mark = await prisma.examMark.findUnique({
+        where: {id: examMarkId},
+        include: {
+            exam: {
+                include: {
+                    subject: true
+                }
+            },
+            student: {
+                include: {
+                    profile: {
+                        include: {
+                            user: true,
+                        }
+                    },
+                    parents: {
+                        include: {
+                            profile: {
+                                include: {
+                                    user: true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            signature: {
+                include: {
+                    parent: {
+                        include: {
+                            profile: {
+                                include: {
+                                    user: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+    return mark ? mapExamMarkWithExamStudentParentAndSignature(mark) : null;
 }

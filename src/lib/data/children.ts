@@ -2,7 +2,8 @@ import {auth} from "@/auth";
 import { Prisma } from "@prisma/client";
 import {StudentWithUser} from "@/lib/definitions/student";
 import prisma from "@/lib/prisma";
-import {mapStudentWithUser} from "@/lib/data/mappings";
+import {mapStudentWithUser, mapStudentWithUserAndParent} from "@/lib/data/mappings";
+import {StudentWithUserAndParent} from "@/lib/definitions/parent";
 
 export async function fetchCurrentUserChildren() {
     const profile = (await auth())?.user;

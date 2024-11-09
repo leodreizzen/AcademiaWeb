@@ -1,20 +1,22 @@
-import {getCurrentProfilePrismaClient} from "@/lib/prisma_utils";
+
 import {fetchCurrentUser} from "@/lib/data/users";
+import Prisma from "@/lib/prisma";
 
 export async function fetchSubjectsFromTeacher() {
-    const prisma = await getCurrentProfilePrismaClient()
+    const prisma = Prisma
     const profile = await fetchCurrentUser();
+    console.log( "Id del profesor " + profile?.id)
     try {
         if (profile != null) {
-            const id = profile?.id
+            const teacherid = profile?.id
             return await prisma.subject.findMany({
                 where: {
                     teachers: {
                         some: {
-                            id: id
+                            id: teacherid
                         }
                     }
-                },
+                }
             });
         }
         else {
@@ -22,7 +24,7 @@ export async function fetchSubjectsFromTeacher() {
         }
 
     } catch (error) {
-        console.error("Error fetching reprimands:", error);
+        console.error("Error fetching subjects:", error);
         return [];
     }
 }

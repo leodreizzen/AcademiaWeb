@@ -2,9 +2,11 @@
 import { AssignmentType } from "@/types/assignment";
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { GradeWithSubjects } from "@/lib/actions/exam-mark";
 
 export async function fetchAssignments(
-  page: number
+  page: number,
+  possibleGrades: GradeWithSubjects[]
 ): Promise<AssignmentType[]> {
   const NUMBER_OF_PRODUCTS = 10;
   const skip = Math.max(0, (page - 1) * NUMBER_OF_PRODUCTS);
@@ -14,6 +16,13 @@ export async function fetchAssignments(
       take: NUMBER_OF_PRODUCTS,
       include: {
         subject: true,
+      },
+      where: {
+        subject: {
+          gradeName: {
+            in: possibleGrades.map((grade) => grade.name),
+          },
+        },
       },
     });
 
@@ -52,12 +61,11 @@ export async function getAssignmentById(assignmentId: number) {
 }
 
 export async function fetchAssignmentsFiltered(
-  {
-    title,
-    subject,
-    grade,
-  }: { title?: string; subject?: number; grade?: string },
-  page: number
+  page: number,
+  possibleGrades: GradeWithSubjects[],
+  title?: string,
+  subject?: number,
+  grade?: string,
 ): Promise<AssignmentType[]> {
   const NUMBER_OF_PRODUCTS = 10;
   const skip = Math.max(0, (page - 1) * NUMBER_OF_PRODUCTS);
@@ -89,7 +97,14 @@ export async function fetchAssignmentsFiltered(
     const results = await prisma.assignment.findMany({
       skip: skip,
       take: NUMBER_OF_PRODUCTS,
-      where: whereClause,
+      where: {
+        ...whereClause,
+        subject: {
+          gradeName: {
+            in: possibleGrades.map((grade) => grade.name),
+          },
+        },
+      },
       include: {
         subject: {
           include: {

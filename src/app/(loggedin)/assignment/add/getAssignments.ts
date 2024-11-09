@@ -4,13 +4,15 @@ import {
 } from "@/app/(loggedin)/assignment/add/fetchAssignments";
 import { AssignmentType } from "@/types/assignment";
 import { PrismaProfileWithUser } from "@/lib/data/mappings";
+import { GradeWithSubjects } from "@/lib/actions/exam-mark";
 
 export async function getAssignments(
   page: number,
+  possibleGrades: GradeWithSubjects[],
   title?: string,
   subject?: number,
   grade?: string,
-  profile?: PrismaProfileWithUser | null
+  profile?: PrismaProfileWithUser | null,
 ): Promise<AssignmentType[]> {
   if (!profile) {
     return [];
@@ -20,8 +22,14 @@ export async function getAssignments(
     (subject && subject >= 0) ||
     (grade && grade.length > 0)
   ) {
-    return await fetchAssignmentsFiltered({ title, subject, grade }, page);
+    return await fetchAssignmentsFiltered(
+      page,
+      possibleGrades,
+      title,
+      subject,
+      grade
+    );
   } else {
-    return await fetchAssignments(page);
+    return await fetchAssignments(page, possibleGrades);
   }
 }

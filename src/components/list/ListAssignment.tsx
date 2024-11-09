@@ -14,11 +14,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectValue } from "@radix-ui/react-select";
 import { NoResultCard } from "./NoResultCard";
 import {Tooltip} from "@nextui-org/tooltip";
+import { PrismaProfileWithUser } from "@/lib/data/mappings";
+
 
 type TPListPageProps = {
     data: AssignmentType[];
     count: number;
     totalAssignments: number;
+    profile: PrismaProfileWithUser | null;
 };
 
 interface Subject {
@@ -31,7 +34,7 @@ interface Grade {
   subjects: Subject[];
 }
 
-export default function TPListPage({ data = [], count }: TPListPageProps) {
+export default function TPListPage({ data = [], count, profile }: TPListPageProps) {
   const [title, setTitle] = useState("");
   const [grades, setGrades] = useState<Grade[]>([]);
   const [selectedGradeName, setSelectedGradeName] = useState<string | null>(
@@ -148,15 +151,17 @@ export default function TPListPage({ data = [], count }: TPListPageProps) {
                     <h2 className="text-2xl sm:text-3xl font-bold text-white">
                         Listado de Trabajos Prácticos
                     </h2>
-                    <Button
-                        onClick={handleCreate}
-                        variant="secondary"
-                        className="bg-green-600 hover:bg-green-500 text-white"
-                    >
-                        <Tooltip content="Nuevo TP" classNames={{content: "text-white"}}>
-                            <Plus className="h-4 w-4"/>
+                    {profile?.role === "Teacher" && (
+                        <Tooltip content="Agregar Trabajo Práctico" classNames={{content: "text-white"}}>
+                            <Button
+                                onClick={handleCreate}
+                                variant="secondary"
+                                className="bg-green-600 hover:bg-green-500 text-white"
+                            >
+                                <Plus className="h-4 w-4"/>
+                            </Button>
                         </Tooltip>
-                    </Button>
+                    )}
                 </div>
 
                 <div className="space-y-4">

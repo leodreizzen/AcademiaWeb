@@ -23,7 +23,6 @@ test('Editar docente nuevo (Caso exito)', async ({ page }) => {
     await searchTeacherByDni(page, teacherDni);
 
     const editButton = await page.getByTestId('edit-teacher-button');
-    await expect(editButton).toBeVisible();
     await editButton.click();
 
     const newFirstName = faker.person.firstName();

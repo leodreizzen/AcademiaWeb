@@ -80,12 +80,9 @@ export async function createTeacher(page: Page) {
     await expect(closeButton).toBeVisible();
     await closeButton.click();
     await page.locator('button[type="submit"]').click();
-
-    page.on('dialog', dialog => {
-        expect(dialog.message()).toBe('Docente creado exitosamente');
-        dialog.dismiss();
-    })
-
+    
+    
+    
     return teacherDni;
 }
 

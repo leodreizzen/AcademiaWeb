@@ -9,7 +9,6 @@ import {
   fetchGradesWithSubjectsForTeacher,
   GradeWithSubjects,
 } from "@/lib/actions/exam-mark";
-import { Student } from "@prisma/client";
 import fetchStudentById from "@/lib/actions/student-info";
 
 export default async function AssignmentPage({

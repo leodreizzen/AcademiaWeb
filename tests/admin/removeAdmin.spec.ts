@@ -3,7 +3,7 @@ import { login } from '@/helpersTest/loginHelper';
 import { searchAdminByDni } from '@/helpersTest/adminHelper';
 import { randomDNI } from '@/helpersTest/studentHelper';
 import { faker } from '@faker-js/faker';
-import {loginAsTestUser} from "../testutils";
+import {loginAsTestUser, randomPhoneNumber} from "../testutils";
 
 test.describe('Remove admin', () => {
 
@@ -23,7 +23,7 @@ test.describe('Remove admin', () => {
         await page.fill('input[id="input-dni"]', DNI);
         await page.fill('input[id="input-firstName"]', faker.person.firstName());
         await page.fill('input[id="input-lastName"]', faker.person.lastName());
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 

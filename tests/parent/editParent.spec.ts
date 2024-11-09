@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { searchParentByDni } from '@/helpersTest/parentHelper';
 import { createParentWithoutChildren } from '@/helpersTest/parentHelper';
 
-import { loginAsTestUser } from "../testutils";
+import {loginAsTestUser, randomPhoneNumber} from "../testutils";
 import { getTestUser } from "../testdata";
 import { faker } from '@faker-js/faker/locale/es_MX';
 import { newBirthDate, newBirthDateCustom } from '@/helpersTest/studentHelper';
@@ -30,7 +30,7 @@ test('Modificar padre con datos validos', async ({ page }) => {
     
 
     await expect(page.getByText("Editar responsable")).toBeVisible();
-    const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
+    const newPhoneNumber = randomPhoneNumber();
     const newFirstName = faker.person.firstName();
     const newLastName = faker.person.lastName();
     const newAddress = faker.location.streetAddress({ useFullAddress: true });
@@ -87,7 +87,7 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
     await page.getByTestId('edit-parent').click();
 
     await expect(page.getByText("Editar responsable")).toBeVisible();
-    const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
+    const newPhoneNumber = randomPhoneNumber().toString().replace('+','');
     const newFirstName = faker.person.firstName();
     const newLastName = faker.person.lastName();
     const newAddress = faker.location.streetAddress({ useFullAddress: true });
@@ -102,10 +102,10 @@ test('Modificar padre con datos invalidos', async ({ page }) => {
 
     
     await expect( page.getByRole('button', { name: 'Editar' }).last()).toBeDisabled();
-    expect (await page.locator(`text=Ingrese un nombre válido para el responsable`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese un apellido válido para el responsable`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese un email válido para el responsable`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese una dirección válida para el responsable`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un nombre válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un apellido válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un email válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese una dirección válida`).isVisible()).toBe(true);
     expect (await page.locator(`text=El responsable debe ser mayor de 18 años`).isVisible()).toBe(true);
 
     await page.getByRole('link', { name: 'Responsables' }).first().click();

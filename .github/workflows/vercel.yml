@@ -16,6 +16,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - run: npm install -g vercel
+
       - uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
           CREATE_COMMENT: true

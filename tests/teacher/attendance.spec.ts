@@ -31,7 +31,6 @@ test.describe('Registrar asistencia', () => {
                 expect(dialog.message()).toBe('Asistencia registrada correctamente');
                 dialog.accept();
             }
-            dialog.dismiss();
             dialogShown = true;
         }
         );

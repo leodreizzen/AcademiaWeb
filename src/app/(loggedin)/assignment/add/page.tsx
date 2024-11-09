@@ -1,7 +1,6 @@
 import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
 import AddAssignmentForm from "@/app/(loggedin)/assignment/add/addAssignmentForm";
-import {fetchGrades} from "@/app/(loggedin)/student/add/fetchGrades";
 import {fetchGradesWithSubjectsForTeacher} from "@/lib/actions/exam-mark";
 import {fetchCurrentUser} from "@/lib/data/users";
 

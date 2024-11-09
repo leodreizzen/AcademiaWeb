@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,20 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
-import { Assignment } from "@prisma/client";
 import { updateAssignment } from "@/app/(loggedin)/assignment/add/fetchAssignments";
-import { getGradesAndSubjects } from "@/app/server-actions/fetchGradeSubject";
 import {GradeWithSubjects} from "@/lib/definitions/grade";
 import {AssignmentWithSubject} from "@/lib/definitions/assignment";
 
 interface Subject {
   id: number;
   name: string;
-}
-
-interface Grade {
-  name: string;
-  subjects: Subject[];
 }
 
 interface FormErrors {

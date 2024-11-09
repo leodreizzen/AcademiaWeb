@@ -3,7 +3,7 @@ import { login } from '@/helpersTest/loginHelper';
 import { searchAdminByDni, searchAdminByLastName } from '@/helpersTest/adminHelper';
 import { randomDNI } from '@/helpersTest/studentHelper';
 import { faker } from '@faker-js/faker';
-import {loginAsTestUser} from "../testutils";
+import {loginAsTestUser, randomPhoneNumber} from "../testutils";
 
 test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
         await page.fill('input[id="input-dni"]', DNI);
         await page.fill('input[id="input-firstName"]', faker.person.firstName());
         await page.fill('input[id="input-lastName"]', faker.person.lastName());
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
@@ -60,11 +60,11 @@ test.beforeEach(async ({ page }) => {
         await page.getByLabel('Apellido').click({delay: 100});
         await page.fill('input[id="input-firstName"]', faker.person.firstName());
         await page.fill('input[id="input-lastName"]', faker.person.lastName());
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        await expect(page.locator('form')).toContainText('Ingrese un dni válido para el administrador');
+        await expect(page.locator('form')).toContainText('Ingrese un dni válido');
 
         expect(await page.locator('button[type="submit"]').isDisabled()).toBe(true);
         expect
@@ -84,11 +84,11 @@ test.beforeEach(async ({ page }) => {
         await page.getByLabel('Apellido').click({delay: 1000});
         await page.type('input[id="input-firstName"]', '',{delay: 100});
         await page.fill('input[id="input-lastName"]', faker.person.lastName());
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        await expect(page.locator('form')).toContainText('Ingrese un nombre válido para el administrador');
+        await expect(page.locator('form')).toContainText('Ingrese un nombre válido');
 
         expect(await page.locator('button[type="submit"]').isDisabled()).toBe(true);
     });
@@ -107,11 +107,11 @@ test.beforeEach(async ({ page }) => {
         await page.getByLabel('Apellido').click({delay: 100});
         await page.type('input[id="input-lastName"]', '',{delay: 1000});
         await page.getByLabel('Apellido').click({delay: 100});
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        await expect(page.locator('form')).toContainText('Ingrese un apellido válido para el administrador');
+        await expect(page.locator('form')).toContainText('Ingrese un apellido válido');
 
         expect(await page.locator('button[type="submit"]').isDisabled()).toBe(true);
     });
@@ -134,7 +134,7 @@ test.beforeEach(async ({ page }) => {
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        await expect(page.locator('form')).toContainText('Ingrese un número de teléfono válido para el administrador');
+        await expect(page.locator('form')).toContainText('Ingrese un número de teléfono válido');
 
         expect(await page.locator('button[type="submit"]').isDisabled()).toBe(true);
     });
@@ -151,13 +151,13 @@ test.beforeEach(async ({ page }) => {
         await page.fill('input[id="input-dni"]', DNI);
         await page.fill('input[id="input-firstName"]', faker.person.firstName());
         await page.fill('input[id="input-lastName"]', faker.person.lastName());
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.getByLabel('Correo electrónico').click({delay: 100});
         await page.getByLabel('Correo electrónico').type('',{delay: 1000});
         await page.getByLabel('Apellido').click({delay: 100});
         await page.fill('input[id="input-address"]', faker.location.direction());
 
-        await expect(page.locator('form')).toContainText('Ingrese un email válido para el administrador');
+        await expect(page.locator('form')).toContainText('Ingrese un email válido');
 
         expect(await page.locator('button[type="submit"]').isDisabled()).toBe(true);
     });
@@ -174,13 +174,13 @@ test.beforeEach(async ({ page }) => {
         await page.fill('input[id="input-dni"]', DNI);
         await page.fill('input[id="input-firstName"]', faker.person.firstName());
         await page.fill('input[id="input-lastName"]', faker.person.lastName());
-        await page.fill('input[id="input-phoneNumber"]', faker.phone.number({ style: 'international' }));
+        await page.fill('input[id="input-phoneNumber"]', randomPhoneNumber());
         await page.fill('input[id="input-email"]', faker.internet.email());
         await page.getByText('Direccion').click({delay: 100});
         await page.getByText('Direccion').type('',{delay: 1000});
         await page.getByLabel('Apellido').click({delay: 100});
 
-        await expect(page.locator('form')).toContainText('Ingrese una dirección válida para el administrador');
+        await expect(page.locator('form')).toContainText('Ingrese una dirección válida');
 
         expect(await page.locator('button[type="submit"]').isDisabled()).toBe(true);
     });

@@ -1,11 +1,8 @@
 import {z} from "zod";
 import {maxDigits, minDigits} from "@/lib/utils";
+import {AddressSchema, DniSchema, FirstNameSchema, LastNameSchema, PhoneNumberSchema} from "@/lib/models/user";
 
-
-const dniMessage = "Ingrese un dni válido para el estudiante";
-const dniSchema = z.coerce.number({message: dniMessage}).min(minDigits(7), {message: dniMessage}).max(maxDigits(9), {message: dniMessage});
-
-function calculateAge(date: Date) {
+export function calculateAge(date: Date) {
     const today = new Date();
     const birthDate = new Date(date);
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -18,56 +15,48 @@ function calculateAge(date: Date) {
     return age;
 }
 
+export function studentDateSuperRefine(date: Date, ctx: z.RefinementCtx) {
+    const age = calculateAge(date);
+    if(age < 4) {
+        ctx.addIssue({
+            code: "custom",
+            message: "El estudiante debe ser mayor de 4 años",
+        });
+    }
+}
+
+export function parentDateSuperRefine(date: Date, ctx: z.RefinementCtx) {
+    const age = calculateAge(date);
+    if(age < 18) {
+        ctx.addIssue({
+            code: "custom",
+            message: "El responsable debe ser mayor de 18 años",
+        });
+    }
+}
+
 export const StudentSchemaWithoutGrade = z.object({
-    firstName: z
-        .string()
-        .min(1, { message: "Ingrese un nombre válido para el estudiante" })
-        .regex(/\S+\s*\S*/, { message: "El nombre debe contener al menos un carácter no espacio" }),
-    lastName: z
-        .string()
-        .min(1, { message: "Ingrese un apellido válido para el estudiante" })
-        .regex(/\S+\s*\S*/, { message: "El apellido debe contener al menos un carácter no espacio" }),
-    email: z.string().email({message: "Ingrese un email válido para el estudiante"}),
-    dni: dniSchema,
-    phoneNumber: z.string().min(8, {message: "Ingrese un número de teléfono válido para el estudiante"}),
-    address: z
-        .string()
-        .min(1, { message: "Ingrese una dirección válida para el estudiante" })
-        .regex(/\S+\s*\S*/, { message: "La dirección debe contener al menos un carácter no espacio" }),
-    birthDate: z.date().refine((date) => {
-        // Calculamos la edad
-        const age = calculateAge(date);
-        // Validamos que sea mayor de 4
-        return age >= 4;
-    }, 'El estudiante debe ser mayor de 4 años')
-});
+    firstName: FirstNameSchema,
+    lastName: LastNameSchema,
+    email: z.string().email({message: "Ingrese un email válido"}),
+    dni: DniSchema,
+    phoneNumber: PhoneNumberSchema,
+    address: AddressSchema,
+    birthDate: z.date().superRefine(studentDateSuperRefine)
+})
 export const StudentSchema = StudentSchemaWithoutGrade.extend({
-    gradeName: z.string().min(1, {message: "Ingrese un año válido para el estudiante"}),
+    gradeName: z.string().min(1, {message: "Ingrese un año válido"}),
 })
 
-const dniMessageParent = "Ingrese un dni válido para el responsable";
+const dniMessageParent = "Ingrese un dni válido";
 export const ParentSchema = z.object({
-    phoneNumber: z.string().min(8, {message: "Ingrese un número de teléfono válido para el responsable"}),
-    address: z
-        .string()
-        .min(1, { message: "Ingrese una dirección válida para el responsable" })
-        .regex(/\S+\s*\S*/, { message: "La dirección debe contener al menos un carácter no espacio" }),
-    firstName: z
-        .string()
-        .min(1, { message: "Ingrese un nombre válido para el responsable" })
-        .regex(/\S+\s*\S*/, { message: "El nombre debe contener al menos un carácter no espacio" }),
-    lastName: z
-        .string()
-        .min(1, { message: "Ingrese un apellido válido para el responsable" })
-        .regex(/\S+\s*\S*/, { message: "El apellido debe contener al menos un carácter no espacio" }),
-    dni: z.coerce.number({message: dniMessageParent}).min(minDigits(7), {message: dniMessageParent}).max(maxDigits(9), {message: dniMessageParent}),
-    email: z.string().email({message: "Ingrese un email válido para el responsable"}),
-    birthDate: z.date().refine((date) => {
-        // Calculamos la edad
-       const age = calculateAge(date);
-        // Validamos que sea mayor de 18
-        return age >= 18;
-    }, 'El responsable debe ser mayor de 18 años')
+    phoneNumber: z.string().min(8, {message: "Ingrese un número de teléfono válido"}),
+    address: AddressSchema,
+    firstName: FirstNameSchema,
+    lastName: LastNameSchema,
+    dni: DniSchema,
+    email: z.string().email({message: "Ingrese un email válido"}),
+    birthDate: z.date().superRefine(parentDateSuperRefine)
 });
 
 

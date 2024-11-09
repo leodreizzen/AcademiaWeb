@@ -30,7 +30,16 @@ export function AttendanceRegister({students, grade, id}: {students: PrismaStude
     }
 
     const handleContinue = async () => {
-        const result = await registerAttendance(attendance, grade.id, field);
+
+        const numericAttendance = Object.fromEntries(
+            Object.entries(attendance).map(([studentId, status]) => [Number(studentId), status])
+        );
+        const dataToParse = {
+            students: numericAttendance,
+            gradeId: grade.id,
+        };
+
+        const result = await registerAttendance(dataToParse, field);
         if(result.success){
             alert("Asistencia registrada correctamente")
             router.push(`/attendance/${id}`)

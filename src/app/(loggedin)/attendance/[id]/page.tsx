@@ -2,9 +2,13 @@ import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
 import {redirect} from "next/navigation";
 import {fetchCurrentUser} from "@/lib/data/users";
+import TeacherAttendance from "@/components/ui/attendance/TeacherAttendance";
+import {getAttendanceForGrade} from "@/lib/actions/get-attendance";
 
 
-export default async function ShowAttendance(){
+export default async function ShowAttendance({ params: { id } }: { params: { id: string } }) {
+
+
 
     await assertPermission({resource: Resource.ATTENDANCE, operation: "READ"});
 
@@ -14,7 +18,13 @@ export default async function ShowAttendance(){
 
     if (user.role != 'Teacher') redirect('/403')
 
+    const attendanceData = await getAttendanceForGrade(parseInt(id))
+
+    console.log(attendanceData)
+
+    if (!attendanceData) redirect('/404')
+
     return (
-        <div>Asistencia para profesor por año.</div>
+        <TeacherAttendance attendanceData={attendanceData}/>
     )
 }

@@ -1,5 +1,9 @@
 import {z} from 'zod';
 import {maxDigits, minDigits} from "@/app/lib/utils";
+import {ActionResult} from "@/app/(loggedin)/student/add/types";
+import {updateTeacher} from "@/app/(loggedin)/teacher/[id]/edit/updateTeacher";
+import {Subject} from "@prisma/client";
+
 
 const invalidDni = "Ingrese un DNI válido.";
 const invalidEmail = "Ingrese un email válido.";
@@ -20,3 +24,22 @@ export const TeacherRegistrationModel = z.object(
 );
 
 export type TeacherRegistrationData = z.infer<typeof TeacherRegistrationModel>;
+
+function  validatTeacherData(formData: TeacherRegistrationData) {
+        return TeacherRegistrationModel.safeParse(formData);
+}
+
+export async function updateTeacherInDatabase(id: number, formData: TeacherRegistrationData, subjects : Subject[]) : Promise<ActionResult> {
+        const validateFields = validatTeacherData(formData);
+
+        if (!validateFields.success) {
+                const errorMessage= "Por favor, corrija los siguientes errores: " + Object.values(validateFields.error.flatten().fieldErrors);
+                return {success: false, error: errorMessage}
+        }
+        if(subjects.length === 0){
+                return {success: false, error: "Por favor, seleccione al menos una materia"}
+        }
+
+        const {phoneNumber, address, email, name, lastName, dni} = validateFields.data;
+        return await updateTeacher(id, phoneNumber, address, email, subjects, name, lastName, dni);
+}

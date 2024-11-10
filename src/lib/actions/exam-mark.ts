@@ -141,6 +141,21 @@ export async function fetchGradesWithSubjectsForTeacher(teacherId: number): Prom
     })
 }
 
+export async function fetchGradesWithSubjectsForStudent(gradeName: string): Promise<GradeWithSubjects[]> {
+    return prisma.grade.findMany({
+        where: {
+            name: gradeName
+        },
+        include: {
+            subjects: {
+                where: {
+                    gradeName: gradeName
+                }
+            }
+        }
+    })
+}
+
 export async function updateMarks(marks: { id: number, examId: number, studentId: number, mark: number }[]) {
     try{
         const insertPromises = marks.filter(x => x.id === 0).map(item => {

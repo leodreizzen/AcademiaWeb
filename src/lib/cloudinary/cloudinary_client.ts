@@ -1,9 +1,8 @@
 import {SignatureData} from "@/lib/cloudinary/cloudinary_server";
 
-let apiKey: string;
 if (process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY === undefined)
     throw new Error("NEXT_PUBLIC_CLOUDINARY_API_KEY not set");
-apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
 
 export async function uploadFile(file: File, signatureData: SignatureData): Promise<string | null> {
     const originalFileName = file.name;
@@ -42,6 +41,7 @@ export async function uploadFile(file: File, signatureData: SignatureData): Prom
         }
         return responseData.secure_url;
     } catch (error) {
+        console.error(error)
         return null;
     }
 }

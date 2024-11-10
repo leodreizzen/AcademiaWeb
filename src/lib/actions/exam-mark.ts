@@ -139,3 +139,18 @@ export async function fetchGradesWithSubjectsForTeacher(teacherId: number): Prom
         }
     })
 }
+
+export async function fetchGradesWithSubjectsForStudent(gradeName: string): Promise<GradeWithSubjects[]> {
+    return prisma.grade.findMany({
+        where: {
+            name: gradeName
+        },
+        include: {
+            subjects: {
+                where: {
+                    gradeName: gradeName
+                }
+            }
+        }
+    })
+}

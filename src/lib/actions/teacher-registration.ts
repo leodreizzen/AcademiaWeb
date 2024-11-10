@@ -5,6 +5,7 @@ import {TeacherRegistrationData} from "@/lib/models/teacher-registration";
 import prisma from "@/lib/prisma";
 import {hashPassword} from "@/lib/data/passwords";
 import { Prisma } from "@prisma/client";
+import {GradeWithSubjects} from "@/lib/definitions/grade";
 
 type SuccessResponse = {
     success: true
@@ -19,10 +20,12 @@ export type TeacherRegistrationResponse = SuccessResponse | ErrorResponse
 
 type TeacherRegistrationDataWithGrades = TeacherRegistrationData & {assignedGrades: {[key: string]: string[]}}
 
-export async function obtainGradesWithSubjects() {
+export async function obtainGradesWithSubjects(): Promise<GradeWithSubjects[]> {
     try {
         return await prisma.grade.findMany({
-            select: {name: true, subjects: {select: {name: true}}}
+            include: {
+                subjects: true
+            }
         })
     } catch (e) {
         console.error(e)

@@ -15,7 +15,7 @@ import {Optional} from "utility-types";
 import {ParentWithUser, ParentWithUserAndChildren, StudentWithUserAndParent} from "@/lib/definitions/parent";
 import {UserWithoutPassword} from "@/lib/definitions";
 
-import {TeacherWithUser} from "@/lib/definitions/teacher";
+import {TeacherWithSubjects, TeacherWithUser} from "@/lib/definitions/teacher";
 import {AdministratorWithUser} from "@/lib/definitions/administrator";
 import {
     ReprimandWithTeacher,
@@ -108,6 +108,10 @@ export type PrismaExamMarkWithExamStudentParentAndSignature = PrismaExamMarkWith
     exam: ExamWithSubject
 }
 
+export type PrismaTeacherWithSubjects = PrismaTeacherWithUser & {
+    subjects: Subject[]
+}
+
 export function expandProfile<T extends {
     profile: PrismaProfileWithUser
 }>(specificProfile: T): Omit<T, 'profile'> & PrismaProfileWithUser {
@@ -135,7 +139,12 @@ export function mapTeacherWithUser(teacher: PrismaTeacherWithUser): TeacherWithU
 export function mapAdministratorWithUser(administrator: PrismaAdministratorWithUser): AdministratorWithUser {
     return expandProfile(administrator);
 }
-
+export function mapTeacherWithSubjects(teacher: PrismaTeacherWithSubjects): TeacherWithSubjects {
+    return {
+        ...expandProfile(teacher),
+        subjects: teacher.subjects
+    }
+}
 
 export function mapParentWithUserAndChildren(parent: PrismaParentWithUserAndChildren): ParentWithUserAndChildren {
     return {

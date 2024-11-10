@@ -119,7 +119,7 @@ export default function TPListPage({
       try {
         const response = await deleteAssignment(id);
         if (!response.success) {
-          alert("Ocurrió un error al eliminar el trabajo práctico.");
+          alert("Ocurrió un error al eliminar el trabajo práctico: " + response.error);
           return;
         }
         alert("Trabajo práctico eliminado con éxito");

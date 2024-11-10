@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-export async function loginAsRole(page: Page, dni: string, password: string, role: string, studentName?:string) {
+export async function   loginAsRole(page: Page, dni: string, password: string, role: string, studentName?:string) {
     await page.fill('input[name="dni"]', dni);
     await page.fill('input[name="password"]', password);
     await page.click('button[type="submit"]');

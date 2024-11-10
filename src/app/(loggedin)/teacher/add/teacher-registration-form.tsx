@@ -10,10 +10,10 @@ import { TeacherRegistrationData, TeacherRegistrationModel } from "@/lib/models/
 import TeacherRegistrationFormDialog from "@/app/(loggedin)/teacher/add/TeacherRegistrationFormDialog";
 import {TeacherRegistrationFormField} from "@/app/(loggedin)/teacher/add/TeacherRegistrationFormField";
 import {createTeacherRegistration} from "@/lib/actions/teacher-registration";
-import {GradeWithSubjects} from "@/app/(loggedin)/teacher/add/page";
+import {GradeWithSubjects} from "@/lib/actions/exam-mark";
 
 interface TeacherRegistrationFormProps {
-    grades: GradeWithSubjects
+    grades: GradeWithSubjects[]
 }
 
 

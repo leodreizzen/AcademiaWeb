@@ -11,6 +11,8 @@ import {
 } from "@/lib/actions/exam-mark";
 import fetchStudentById from "@/lib/actions/student-info";
 import { redirect } from "next/navigation";
+import { fetchParentById } from "@/lib/actions/info-parent";
+import { fetchSelectedChild } from "@/lib/data/children";
 
 export default async function AssignmentPage({
   searchParams,
@@ -25,10 +27,16 @@ export default async function AssignmentPage({
 
   const profile = await fetchCurrentUser();
   let grades: GradeWithSubjects[] = [];
+  
   if (profile?.role === "Teacher") {
     grades = await fetchGradesWithSubjectsForTeacher(profile.id);
   } else if (profile?.role === "Student") {
     const student = await fetchStudentById(profile.id);
+    if (student) {
+      grades = await fetchGradesWithSubjectsForStudent(student.gradeName);
+    }
+  } else if (profile?.role === "Parent") {
+    const student = await fetchSelectedChild();
     if (student) {
       grades = await fetchGradesWithSubjectsForStudent(student.gradeName);
     }
@@ -41,7 +49,7 @@ export default async function AssignmentPage({
     title,
     subject,
     grade,
-    profile,
+    profile
   );
   const count = assignments[0]?.count || 0;
   const numberOfPages = Math.ceil(count / ASSIGNMENTS_PER_PAGE);

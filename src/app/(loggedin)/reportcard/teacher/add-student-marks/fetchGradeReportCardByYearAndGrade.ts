@@ -58,63 +58,7 @@ export async function hasRegisteredMarks(year: number, gradeName: string, subjec
     return subjectMarks !== null
 }
 
-// export async function canLoadGradesForSemester(year: number, gradeName: string, subjectId: number): Promise<CantRegisterGradesResult> {
-//     try {
-//         const gradeReportCard = await prisma.gradeReportCards.findUnique({
-//             where: {
-//                 gradeName_year: {
-//                     gradeName,
-//                     year,
-//                 },
-//             },
-//             include: {
-//                 reportCards: true, // Incluir los reportCards relacionados
-//             },
-//         });
-//
-//         if (!gradeReportCard) {
-//             throw new Error(`GradeReportCard not found for year ${year} and grade ${gradeName}`);
-//         }
-//
-//
-//         let activeSemester: number | null = null;
-//         if (!gradeReportCard.firstSemesterReleased) {
-//             activeSemester = 1;
-//         } else if (!gradeReportCard.secondSemesterReleased) {
-//             activeSemester = 2;
-//         }
-//
-//         if (activeSemester === null) {
-//             throw new Error('Both semesters have already been released.');
-//         }
-//
-//         // Buscar si ya hay notas para el semestre activo y la materia
-//         const reportCardWithGrades = gradeReportCard.reportCards.find((reportCard) => {
-//             return (
-//                 reportCard.subjectId === subjectId &&
-//                 reportCard.semester === activeSemester &&
-//                 reportCard.grades.length > 0 // Asegurarse de que haya notas cargadas
-//             );
-//         });
-//
-//         // Si ya hay notas cargadas para ese semestre y materia
-//         if (reportCardWithGrades) {
-//             return {
-//                 canLoadGrades: false,
-//                 message: `Grades for semester ${activeSemester} and subject ${subjectId} have already been loaded.`,
-//             };
-//         }
-//
-//         // Si no hay notas cargadas, permitir cargar
-//         return {
-//             canLoadGrades: true,
-//             message: `You can load grades for semester ${activeSemester} and subject ${subjectId}.`,
-//         };
-//     } catch (error) {
-//         console.error('Error checking if grades can be loaded:', error);
-//         throw error;
-//     }
-// }
+
 
 export type GetSubjectsWithReportCardStatusReturnType = Map<number, {currentSemester: "first" | "second", canLoad: boolean}>
 

@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import {mapStudentWithUser} from "@/lib/data/mappings";
 
-export async function fetchStudentFromSubject(id: number) {
+export async function fetchStudentsFromSubject(id: number) {
     try {
         const students = await prisma.student.findMany({
             where: {

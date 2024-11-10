@@ -20,10 +20,10 @@ export default function AddReportCard({ subjects, result }: PrincipalProps) {
     const [materiaSeleccionada, setMateriaSeleccionada] = useState<Subject | null>(null);
     const [semestreSeleccionado, setSemestreSeleccionado] = useState('');
     const [notasCargadas, setNotasCargadas] = useState<{ [key: number]: { semestre1: boolean; semestre2: boolean } }>({});
-    const {push, replace, refresh} = useRouter();
+    const {push} = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    // Función para obtener el estado de las notas para cada materia
+
     const obtenerEstadoNotas = async (subjectId: number) => {
         const value = result.get(subjectId);
         if (value?.canLoad == false)
@@ -36,7 +36,7 @@ export default function AddReportCard({ subjects, result }: PrincipalProps) {
 
     };
 
-    // Obtener el estado de las notas para todas las materias al cargar la página
+
     useEffect(() => {
         const cargarEstadoNotas = async () => {
             const estadoNotas: { [key: number]: { semestre1: boolean; semestre2: boolean } } = {};

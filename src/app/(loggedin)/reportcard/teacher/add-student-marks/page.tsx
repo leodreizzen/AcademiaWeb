@@ -1,32 +1,74 @@
 import {assertPermission} from "@/lib/access_control";
 import {Resource} from "@/lib/operation_list";
 import {fetchSubject} from "@/app/(loggedin)/reportcard/teacher/add-student-marks/fetchSubject";
-import {fetchStudentFromSubject} from "@/app/(loggedin)/reportcard/teacher/add-student-marks/fetchStudentsFromSubject";
-import ListadoAlumnos from "@/app/(loggedin)/reportcard/teacher/add-student-marks/ListStudentsAddReportCard";
+import {fetchStudentsFromSubject} from "@/app/(loggedin)/reportcard/teacher/add-student-marks/fetchStudentsFromSubject";
 import {
     getSubjectsWithReportCardStatus
 } from "@/app/(loggedin)/reportcard/teacher/add-student-marks/fetchGradeReportCardByYearAndGrade";
+import FirstSemesterReportCardFront
+    from "@/app/(loggedin)/reportcard/teacher/add-student-marks/firstSemesterReportCardFront";
+import {notFound} from "next/navigation";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import SecondSemesterReportCardFront
+    from "@/app/(loggedin)/reportcard/teacher/add-student-marks/secondSemesterReportCardFront";
 
 export default async function ReportCardAddListPage({
                                                         searchParams,
                                                     }: {
-    searchParams: { [key: string]: string | undefined }
+    searchParams: Record<"idSubject", string|undefined>
 }) {
     await assertPermission({resource: Resource.REPORT_CARD, operation: "CREATE"});
-    const subjectId = searchParams?.idSubject;
-    const alumnos = await fetchStudentFromSubject(Number(subjectId));
+    const subjectId = searchParams.idSubject;
+    if(!Number(subjectId))
+        notFound();
+    const alumnos = await fetchStudentsFromSubject(Number(subjectId));
     const materia = await fetchSubject(Number(subjectId))
+    if(!materia)
+        notFound();
     const result = await getSubjectsWithReportCardStatus(Number(new Date().getFullYear()))
     const value = result.get(Number(subjectId))
-    let semestre: string
-    if(value?.currentSemester == "first")
-        semestre = '1';
-    else
-        semestre = '2';
+    if(!value)
+        notFound();
+    if(value.currentSemester == "first"){
+        if(value.canLoad) {
+            return (
+                <div>
+                    <FirstSemesterReportCardFront students={alumnos} subject={materia}/>
+                </div>
+            );
+        }
+        else
+            return (<div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
+                <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold text-center">No se puede cargar notas</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-center">Las notas del primer semestre ya están cargadas.</p>
+                    </CardContent>
+                </Card>
+            </div>)
+    }
+    else{
+        if(value.canLoad) {
+            return (
+                <div>
+                    <SecondSemesterReportCardFront students={alumnos} subject={materia}/>
+                </div>
+            );
+        }
+        else
+            return (<div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
+                <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold text-center">No se puede cargar notas</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-center">Las notas del segundo semestre ya están cargadas.</p>
+                    </CardContent>
+                </Card>
+            </div>
+            );
+    }
 
-    return (
-        <div>
-            <ListadoAlumnos students={alumnos} subject={materia[0]} semestre={semestre}/>
-        </div>
-    );
 }

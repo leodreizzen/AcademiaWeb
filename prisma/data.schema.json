@@ -1,0 +1,622 @@
+{
+  "$ref": "#/definitions/test data",
+  "definitions": {
+    "test data": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "profiles": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "const": "Student"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "birthDate": {
+                          "type": "string"
+                        },
+                        "phoneNumber": {
+                          "type": "string",
+                          "pattern": "^[0-9]*$",
+                          "errorMessage": {
+                            "pattern": "El número de teléfono debe contener solo números",
+                            "minLength": "Ingrese un número de teléfono válido"
+                          },
+                          "minLength": 8
+                        },
+                        "address": {
+                          "type": "string",
+                          "minLength": 1,
+                          "errorMessage": {
+                            "minLength": "Ingrese una dirección válida",
+                            "pattern": "La dirección debe contener al menos un carácter no espacio"
+                          },
+                          "pattern": "\\S+\\s*\\S*"
+                        },
+                        "parentDnis": {
+                          "type": "array",
+                          "items": {
+                            "type": "number",
+                            "minimum": 1000000,
+                            "errorMessage": {
+                              "minimum": "Ingrese un dni válido",
+                              "maximum": "Ingrese un dni válido"
+                            },
+                            "maximum": 999999999
+                          },
+                          "minItems": 1,
+                          "errorMessage": {
+                            "minItems": "Students must have at least one parent"
+                          }
+                        },
+                        "grade": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "role",
+                        "email",
+                        "birthDate",
+                        "phoneNumber",
+                        "address",
+                        "parentDnis",
+                        "grade"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "const": "Parent"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "birthDate": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
+                        },
+                        "phoneNumber": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/phoneNumber"
+                        },
+                        "address": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/address"
+                        }
+                      },
+                      "required": [
+                        "role",
+                        "email",
+                        "birthDate",
+                        "phoneNumber",
+                        "address"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "const": "Teacher"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phoneNumber": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/phoneNumber"
+                        },
+                        "address": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/address"
+                        },
+                        "subjects": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "role",
+                        "email",
+                        "phoneNumber",
+                        "address",
+                        "subjects"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "const": "Administrator"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "phoneNumber": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/phoneNumber"
+                        },
+                        "address": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/address"
+                        }
+                      },
+                      "required": [
+                        "role",
+                        "email",
+                        "phoneNumber",
+                        "address"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "minItems": 1,
+                "errorMessage": {
+                  "minItems": "User must have at least one profile"
+                }
+              },
+              "firstName": {
+                "type": "string",
+                "minLength": 1,
+                "errorMessage": {
+                  "minLength": "Ingrese un nombre válido",
+                  "pattern": "El nombre debe contener al menos un carácter no espacio"
+                },
+                "pattern": "\\S+\\s*\\S*"
+              },
+              "lastName": {
+                "type": "string",
+                "minLength": 1,
+                "errorMessage": {
+                  "minLength": "Ingrese un apellido válido",
+                  "pattern": "El apellido debe contener al menos un carácter no espacio"
+                },
+                "pattern": "\\S+\\s*\\S*"
+              },
+              "dni": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+              },
+              "password": {
+                "type": "string",
+                "minLength": 12,
+                "errorMessage": {
+                  "minLength": "La contraseña debe tener al menos 12 caracteres."
+                },
+                "allOf": [
+                  {
+                    "pattern": "[0-9]",
+                    "errorMessage": {
+                      "pattern": "La contraseña debe contener al menos un número."
+                    }
+                  },
+                  {
+                    "pattern": "[a-z]",
+                    "errorMessage": {
+                      "pattern": "La contraseña debe contener al menos una letra minúscula."
+                    }
+                  },
+                  {
+                    "pattern": "[A-Z]",
+                    "errorMessage": {
+                      "pattern": "La contraseña debe contener al menos una letra mayúscula."
+                    }
+                  },
+                  {
+                    "pattern": "[\\W_]",
+                    "errorMessage": {
+                      "pattern": "La contraseña debe contener al menos un carácter especial."
+                    }
+                  }
+                ]
+              },
+              "alias": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "profiles",
+              "firstName",
+              "lastName",
+              "dni",
+              "password"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "reprimands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "students": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dni": {
+                      "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                    },
+                    "signature": {
+                      "type": "object",
+                      "properties": {
+                        "signedByDni": {
+                          "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                        },
+                        "dateTime": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "signedByDni",
+                        "dateTime"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "dni"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "teacherDni": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+              },
+              "message": {
+                "type": "string"
+              },
+              "date": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
+              }
+            },
+            "required": [
+              "students",
+              "teacherDni",
+              "message",
+              "date"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "exams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/2/properties/subjects/items"
+              },
+              "date": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
+              },
+              "marks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "studentDni": {
+                      "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                    },
+                    "mark": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "errorMessage": {
+                        "minimum": "mark must be betweeen 1 and 10",
+                        "maximum": "mark must be betweeen 1 and 10"
+                      },
+                      "maximum": 10
+                    },
+                    "signature": {
+                      "$ref": "#/definitions/test data/properties/reprimands/items/properties/students/items/properties/signature"
+                    }
+                  },
+                  "required": [
+                    "studentDni",
+                    "mark"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "subject",
+              "date",
+              "marks"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": {
+                "type": "string"
+              },
+              "fileUrl": {
+                "type": "string",
+                "format": "uri"
+              },
+              "uploadDate": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
+              },
+              "subject": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/2/properties/subjects/items"
+              },
+              "submissions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "uploadDate": {
+                      "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
+                    },
+                    "fileUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "studentDni": {
+                      "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                    }
+                  },
+                  "required": [
+                    "uploadDate",
+                    "fileUrl",
+                    "studentDni"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "title",
+              "fileUrl",
+              "uploadDate",
+              "subject",
+              "submissions"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "reportCards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": "integer",
+                "minimum": 2000,
+                "maximum": 2100
+              },
+              "grade": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/grade"
+              },
+              "firstSemesterMarks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "marks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "studentDni": {
+                            "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                          },
+                          "mark": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1,
+                            "pattern": "[A-D]",
+                            "errorMessage": {
+                              "pattern": "mark must be between A and D"
+                            }
+                          }
+                        },
+                        "required": [
+                          "studentDni",
+                          "mark"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "subject",
+                    "marks"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "secondSemesterMarks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/test data/properties/reportCards/items/properties/firstSemesterMarks/items"
+                }
+              },
+              "finalMarks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "marks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "studentDni": {
+                            "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                          },
+                          "mark": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "errorMessage": {
+                              "minimum": "mark must be betweeen 1 and 10",
+                              "maximum": "mark must be betweeen 1 and 10"
+                            },
+                            "maximum": 10
+                          }
+                        },
+                        "required": [
+                          "studentDni",
+                          "mark"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "subject",
+                    "marks"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "firstSemesterReleased": {
+                "type": "boolean"
+              },
+              "secondSemesterReleased": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "year",
+              "grade",
+              "firstSemesterMarks",
+              "secondSemesterMarks",
+              "finalMarks",
+              "firstSemesterReleased",
+              "secondSemesterReleased"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "attendance": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/birthDate"
+              },
+              "grade": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/grade"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "studentDni": {
+                      "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "present",
+                        "absent"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "studentDni",
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "date",
+              "grade",
+              "items"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fromDni": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+              },
+              "toDni": {
+                "$ref": "#/definitions/test data/properties/users/items/properties/profiles/items/anyOf/0/properties/parentDnis/items"
+              },
+              "dateTime": {
+                "$ref": "#/definitions/test data/properties/reprimands/items/properties/students/items/properties/signature/properties/dateTime"
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "isRead": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "fromDni",
+              "toDni",
+              "dateTime",
+              "message",
+              "isRead"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "users",
+        "reprimands",
+        "exams",
+        "assignments",
+        "reportCards",
+        "attendance",
+        "messages"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

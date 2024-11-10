@@ -3,7 +3,7 @@ import {Resource} from "@/lib/operation_list";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {fetchStudentsByGrade} from "@/lib/data/fetchStudentsByGrade";
 import {AttendanceRegister} from "@/components/ui/attendance/AttendanceRegister";
-import {hasPreviousAttendace} from "@/lib/actions/registerAttendance";
+import {hasPreviousAttendace, teacherCanRegisterAttendance} from "@/lib/actions/registerAttendance";
 import {fetchGradeByID} from "@/lib/data/fetchGradeNameByID";
 
 export default async function RegisterAttendance({params}: {params: {id: string}}){
@@ -36,6 +36,21 @@ export default async function RegisterAttendance({params}: {params: {id: string}
                     </CardHeader>
                     <CardContent>
                         <p className="text-center">Ya se ha registrado la asistencia hoy.</p>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
+
+    if(!await teacherCanRegisterAttendance(grade)){
+        return (
+            <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
+                <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold text-center">No puede registrar asistencia</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-center">No puede registrar asistencia para este año.</p>
                     </CardContent>
                 </Card>
             </div>

@@ -10,6 +10,7 @@ import {
   GradeWithSubjects,
 } from "@/lib/actions/exam-mark";
 import fetchStudentById from "@/lib/actions/student-info";
+import { redirect } from "next/navigation";
 
 export default async function AssignmentPage({
   searchParams,
@@ -32,7 +33,7 @@ export default async function AssignmentPage({
       grades = await fetchGradesWithSubjectsForStudent(student.gradeName);
     }
   } else {
-    return new Response("No autorizado", { status: 403 });
+    redirect("/403");
   }
   const assignments = await getAssignments(
     page,

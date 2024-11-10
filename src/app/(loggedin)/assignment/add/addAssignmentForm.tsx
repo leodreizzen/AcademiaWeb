@@ -15,7 +15,6 @@ import {
     getAssignmentSignature,
     saveAssignment,
 } from "@/app/server-actions/submitAssignment";
-import {getGradesAndSubjects} from "@/app/server-actions/fetchGradeSubject";
 import Link from "next/link";
 import {assignmentSchema, validExtensions} from "@/lib/models/addAssignment";
 import {z} from "zod";

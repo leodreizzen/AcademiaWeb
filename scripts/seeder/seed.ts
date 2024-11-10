@@ -356,6 +356,7 @@ async function createAssignments() {
                         }
                     }
                 },
+                testCase: true,
                 description: assignment.description,
                 title: assignment.title,
                 fileUrl: assignment.fileUrl,
@@ -363,6 +364,7 @@ async function createAssignments() {
                     create: assignment.submissions.map((submission) => ({
                         uploadDate: submission.uploadDate,
                         fileUrl: submission.fileUrl,
+                        testCase: true,
                         student: {
                             connect: {
                                 id: studentMap.get(submission.studentDni)

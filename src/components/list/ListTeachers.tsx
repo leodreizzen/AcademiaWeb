@@ -44,8 +44,7 @@ export function ListTeachers({data, count, numberOfTeachers}: PrincipalProps) {
     }
 
     const handleEdit = (id: number) => {
-        console.log(`Edit teacher with id: ${id}`)
-        // Implement edit functionality here
+        push(`/teacher/${id}/edit`)
     }
 
     const handleView = (id: number) => {

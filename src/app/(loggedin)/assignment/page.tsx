@@ -11,7 +11,6 @@ import {
 } from "@/lib/actions/exam-mark";
 import fetchStudentById from "@/lib/actions/student-info";
 import { redirect } from "next/navigation";
-import { fetchParentById } from "@/lib/actions/info-parent";
 import { fetchSelectedChild } from "@/lib/data/children";
 
 export default async function AssignmentPage({
@@ -27,7 +26,7 @@ export default async function AssignmentPage({
 
   const profile = await fetchCurrentUser();
   let grades: GradeWithSubjects[] = [];
-  
+
   if (profile?.role === "Teacher") {
     grades = await fetchGradesWithSubjectsForTeacher(profile.id);
   } else if (profile?.role === "Student") {

@@ -2,6 +2,7 @@ import { Page, expect } from "@playwright/test";
 import {  faker } from "@faker-js/faker/locale/es";
 import { newBirthDate, randomDNI } from "./studentHelper";
 import exp from "constants";
+import {randomPhoneNumber} from "../../tests/testutils";
 
 
 
@@ -49,7 +50,7 @@ export async function createParentWithoutChildren(page: Page) {
     const parentDni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -61,7 +62,7 @@ export async function createParentWithoutChildren(page: Page) {
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -82,7 +83,7 @@ export async function createChildrenWithTwoParents(page: Page) {
     const parentDni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -97,7 +98,7 @@ export async function createChildrenWithTwoParents(page: Page) {
     await page.getByRole('button', { name: 'Nuevo Responsable' }).first().click();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -136,7 +137,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
     const dni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(dni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -151,7 +152,7 @@ export async function createParentWithOnlyOneChild(page: Page) {
     const parentDni = await randomDNI();
 
     await page.locator('input[id="input-dni"]').fill(parentDni);
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
     await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').last().fill(faker.person.lastName());
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));

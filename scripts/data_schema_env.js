@@ -1,0 +1,1 @@
+process.env.TEST_DATA_SCHEMA_GENERATION = "true";

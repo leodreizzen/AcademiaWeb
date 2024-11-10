@@ -6,7 +6,7 @@ export async function deleteAssignment(assignmentId: number) {
   try {
     const assignmentUrl = await prisma.assignment.findUnique({
       where: { id: assignmentId },
-      select: { fileUrl: true },
+      select: { fileUrl: true, testCase:true },
     });
 
     if (!assignmentUrl) {
@@ -20,12 +20,14 @@ export async function deleteAssignment(assignmentId: number) {
         error: "No se pudo obtener el public_id del archivo.",
       };
     }
-    const result = await deleteFileFromCloudinary(public_id);
-    if (result.result !== "ok") {
-      return {
-        success: false,
-        error: `Error al eliminar archivo en Cloudinary: ${result.result}`,
-      };
+    if(!assignmentUrl.testCase) {
+      const result = await deleteFileFromCloudinary(public_id);
+      if (result.result !== "ok") {
+        return {
+          success: false,
+          error: `Error al eliminar archivo en Cloudinary: ${result.result}`,
+        };
+      }
     }
     const assignment = await prisma.assignment.delete({
       where: { id: assignmentId },

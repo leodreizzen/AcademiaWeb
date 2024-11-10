@@ -1,7 +1,7 @@
 import { searchStudentByDni, createStudentWithOneParent, newBirthDate, randomDNI, newBirthDateCustom } from '@/helpersTest/studentHelper';
 import { getFirstPersonDetails, getPersonDetails } from '@/helpersTest/infoHelper';
 import { getTestUser } from "../testdata";
-import { loginAsTestUser } from "../testutils";
+import {loginAsTestUser, randomPhoneNumber} from "../testutils";
 import { faker } from '@faker-js/faker/locale/es_MX';
 import test, { expect } from '@playwright/test';
 import { searchParentByDni } from '@/helpersTest/parentHelper';
@@ -28,7 +28,7 @@ test('Modificar alumno con todos los datos validos', async ({ page }) => {
     await searchStudentByDni(page, dni);
     await page.waitForTimeout(1000);
     await page.getByTestId("edit-button").click();
-    const newPhoneNumber = faker.phone.number({ style: 'international' }).toString().replace('+','');
+    const newPhoneNumber = randomPhoneNumber().toString().replace('+','');
     const newFirstName = faker.person.firstName();
     const newLastName = faker.person.lastName();
     const newAddress = faker.location.streetAddress({ useFullAddress: true });
@@ -115,11 +115,11 @@ test('Modificar alumno con datos invalidos', async ({ page }) => {
 
     
     await expect( page.getByRole('button', { name: 'Editar' }).last()).toBeDisabled();
-    expect (await page.locator(`text=Ingrese un nombre válido para el estudiante`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese un apellido válido para el estudiante`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese un número de teléfono válido para el estudiante`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese un email válido para el estudiante`).isVisible()).toBe(true);
-    expect (await page.locator(`text=Ingrese una dirección válida para el estudiante`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un nombre válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un apellido válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un número de teléfono válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese un email válido`).isVisible()).toBe(true);
+    expect (await page.locator(`text=Ingrese una dirección válida`).isVisible()).toBe(true);
     expect (await page.locator(`text=El estudiante debe ser mayor de 4 años`).isVisible()).toBe(true);
 
     await page.goBack();

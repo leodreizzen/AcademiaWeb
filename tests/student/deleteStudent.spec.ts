@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { Faker, es } from '@faker-js/faker'
 import { newBirthDate, searchStudentByDni } from '@/helpersTest/studentHelper';
 import { getFirstPersonDetails } from '@/helpersTest/infoHelper';
-import {loginAsTestUser} from "../testutils";
+import {loginAsTestUser, randomPhoneNumber} from "../testutils";
 import {searchParentByDni} from '@/helpersTest/parentHelper';
 
 
@@ -29,7 +29,7 @@ test.describe('Testing borrar alumno', () => {
         const dniStudent = randomDNI();
 
         await page.locator('input[id="input-dni"]').fill(dniStudent);
-        await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+        await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
         await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -70,7 +70,7 @@ test.describe('Testing borrar alumno', () => {
 
         const dniStudent = randomDNI();
         await page.locator('input[id="input-dni"]').fill(dniStudent);
-        await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+        await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
         await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
@@ -119,7 +119,7 @@ test.describe('Testing borrar alumno', () => {
         const dniStudent = randomDNI();
 
         await page.locator('input[id="input-dni"]').fill(dniStudent);
-        await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+        await page.locator('input[id="input-phoneNumber"]').fill(randomPhoneNumber());
         await page.locator('input[id="input-firstName"]').fill(faker.person.firstName());
         await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
         await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));

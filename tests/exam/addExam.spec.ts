@@ -1,6 +1,6 @@
 import {expect, test} from "@playwright/test";
 import {loginAsRole} from "@/helpersTest/loginAsRolHelper";
-import {getTestUser} from "../testdata";
+import {getTestUser, getTestUserWithRole} from "../testdata";
 import {randomBetween} from "@/lib/testing/testUtils";
 import {faker} from "@faker-js/faker/locale/es";
 import {format} from "date-fns";
@@ -11,7 +11,7 @@ test.beforeEach(async ({page}) => {
     await page.goto('/');
 });
 
-const teacher = getTestUser('teacher');
+const teacher = getTestUserWithRole('teacher', "Teacher");
 
 test('Crear examen con datos válidos', async ({page}) => {
     await loginAsRole(page, teacher.dni.toString(), teacher.password, 'Profesor');

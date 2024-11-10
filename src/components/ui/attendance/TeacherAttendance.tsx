@@ -23,6 +23,7 @@ import {
 import {PickersDay, PickersDayProps} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {AttendanceDataWithItems} from "@/lib/actions/get-attendance";
+import {useRouter} from "next/navigation";
 
 // Tema oscuro
 const darkTheme = createTheme({
@@ -32,17 +33,19 @@ const darkTheme = createTheme({
 })
 
 type TeacherAttendanceProps = {
-    attendanceData: AttendanceDataWithItems[]
+    attendanceData: AttendanceDataWithItems[],
+    gradeId: number,
+    gradeName: string
 }
 
 type AttendanceFormat = {
     [key: string]: Record<string, boolean>
 }
 
-export default function TeacherAttendance({attendanceData}: TeacherAttendanceProps) {
+export default function TeacherAttendance({attendanceData, gradeId, gradeName}: TeacherAttendanceProps) {
     const [dialogOpen, setDialogOpen] = useState(false)
     const [diaSeleccionado, setDiaSeleccionado] = useState<string | null>(null)
-
+    const router = useRouter()
 
 
     const attendanceFormatted: AttendanceFormat = attendanceData.reduce((acc, item) => {
@@ -97,7 +100,7 @@ export default function TeacherAttendance({attendanceData}: TeacherAttendancePro
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
                 <Paper elevation={3} sx={{ p: 3, maxWidth: 400, margin: 'auto', mt: 4 }}>
                     <Typography variant="h5" gutterBottom>
-                        Asistencia de la Clase
+                        Asistencia de la clase de {gradeName}
                     </Typography>
                     <DateCalendar
                         renderLoading={() => <div>Cargando calendario...</div>}
@@ -113,7 +116,11 @@ export default function TeacherAttendance({attendanceData}: TeacherAttendancePro
                     <Box justifyContent="center" alignItems="center" display={"flex"} sx={{ mt: 2 }}>
                         Los días que no presentan colores no tienen información de asistencia.
                     </Box>
+                    <Box justifyContent={"center"} alignItems={"center"} display={"flex"}>
+                        <Button sx={{mt:2, justifySelf:'center'}} onClick={() => router.push(`/attendance/${gradeId}/add`)}>Registrar asistencia</Button>
+                    </Box>
                 </Paper>
+
 
                 <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
                     <DialogTitle>

@@ -15,12 +15,12 @@ test('Editar docente nuevo (Caso exito)', async ({ page }) => {
 
     const teacherDni = await createTeacher(page);
 
-    await page.goto('/');
-    await page.waitForURL('/')
 
     await page.getByRole('navigation').getByRole('link', { name: 'Docentes' }).first().click();
 
-    await searchTeacherByDni(page, teacherDni);
+    const resultReady = await searchTeacherByDni(page, teacherDni);
+
+    expect(resultReady).toBe(true);
 
     await page.getByTestId('edit-teacher-button').click();
 
@@ -32,7 +32,7 @@ test('Editar docente nuevo (Caso exito)', async ({ page }) => {
 
     await page.locator('input[id="input-name"]').fill(newFirstName);
     await page.locator('input[id="input-lastName"]').fill(newLastName);
-    await page.locator('input[id="input-phoneNumber"]').fill(newPhoneNumber);
+    await page.locator('input[id="input-phoneNumber"]').fill(newPhoneNumber.replace('+',''));
     await page.locator('input[id="input-address"]').fill(newAddress);
     await page.locator('input[id="input-email"]').fill(newEmail);
 
@@ -44,7 +44,7 @@ test('Editar docente nuevo (Caso exito)', async ({ page }) => {
 
     let dialogShown = false;
 
-    page.on('dialog', dialog => {
+    page.on('dialog',async dialog => {
         expect(dialog.message()).toBe('El docente se ha modificado correctamente');
         dialog.accept();
         dialogShown = true;

@@ -46,7 +46,7 @@ export async function createTeacher(page: Page) {
     await page.locator('input[id="input-dni"]').fill(teacherDni);
     await page.locator('input[id="input-name"]').fill(faker.person.firstName());
     await page.locator('input[id="input-lastName"]').fill(faker.person.lastName());
-    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }));
+    await page.locator('input[id="input-phoneNumber"]').fill(faker.phone.number({ style: 'international' }).replace('+',''));
     await page.locator('input[id="input-address"]').fill(faker.location.streetAddress({ useFullAddress: true }));
     await page.locator('input[id="input-email"]').fill(faker.internet.email());
 
@@ -79,7 +79,27 @@ export async function createTeacher(page: Page) {
     const closeButton = await page.locator('button:has-text("Close")');
     await expect(closeButton).toBeVisible();
     await closeButton.click();
+    
+
+    let dialogShown = false;
+    
+    page.on('dialog',async dialog => {
+        expect(dialog.message()).toBe('Docente creado exitosamente');
+        dialog.accept();
+        dialogShown = true;
+    }
+    );
     await page.locator('button[type="submit"]').click();
+
+    await expect.poll(async () => {
+        return dialogShown;
+    }, {
+        intervals: [250],
+        timeout: 20000,
+    }).toBe(true)
+
+    page.removeAllListeners('dialog');
+
     
     
     

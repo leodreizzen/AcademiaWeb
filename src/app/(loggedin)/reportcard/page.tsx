@@ -5,6 +5,8 @@ import ReportCardInfo from "@/components/ui/Reportcard/ReportcardInfo";
 import {fetchCurrentUser} from "@/lib/data/users";
 import {redirect} from "next/navigation";
 import {fetchSelectedChild} from "@/lib/data/children";
+import {CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent} from "@/components/ui/card";
 
 export default async function ReportCardInfoPage() {
     await assertPermission({resource: Resource.REPORT_CARD, operation: "READ"});
@@ -52,11 +54,19 @@ export default async function ReportCardInfoPage() {
     if (!result) {
         return (
             <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
-                <div className="w-full
-                max-w-2xl bg-gray-800 text-gray-100">
-                    <h1 className="text-2xl font-bold text-center">Boletín no encontrado</h1>
-                    <p className="text-center">No se encontró un boletín para el ID seleccionado.</p>
-                </div>
+                <Card
+                    className="w-full max-w-2xl mx-auto bg-gradient-to-b from-gray-800 to-gray-900 shadow-xl border border-gray-700">
+                    <CardHeader className="space-y-1 text-center">
+                        <CardTitle className="text-3xl font-bold tracking-tight text-white">Boletín no disponible</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="text-center text-gray-200">
+                            <p>Los datos de este boletín aún no están disponibles.</p>
+                            <p>Por favor, vuelva a intentarlo más tarde.</p>
+                        </div>
+                    </CardContent>
+                </Card>
+
             </div>
         );
     }

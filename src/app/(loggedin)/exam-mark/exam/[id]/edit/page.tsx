@@ -4,6 +4,7 @@ import { fetchExam } from "@/lib/actions/exam";
 import { fetchStudentsForSubject } from "@/lib/actions/exam-mark";
 import { fetchCurrentUser } from "@/lib/data/users";
 import {Resource} from "@/lib/operation_list";
+import { redirect } from "next/navigation";
 
 interface ExamMarkEditParams {
     params: {
@@ -16,20 +17,20 @@ export default async function ExamMarkEditPage({ params }: ExamMarkEditParams) {
 
     const user = await fetchCurrentUser();
     if(!user) {
-        return <div>Usuario no encontrado</div>
+        redirect("/403")
     }
     
     const id = Number.parseInt(params.id, 10);
     if (Number.isNaN(id)) {
-        return (<div>No se encontro las notas de examen</div>)
+        redirect("/403")
     }
     const exam = await fetchExam(id);
     if (!exam) {
-        return (<div>No se encontro las notas de examen</div>)
+        redirect("/403")
     }
 
     if (!exam.subject.teachers.some(x => x.id === user.id)) {
-        return <div>Profesor no tiene permiso para ver este examen</div>
+        redirect("/403");
     }
 
     const students = await fetchStudentsForSubject(exam.subjectId);

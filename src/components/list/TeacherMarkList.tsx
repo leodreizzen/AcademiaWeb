@@ -33,7 +33,7 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
     }, [teacherId])
 
     const goToEdit = (id: number): void => {
-        router.push(`/exam-mark/${id}`);
+        router.push(`/exam-mark/exam/${id}/edit`);
     };
 
     return (

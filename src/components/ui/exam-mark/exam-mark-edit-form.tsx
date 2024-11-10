@@ -11,35 +11,40 @@ import {useRouter} from "next/navigation";
 import { ExamMarkEdit, ExamMarkEditModel } from "@/lib/models/examMark";
 import {format} from "date-fns";
 import { updateMarks } from "@/lib/actions/exam-mark";
+import { StudentWithUser } from "@/lib/definitions/student";
 
 type ExamMarkFormProps = {
-    exam: ExamWithSubjectAndMarks
+    exam: ExamWithSubjectAndMarks;
+    students: StudentWithUser[];
 }
 
-export default function ExamMarkEditForm({ exam }: ExamMarkFormProps) {
+export default function ExamMarkEditForm({ exam, students }: ExamMarkFormProps) {
     const router = useRouter();
     const { register, handleSubmit, formState, control } = useForm<ExamMarkEdit>({
         defaultValues: {
-            marks: exam.marks.map(x => ({
-                id: x.id,
-                examId: x.examId,
-                mark: x.mark,
-                studentId: x.studentId
-            }))
+            marks: students.map(x => {
+                const examMark = exam.marks.find(m => m.studentId === x.id);
+                return {
+                    id: examMark?.id ?? 0,
+                    examId: exam.id,
+                    mark: examMark?.mark,
+                    studentId: x.id
+                };
+            })
         },
         resolver: zodResolver(ExamMarkEditModel)
     });
     async function onSubmit(examMarks: ExamMarkEdit) {
-        console.log(examMarks);
         if(!examMarks.marks.some(student => student.mark != null)){
             alert("Debes ingresar al menos una nota")
         } else {
-            const res = await updateMarks(examMarks.marks.map(x => ({ id: x.id, mark: x.mark })))
-            if (res.success) {
+            const marksSaveOrUpdate = examMarks.marks.filter(x => x.mark != null);
+            const resUpdate = await updateMarks(marksSaveOrUpdate as any)
+            if (resUpdate.success) {
                 alert("Notas guardadas exitosamente")
                 router.push("/exam-mark")
             } else {
-                alert(res.message)
+                alert(resUpdate.message)
             }
         }
     }
@@ -47,7 +52,7 @@ export default function ExamMarkEditForm({ exam }: ExamMarkFormProps) {
         <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
             <Card className="w-full max-w-2xl bg-gray-800 text-gray-100">
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold text-center">Registrar Examen</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-center">Editar examen</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -70,27 +75,27 @@ export default function ExamMarkEditForm({ exam }: ExamMarkFormProps) {
                         <div>
                             <h3 className="font-semibold mb-4">Listado de alumnos</h3>
                             <div className="space-y-4">
-                                {exam.marks.map((examMark, index) => (
-                                    <div key={examMark.id}
+                                {students.map((student, index) => (
+                                    <div key={student.id}
                                          className="flex items-center justify-between p-3 bg-gray-700 rounded-lg" data-testid="student-mark">
                                         <span
-                                            className="font-medium">{examMark.student.user.firstName} {examMark.student.user.lastName}</span>
+                                            className="font-medium">{student.user.firstName} {student.user.lastName}</span>
                                         <div className={"flex-col space-y-2"}>
                                             <div className="flex items-center space-x-2 justify-end">
-                                                <Label htmlFor={`${index}.mark`}
+                                                <Label htmlFor={`marks.${index}.mark`}
                                                        className="text-sm">Nota:</Label>
                                                 <Input
-                                                    id={`${index}.mark`}
+                                                    id={`marks.${index}.mark`}
                                                     type="number"
-                                                    defaultValue={examMark.mark}
+                                                    defaultValue={exam.marks.find(mark => mark.studentId === student.id)?.mark}
                                                     placeholder="Editar nota"
                                                     className="w-20 bg-gray-600 text-gray-100 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                    aria-label={`Nota para ${examMark.student.user.firstName} ${examMark.student.user.lastName}`}
+                                                    aria-label={`Nota para ${student.user.firstName} ${student.user.lastName}`}
                                                     {...register(`marks.${index}.mark`, {setValueAs: v => v === '' ? null : Number.parseInt(v)})}
                                                 />
                                             </div>
-                                            {formState.errors.marks && formState.errors.marks[index] &&
-                                                <p className="text-red-500 text-sm">{formState.errors.marks[index].mark?.message}</p>}
+                                            {formState.errors.marks && formState.errors?.marks[index] &&
+                                                <p className="!text-red-500 text-sm">{formState.errors.marks[index].mark?.message}</p>}
                                         </div>
 
                                     </div>

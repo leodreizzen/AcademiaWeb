@@ -1,6 +1,7 @@
 import ExamMarkEditForm from "@/components/ui/exam-mark/exam-mark-edit-form";
 import {assertPermission} from "@/lib/access_control";
 import { fetchExam } from "@/lib/actions/exam";
+import { fetchStudentsForSubject } from "@/lib/actions/exam-mark";
 import { fetchCurrentUser } from "@/lib/data/users";
 import {Resource} from "@/lib/operation_list";
 
@@ -31,9 +32,11 @@ export default async function ExamMarkEditPage({ params }: ExamMarkEditParams) {
         return <div>Profesor no tiene permiso para ver este examen</div>
     }
 
+    const students = await fetchStudentsForSubject(exam.subjectId);
+
     return (
         <div>
-            <ExamMarkEditForm exam={exam} />
+            <ExamMarkEditForm exam={exam} students={students} />
         </div>
     );
 }

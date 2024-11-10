@@ -141,15 +141,25 @@ export async function fetchGradesWithSubjectsForTeacher(teacherId: number): Prom
     })
 }
 
-export async function updateMarks(marks: { id: number, mark: number }[]) {
+export async function updateMarks(marks: { id: number, examId: number, studentId: number, mark: number }[]) {
     try{
-        const updatePromises = marks.map((item) =>
+        const insertPromises = marks.filter(x => x.id === 0).map(item => {
+            return prisma.examMark.create({
+                data: {
+                    examId: item.examId,
+                    studentId: item.studentId,
+                    mark: item.mark
+                },
+            })
+        });
+        const updatePromises = marks.filter(x => x.id !== 0).map((item) =>
             prisma.examMark.update({
                 where: { id: item.id },
                 data: { mark: item.mark },
             })
         );
 
+        await prisma.$transaction(insertPromises);
         await prisma.$transaction(updatePromises);
         return {
             success: true,

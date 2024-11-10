@@ -244,19 +244,21 @@ export default function TPListPage({
                     </p>
                   </div>
                   <div className="flex space-x-3 w-full sm:w-auto">
-                    <Tooltip
-                      content="Editar"
-                      classNames={{ content: "text-white" }}
-                    >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(assignment.id)}
-                        className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                    {profile?.role === "Teacher" && (
+                      <Tooltip
+                        content="Editar"
+                        classNames={{ content: "text-white" }}
                       >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </Tooltip>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(assignment.id)}
+                          className="bg-gray-600 text-white hover:bg-gray-500 border-gray-500 flex-grow sm:flex-grow-0"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </Tooltip>
+                    )}
                     <Tooltip
                       content="Ver"
                       classNames={{ content: "text-white" }}
@@ -270,10 +272,11 @@ export default function TPListPage({
                         <Eye className="h-4 w-4" />
                       </Button>
                     </Tooltip>
-                    <Tooltip
+                    {profile?.role === "Teacher" && (
+                      <Tooltip
                       content="Borrar"
                       classNames={{ content: "text-white" }}
-                    >
+                      >
                       <Button
                         variant="outline"
                         size="sm"
@@ -282,7 +285,8 @@ export default function TPListPage({
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-                    </Tooltip>
+                      </Tooltip>
+                    )}
                   </div>
                 </CardContent>
               </Card>

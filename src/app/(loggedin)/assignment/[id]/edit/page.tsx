@@ -2,10 +2,11 @@ import { assertPermission } from "@/lib/access_control";
 import { Resource } from "@/lib/operation_list";
 import { getAssignmentById } from "@/app/(loggedin)/assignment/add/fetchAssignments";
 import EditAssignmentForm from "@/app/(loggedin)/assignment/[id]/edit/editAssignmentForm";
-import { notFound } from "next/navigation";
+import {notFound, redirect} from "next/navigation";
 import {fetchGradesWithSubjectsForTeacher} from "@/lib/actions/exam-mark";
 import {fetchCurrentUser} from "@/lib/data/users";
 import {AssignmentWithSubject} from "@/lib/definitions/assignment";
+import {fetchTeacherById} from "@/app/(loggedin)/teacher/fetchTeacher";
 
 export default async function EditAssignmentPage({
   params,
@@ -22,6 +23,7 @@ export default async function EditAssignmentPage({
     notFound();
   }
   const teacher = await fetchCurrentUser();
+
   if(!teacher)
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center p-4">
@@ -32,6 +34,15 @@ export default async function EditAssignmentPage({
           </div>
         </div>
     )
+
+
+  const teacherWithSubjects = await fetchTeacherById(teacher.id);
+  if(!teacherWithSubjects){
+    redirect("/403");
+  }
+  if(teacherWithSubjects.subjects.find(subject => subject.id == assignment.subject.id) == null){
+    redirect("/403");
+  }
   const grades = await fetchGradesWithSubjectsForTeacher(teacher.id);
 
   return (

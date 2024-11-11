@@ -6,7 +6,7 @@ export const ExamMarkEditModel = z.object({
             id: z.number(),
             examId: z.number(),
             studentId: z.number(),
-            mark: z.number().optional()
+            mark: z.number().nullable().optional()
         })
     )
 });

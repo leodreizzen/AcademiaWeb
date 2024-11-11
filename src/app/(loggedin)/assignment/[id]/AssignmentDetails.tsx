@@ -24,10 +24,11 @@ interface AssignmentType {
 
 interface AssignmentDetailsClientProps {
   assignment: AssignmentType;
+  isStudent: boolean;
 }
 
 export default function AssignmentDetailsPage({
-  assignment: assignment,
+  assignment, isStudent
 }: AssignmentDetailsClientProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -93,9 +94,19 @@ export default function AssignmentDetailsPage({
     <div className="min-h-full bg-gray-900 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-2xl bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            {assignment.title}
-          </h1>
+          <div className="flex justify-between">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+              {assignment.title}
+            </h1>
+            {isStudent ? (
+              <button type="button"
+                onClick={() => router.push(`/assignment/${assignment.id}/submit`)}
+                className="bg-green-600 hover:bg-green-500 text-white h-fit py-2 px-4 rounded-lg transition-colors"
+              >
+                Entregar
+              </button>) : null}
+            
+          </div>
           <p className="text-lg text-gray-400 mb-4">{assignment.description}</p>
         </div>
         <div className="mb-6">

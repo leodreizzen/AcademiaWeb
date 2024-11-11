@@ -67,5 +67,5 @@ export default async function AssignmentDetailsPage({
     subject: assignmentData.subject,
   };
 
-  return <AssignmentDetailsClient assignment={assignment} />;
+  return <AssignmentDetailsClient assignment={assignment} isStudent={user.role === "Student"} />;
 }

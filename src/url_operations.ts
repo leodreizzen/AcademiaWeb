@@ -25,6 +25,7 @@ const routeList:{path: string, handler: Permission}[] = [
     {path: "/assignment/:id", handler: {resource: Resource.ASSIGNMENT, operation: "READ"}},
     {path: "/assignment/:id/add", handler: {resource: Resource.ASSIGNMENT, operation: "CREATE"}},
     {path: "/assignment/:id/edit", handler: {resource: Resource.ASSIGNMENT, operation: "UPDATE"}},
+    {path: "/assignment/:id/submit", handler: {resource: Resource.ASSIGNMENT, operation: "SUBMIT"}},
     {path: "/changepassword", handler: {resource: Resource.USER, operation: "CHANGE_OWN_PASSWORD"}},
     {path: "/parent", handler: {resource: Resource.PARENT, operation: "LIST"}},
     {path: "/parent/:id", handler: {resource: Resource.PARENT, operation: "READ"}},

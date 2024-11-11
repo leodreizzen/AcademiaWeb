@@ -6,7 +6,7 @@ import prisma from "@/lib/prisma";
 import {generateSignature, SignatureData} from "@/lib/cloudinary/cloudinary_server";
 import {revalidatePath} from "next/cache";
 
-type SignatureResult = {
+export type SignatureResult = {
   success: true,
   signatureData: SignatureData
 } | {
@@ -29,6 +29,7 @@ export async function getAssignmentSignature(data: z.infer<typeof assignmentSche
     };
   }
 }
+
 
 export async function saveAssignment(
   data: z.infer<typeof assignmentSchema>,

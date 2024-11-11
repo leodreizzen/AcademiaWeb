@@ -8,6 +8,7 @@ import {fetchCurrentUser} from "@/lib/data/users";
 import {redirect} from "next/navigation";
 import fetchStudentById from "@/lib/actions/student-info";
 import {fetchSelectedChild} from "@/lib/data/children";
+import { fetchSubmissionByStudentAndAssignment } from "@/lib/data/assignmentSubmissions";
 
 export default async function AssignmentDetailsPage({
   params,
@@ -67,5 +68,16 @@ export default async function AssignmentDetailsPage({
     subject: assignmentData.subject,
   };
 
-  return <AssignmentDetailsClient assignment={assignment} />;
+  let existingSubmission = false;
+
+  if (user.role === "Student") {
+    const studentProfile = await fetchStudentById(user.id);
+    if(!studentProfile || assignment.subject.gradeName !== studentProfile.gradeName) {
+        redirect('/403');
+    }
+  
+    existingSubmission = await fetchSubmissionByStudentAndAssignment(studentProfile.id, assignment.id) != null;
+  }
+
+  return <AssignmentDetailsClient assignment={assignment} isStudent={user.role === "Student"} isSubmitted={existingSubmission} />;
 }

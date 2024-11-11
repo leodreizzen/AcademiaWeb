@@ -25,13 +25,14 @@ const adminsButton: HomeButton = { name: "Administradores", Icon: UserCog, href:
 const parentsButton: HomeButton = { name: "Responsables", Icon: Users2, href: "/parent" }
 const assignmentsButton: HomeButton = { name: "Trabajos Prácticos", Icon: BookOpen, href: "/assignment" }
 const reprimandsButton: HomeButton = { name: "Amonestaciones", Icon: AlertTriangle, href: "/reprimand" }
-const reportCardsButton: HomeButton = { name: "Boletín", Icon: FileText, href: "/reportcard" }
+const reportCardsButtonView: HomeButton = { name: "Boletín", Icon: FileText, href: "/reportcard" }
+const reportCardsButtonCreate: HomeButton = { name: "Boletines", Icon: FileText, href: "/reportcard/teacher" }
 const examMarksButton: HomeButton = { name: "Notas de exámenes", Icon: CheckSquare, href: "/exam-mark" }
 const attendanceButton: HomeButton = {name: "Asistencia", Icon: CalendarCheck2, href: "/attendance"}
 
 export const homeButtonsByRole: Record<ProfileRole, HomeButton[]> = {
-    "Student": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton],
-    "Teacher": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton, attendanceButton],
-    "Parent": [assignmentsButton, reprimandsButton, reportCardsButton, examMarksButton],
+    "Student": [assignmentsButton, reprimandsButton, reportCardsButtonView, examMarksButton],
+    "Teacher": [assignmentsButton, reprimandsButton, reportCardsButtonCreate, examMarksButton, attendanceButton],
+    "Parent": [assignmentsButton, reprimandsButton, reportCardsButtonView, examMarksButton],
     "Administrator": [studentsButton, teachersButton, parentsButton, adminsButton]
 }

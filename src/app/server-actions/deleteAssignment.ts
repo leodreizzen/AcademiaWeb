@@ -8,11 +8,32 @@ export async function deleteAssignment(assignmentId: number) {
   try {
     const assignmentUrl = await prisma.assignment.findUnique({
       where: { id: assignmentId },
-      select: { fileUrl: true, testCase:true },
+      include: {submissions: true},
     });
 
     if (!assignmentUrl) {
       return { success: false, error: "Trabajo práctico no encontrado." };
+    }
+
+    for(const submission of assignmentUrl.submissions) {
+        const public_id = extractPublicId(submission.fileUrl)
+        if (!public_id) {
+            return {
+            success: false,
+            error: "No se pudo obtener el public_id del archivo.",
+            };
+        }
+        const result = await deleteFileFromCloudinary(public_id);
+        if (result.result !== "ok") {
+          return {
+            success: false,
+            error: `Error al eliminar archivo de entrega en Cloudinary: ${result.result}`,
+          };
+        }
+
+        await prisma.assignmentSubmission.delete({
+            where: { id: submission.id },
+        });
     }
 
     const public_id = extractPublicId(assignmentUrl.fileUrl)
@@ -28,7 +49,7 @@ export async function deleteAssignment(assignmentId: number) {
       if (result.result !== "ok") {
         return {
           success: false,
-          error: `Error al eliminar archivo en Cloudinary: ${result.result}`,
+          error: `Error al eliminar archivo de enunciado en Cloudinary: ${result.result}`,
         };
       }
     }

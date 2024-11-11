@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const validExtensions = ["pdf", "docx", "pptx", "xlsx"];
+export const invalidExtensionMessage = "El archivo debe ser un PDF, DOCX, PPTX, XLSX";
 export const assignmentSchema = z.object({
   title: z.string().min(1, "El título es obligatorio"),
   description: z.string().optional(),
@@ -11,7 +12,7 @@ export const assignmentSchema = z.object({
       return validExtensions.includes(extension || "");
     },
     {
-      message: "El archivo debe ser un PDF, DOCX, PPTX, XLSX",
+      message: invalidExtensionMessage,
     }
   ),
 });

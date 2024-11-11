@@ -26,7 +26,7 @@ const parentsButton: HomeButton = { name: "Responsables", Icon: Users2, href: "/
 const assignmentsButton: HomeButton = { name: "Trabajos Prácticos", Icon: BookOpen, href: "/assignment" }
 const reprimandsButton: HomeButton = { name: "Amonestaciones", Icon: AlertTriangle, href: "/reprimand" }
 const reportCardsButtonView: HomeButton = { name: "Boletín", Icon: FileText, href: "/reportcard" }
-const reportCardsButtonCreate: HomeButton = { name: "Boletines", Icon: FileText, href: "/reportcard/create" }
+const reportCardsButtonCreate: HomeButton = { name: "Boletines", Icon: FileText, href: "/reportcard/teacher" }
 const examMarksButton: HomeButton = { name: "Notas de exámenes", Icon: CheckSquare, href: "/exam-mark" }
 const attendanceButton: HomeButton = {name: "Asistencia", Icon: CalendarCheck2, href: "/attendance"}
 

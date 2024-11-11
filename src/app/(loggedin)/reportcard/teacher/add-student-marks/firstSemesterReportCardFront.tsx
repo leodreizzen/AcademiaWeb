@@ -81,7 +81,7 @@ export default function FirstSemesterReportCardFront({students, subject}: Princi
                                 <TableBody>
                                     {students.map(alumno => (
                                         <TableRow key={alumno.id} className="border-b border-gray-700">
-                                            <TableCell className="text-white">
+                                            <TableCell className="text-white w-full">
                                                 {alumno.user.firstName} {alumno.user.lastName}
                                             </TableCell>
                                             <TableCell>
@@ -90,7 +90,7 @@ export default function FirstSemesterReportCardFront({students, subject}: Princi
                                                     value={notas[alumno.id] || ''}
                                                     onValueChange={(value) => handleNotaChange(alumno.id, value)}
                                                 >
-                                                    <SelectTrigger className={`bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500`}>
+                                                    <SelectTrigger className={`bg-gray-700 text-gray-100 border-gray-600 focus:border-gray-500 w-48`}>
                                                         <SelectValue placeholder="Selecciona una nota" />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-gray-700">

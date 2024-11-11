@@ -70,38 +70,3 @@ export async function getAttendanceForStudent(studentId: number): Promise<Attend
     return {attendance, student};
 
 }
-
-export async function getAttendanceForGrade(gradeId: number): Promise<AttendanceDataWithItems[] | null> {
-    const grade = await prisma.grade.findUnique({
-        where: {
-            id: gradeId
-        },
-    })
-
-    if(!grade) return null;
-
-    const attendanceResult = await prisma.attendanceData.findMany({
-        where: {
-            gradeName: grade.name
-        },
-        include: {
-            items: {
-                include: {
-                    student: {
-                        include: {
-                            profile: {
-                                include: {
-                                    user: true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    })
-
-    if(!attendanceResult) return null;
-
-    return attendanceResult;
-}

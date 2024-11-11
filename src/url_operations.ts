@@ -39,6 +39,7 @@ const routeList:{path: string, handler: Permission}[] = [
     {path: "/teacher/add", handler: {resource: Resource.TEACHER, operation: "CREATE"}},
     {path: "/selectstudent", handler: {resource: Resource.USER, operation: "SELECT_CHILD"}},
     {path: "/exam-mark", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
+    {path: "/exam-mark/exam/:id/edit", handler: {resource: Resource.EXAM_MARK, operation: "UPDATE"}},
     {path: "/exam-mark/subject/:id", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
     {path: "/exam-mark/exam/:id", handler: {resource: Resource.EXAM_MARK, operation: "LIST"}},
     {path: "/exam-mark/add", handler: {resource: Resource.EXAM_MARK, operation: "CREATE"}},

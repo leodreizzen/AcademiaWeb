@@ -4,15 +4,14 @@ import {Label} from "@/components/ui/label";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {X} from "lucide-react";
 import {useState} from "react";
-import {GradeWithSubjects} from "@/app/(loggedin)/teacher/add/page";
-
+import {GradeWithSubjects} from "@/lib/definitions/grade";
 
 
 interface TeacherRegistrationFormDialogProps {
     assignedGrades: {[key: number]: string[]},
     onAssignSubject: (grade: string, subject: string) => void,
     onRemoveSubject: (grade: string, subject: string) => void,
-    grades: GradeWithSubjects
+    grades: GradeWithSubjects[]
 }
 
 export default function TeacherRegistrationFormDialog({assignedGrades, onAssignSubject, onRemoveSubject, grades}: TeacherRegistrationFormDialogProps) {

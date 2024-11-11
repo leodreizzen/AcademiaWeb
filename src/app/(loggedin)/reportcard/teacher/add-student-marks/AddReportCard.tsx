@@ -85,7 +85,7 @@ export default function AddReportCard({ subjects, result }: PrincipalProps) {
             <Card className="max-w-4xl mx-auto bg-gray-800 border-gray-700">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-white">
-                        Selección de Materia y Semestre
+                        Carga de boletines: Selección de Materia y Semestre
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

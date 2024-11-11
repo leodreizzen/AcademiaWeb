@@ -2,12 +2,11 @@
 import {Button} from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { validExtensions } from "@/lib/models/addAssignment";
-import {Tooltip} from "@nextui-org/tooltip";
 import { Assignment } from "@prisma/client";
 import { useState } from "react";
-import { submitAssignment } from "./submitAssignmentActions";
-import { uploadFile } from "@/lib/fileUtils";
-import { deleteFileFromCloudinary, getPublicIdFromURL } from "@/lib/cloudinary";
+import {getAssignmentSubmissionSignature, submitAssignmentToServer} from "./submitAssignmentActions";
+import {ActionResult} from "@/app/(loggedin)/student/add/types";
+import {uploadFile} from "@/lib/cloudinary/cloudinary_client";
 
 export interface SubmitAssignmentFormProps {
     assignment: Assignment;
@@ -31,23 +30,15 @@ export default function SubmitAssignmentForm({ assignment, }: SubmitAssignmentFo
                 return;
             }
             
-            fileUrl = await uploadFile(file);
-            if (!fileUrl) {
-                setError("Error al subir el archivo");
+            const res = await submitAssignment(assignment.id, file);
+            if(!res.success){
+                setError(res.error);
                 return;
             }
-    
-            await submitAssignment(fileUrl, assignment.id);
-            setShowSuccess(true);
+             setShowSuccess(true);
         } catch (error) {
             setError(`Error al enviar el trabajo: ${error}`);
             setShowSuccess(false);
-            if (fileUrl) {
-                const publicId = await getPublicIdFromURL(fileUrl);
-                if (publicId) {
-                    await deleteFileFromCloudinary(publicId);
-                }
-            }
         } finally {
             setSending(false);
         }
@@ -95,4 +86,17 @@ export default function SubmitAssignmentForm({ assignment, }: SubmitAssignmentFo
             </div>
         </div>
     )
+}
+
+async function submitAssignment(assignmentId: number, file: File): Promise<ActionResult> {
+    const signature = await getAssignmentSubmissionSignature(assignmentId);
+    if (!signature.success) {
+        return { success: false, error: signature.error };
+    }
+    const fileUrl = await uploadFile(file, signature.signatureData);
+    if (!fileUrl) {
+        return { success: false, error: "Error al subir el archivo" };
+    }
+    const res = await submitAssignmentToServer(fileUrl, assignmentId);
+    return res
 }

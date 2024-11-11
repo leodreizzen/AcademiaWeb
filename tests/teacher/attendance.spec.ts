@@ -19,6 +19,7 @@ test.describe('Registrar asistencia', () => {
         await page.waitForURL('/');
         await page.getByRole('navigation').getByRole('link', { name: 'Asistencia' }).first().click();
         await page.getByText('Siguiente').click();
+        await page.getByRole("button", {name: "Registrar asistencia"}).click();
         await page.waitForURL('/attendance/1/add');
         await page.locator('button[id="present-8"]').click();
         await page.locator('button[id="present-9"]').click();
@@ -44,11 +45,5 @@ test.describe('Registrar asistencia', () => {
             intervals: [250],
             timeout: 20000,
         }).toBe(true)
-
-            
-
-
-
-
     });
 });

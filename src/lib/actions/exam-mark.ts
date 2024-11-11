@@ -158,24 +158,30 @@ export async function fetchGradesWithSubjectsForStudent(gradeName: string): Prom
 
 export async function updateMarks(marks: { id: number, examId: number, studentId: number, mark: number }[]) {
     try{
-        const insertPromises = marks.filter(x => x.id === 0).map(item => {
+        const deleteOperations = marks.filter(x => x.mark == null && x.id !== 0).map(item => {
+            return prisma.examMark.delete({
+                where: {
+                    id: item.id
+                }
+            });
+        });
+        const insertOperations = marks.filter(x => x.mark != null && x.id === 0).map(item => {
             return prisma.examMark.create({
                 data: {
                     examId: item.examId,
                     studentId: item.studentId,
                     mark: item.mark
                 },
-            })
+            });
         });
-        const updatePromises = marks.filter(x => x.id !== 0).map((item) =>
+        const updateOperations = marks.filter(x => x.mark != null && x.id !== 0).map((item) =>
             prisma.examMark.update({
                 where: { id: item.id },
                 data: { mark: item.mark },
             })
         );
 
-        await prisma.$transaction(insertPromises);
-        await prisma.$transaction(updatePromises);
+        await prisma.$transaction([...deleteOperations, ...insertOperations, ...updateOperations]);
         return {
             success: true,
             message: "Notas registradas"

@@ -38,7 +38,7 @@ export default function ExamMarkEditForm({ exam, students }: ExamMarkFormProps) 
         if(!examMarks.marks.some(student => student.mark != null)){
             alert("Debes ingresar al menos una nota")
         } else {
-            const marksSaveOrUpdate = examMarks.marks.filter(x => x.mark != null);
+            const marksSaveOrUpdate = examMarks.marks;
             const resUpdate = await updateMarks(marksSaveOrUpdate as any)
             if (resUpdate.success) {
                 alert("Notas guardadas exitosamente")

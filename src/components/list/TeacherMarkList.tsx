@@ -32,6 +32,10 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
             .then((data) => setTeacher(data))
     }, [teacherId])
 
+    const goToEdit = (id: number): void => {
+        router.push(`/exam-mark/exam/${id}/edit`);
+    };
+
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100 flex">
             <div className="container mx-auto p-4 max-w-4xl">
@@ -78,6 +82,7 @@ export default function TeacherMarkList({teacherId}: {teacherId: number}) {
                                                             ))}
                                                         </TableBody>
                                                     </Table>
+                                                    <Button variant="default" onClick={() => goToEdit(exam.id)}>Editar</Button>
                                                 </DialogContent>
                                             </Dialog>
                                         </div>

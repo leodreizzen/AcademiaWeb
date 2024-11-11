@@ -12,6 +12,7 @@ test.beforeEach(async ({page}) => {
 });
 
 const teacher = getTestUserWithRole('teacher', "Teacher");
+test.describe.configure({ mode: 'serial' });
 
 test('Crear examen con datos válidos', async ({page}) => {
     await loginAsRole(page, teacher.dni.toString(), teacher.password, 'Profesor');

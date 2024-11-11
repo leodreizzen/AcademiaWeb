@@ -8,9 +8,13 @@ import {generateSignature} from "@/lib/cloudinary/cloudinary_server";
 import {SignatureResult} from "@/app/server-actions/submitAssignment";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {fetchSubmissionByStudentAndAssignment} from "@/lib/data/assignmentSubmissions";
+import {invalidExtensionMessage, validExtensions} from "@/lib/models/addAssignment";
 
 
-export async function getAssignmentSubmissionSignature(assignmentId: number): Promise<SignatureResult>{
+export async function getAssignmentSubmissionSignature(fileName:string, assignmentId: number): Promise<SignatureResult>{
+    if(!validExtensions.includes(fileName.split('.').pop()!)){
+        return { success: false, error: invalidExtensionMessage}
+    }
     const user = await fetchCurrentUser();
     if(!user)
         return { success: false, error: "Debes iniciar sesión para enviar el trabajo" };
@@ -41,7 +45,11 @@ export async function getAssignmentSubmissionSignature(assignmentId: number): Pr
     return { success: true, signatureData: signature };
 }
 
-export async function submitAssignmentToServer(fileUrl:string, assignmentId: number): Promise<ActionResult>{
+export async function submitAssignmentToServer(fileName:string, fileUrl:string, assignmentId: number): Promise<ActionResult>{
+    if(!validExtensions.includes(fileName.split('.').pop()!)){
+        return { success: false, error: invalidExtensionMessage}
+    }
+
     const user = await fetchCurrentUser();
     if(!user)
         return { success: false, error: "Debes iniciar sesión para enviar el trabajo" };

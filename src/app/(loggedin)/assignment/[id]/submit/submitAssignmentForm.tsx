@@ -98,7 +98,7 @@ export default function SubmitAssignmentForm({ assignment, existsSubmission }: S
 }
 
 async function submitAssignment(assignmentId: number, file: File): Promise<ActionResult> {
-    const signature = await getAssignmentSubmissionSignature(assignmentId);
+    const signature = await getAssignmentSubmissionSignature(file.name, assignmentId);
     if (!signature.success) {
         return { success: false, error: signature.error };
     }
@@ -106,6 +106,6 @@ async function submitAssignment(assignmentId: number, file: File): Promise<Actio
     if (!fileUrl) {
         return { success: false, error: "Error al subir el archivo" };
     }
-    const res = await submitAssignmentToServer(fileUrl, assignmentId);
+    const res = await submitAssignmentToServer(file.name, fileUrl, assignmentId);
     return res
 }

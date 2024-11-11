@@ -39,3 +39,7 @@ export async function deleteFileFromCloudinary(public_id: string): Promise<any>{
     return cloudinary.v2.uploader.destroy(searchResult.resources[0].public_id, {resource_type: searchResult.resources[0].resource_type});
   }
 }
+
+export async function getPublicIdFromURL(url: string): Promise<string | undefined> {
+  return url.split("/").pop()?.split(".")[0];
+}

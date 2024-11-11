@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import {mapStudentWithUser} from "@/lib/data/mappings";
 import {localDayStart} from "@/lib/dateUtils";
 import { ExamMarkEdit } from "../models/examMark";
+import { revalidatePath } from "next/cache";
 
 export interface SubjectWithGradeAndTeachers extends Subject {
     grade: Grade
@@ -182,6 +183,7 @@ export async function updateMarks(marks: { id: number, examId: number, studentId
         );
 
         await prisma.$transaction([...deleteOperations, ...insertOperations, ...updateOperations]);
+        revalidatePath(`/exam-mark/exam/${marks[0].examId}/edit`);
         return {
             success: true,
             message: "Notas registradas"

@@ -1,7 +1,8 @@
 "use server"
 import {StudentWithUserAndParent} from "@/lib/definitions/parent";
 import prisma from "@/lib/prisma";
-import {mapStudentWithUserAndParent} from "@/lib/data/mappings";
+import {mapStudentWithUser, mapStudentWithUserAndParent} from "@/lib/data/mappings";
+import {StudentWithUser} from "@/lib/definitions/student";
 
 
 export default async function fetchStudentById(id: number): Promise<StudentWithUserAndParent | null> {

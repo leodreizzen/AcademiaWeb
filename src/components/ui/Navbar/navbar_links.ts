@@ -15,8 +15,11 @@ export const navbarItems: Record<ProfileRole, NavbarItem[]> = {
         name: "Notas de exámenes",
         href: "/exam-mark"
     }, {
-        name: "Boletines",
+        name: "Boletín",
         href: "/reportcard"
+    }, {
+        name: "Asistencia",
+        href: "/attendance"
     }],
     Student: [{
         name: "Trabajos prácticos",
@@ -28,7 +31,7 @@ export const navbarItems: Record<ProfileRole, NavbarItem[]> = {
         name: "Notas de exámenes",
         href: "/exam-mark"
     }, {
-        name: "Boletines",
+        name: "Boletín",
         href: "/reportcard"
     }],
     Teacher: [{

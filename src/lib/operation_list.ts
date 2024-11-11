@@ -20,7 +20,7 @@ const Operation = {
     [Resource.ASSIGNMENT]: ["READ", "LIST", "CREATE", "UPDATE", "DELETE", "SUBMIT"] as const,
     [Resource.USER]: ["CHANGE_OWN_PASSWORD", "DELETE", "SELECT_CHILD"] as const,
     [Resource.PROFILE]: ["DELETE"] as const,
-    [Resource.EXAM_MARK]: ["LIST", "CREATE", "UPDATE"] as const,
+    [Resource.EXAM_MARK]: ["LIST", "CREATE", "READ", "UPDATE"] as const,
     [Resource.REPORT_CARD]: ["LIST", "READ", "CREATE", "UPDATE"] as const,
     [Resource.REPRIMAND]: ["LIST", "CREATE", "READ"] as const,
     [Resource.ATTENDANCE]: ["LIST", "CREATE", "READ"] as const,

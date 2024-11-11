@@ -1,5 +1,4 @@
-'use server'
-
+import "server-only";
 import cloudinary from 'cloudinary';
 
 cloudinary.v2.config({
@@ -8,7 +7,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-type SignatureData = {
+export type SignatureData = {
   apiKey: string;
   signature: string;
   timestamp: number;
@@ -29,21 +28,16 @@ export async function generateSignature(): Promise<SignatureData> {
 
   const apiKey = process.env.CLOUDINARY_API_KEY || '';
   return { apiKey, signature, timestamp };
-};
-
-export async function uploadFileToCloudinary(formData: FormData): Promise<any> {
-  const response = await fetch(
-    `https://api.cloudinary.com/v1_1/${process.env.CLOUD_NAME}/auto/upload`,
-    {
-      method: 'POST',
-      body: formData,
-    }
-  );
-  return response.json();
 }
 
 export async function deleteFileFromCloudinary(public_id: string): Promise<any>{
-  return cloudinary.v2.uploader.destroy(public_id);
+  const searchResult = await cloudinary.v2.search.expression(`public_id=${public_id}*`).execute();
+  if(searchResult.resources.length !== 1) {
+    return {result: "not_found"};
+  }
+  else{
+    return cloudinary.v2.uploader.destroy(searchResult.resources[0].public_id, {resource_type: searchResult.resources[0].resource_type});
+  }
 }
 
 export async function getPublicIdFromURL(url: string): Promise<string | undefined> {

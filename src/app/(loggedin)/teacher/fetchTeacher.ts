@@ -2,8 +2,8 @@
 
 
 import prisma from "@/lib/prisma";
-import {TeacherWithUser} from "@/lib/definitions/teacher";
-import {mapTeacherWithUser} from "@/lib/data/mappings";
+import {TeacherWithSubjects, TeacherWithUser} from "@/lib/definitions/teacher";
+import {mapTeacherWithSubjects, mapTeacherWithUser} from "@/lib/data/mappings";
 
 export async function fetchTeachers(page: number): Promise<TeacherWithUser[]> {
     const NUMBER_OF_TEACHERS = 10;
@@ -24,6 +24,28 @@ export async function fetchTeachers(page: number): Promise<TeacherWithUser[]> {
         console.error("Error fetching teachers:", error);
         return [];
     }
+}
+
+
+export async function fetchTeacherById(id: number): Promise<TeacherWithSubjects | null> {
+    try {
+        const teacher = await prisma.teacher.findUnique({
+            where: {id},
+            include: {
+                profile: {
+                    include: {
+                        user: true
+                    }
+                },
+                subjects: true
+            }
+        });
+        return teacher ? mapTeacherWithSubjects(teacher) : null;
+    } catch (error) {
+        console.error("Error fetching teacher by id:", error);
+        return null;
+    }
+
 }
 
 export async function countTeachers() {

@@ -1,10 +1,12 @@
 "use server"
 
-import {Grade, Prisma, Subject, Teacher} from "@prisma/client";
+import {ExamMark, Grade, Prisma, Subject, Teacher} from "@prisma/client";
 import {StudentMark} from "@/lib/models/examMarkAdd";
 import prisma from "@/lib/prisma";
 import {mapStudentWithUser} from "@/lib/data/mappings";
 import {localDayStart} from "@/lib/dateUtils";
+import { ExamMarkEdit } from "../models/examMark";
+import { revalidatePath } from "next/cache";
 
 export interface SubjectWithGradeAndTeachers extends Subject {
     grade: Grade
@@ -138,4 +140,58 @@ export async function fetchGradesWithSubjectsForTeacher(teacherId: number): Prom
             }
         }
     })
+}
+
+export async function fetchGradesWithSubjectsForStudent(gradeName: string): Promise<GradeWithSubjects[]> {
+    return prisma.grade.findMany({
+        where: {
+            name: gradeName
+        },
+        include: {
+            subjects: {
+                where: {
+                    gradeName: gradeName
+                }
+            }
+        }
+    })
+}
+
+export async function updateMarks(marks: { id: number, examId: number, studentId: number, mark: number }[]) {
+    try{
+        const deleteOperations = marks.filter(x => x.mark == null && x.id !== 0).map(item => {
+            return prisma.examMark.delete({
+                where: {
+                    id: item.id
+                }
+            });
+        });
+        const insertOperations = marks.filter(x => x.mark != null && x.id === 0).map(item => {
+            return prisma.examMark.create({
+                data: {
+                    examId: item.examId,
+                    studentId: item.studentId,
+                    mark: item.mark
+                },
+            });
+        });
+        const updateOperations = marks.filter(x => x.mark != null && x.id !== 0).map((item) =>
+            prisma.examMark.update({
+                where: { id: item.id },
+                data: { mark: item.mark },
+            })
+        );
+
+        await prisma.$transaction([...deleteOperations, ...insertOperations, ...updateOperations]);
+        revalidatePath(`/exam-mark/exam/${marks[0].examId}/edit`);
+        return {
+            success: true,
+            message: "Notas registradas"
+        }
+    } catch (e: any){
+        return {
+            success: false,
+            message: e.message
+        }
+    }
 }

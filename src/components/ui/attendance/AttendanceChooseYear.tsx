@@ -12,7 +12,7 @@ export function AttendanceChooseYear({grades} : {grades: { name: string, id: num
     const router = useRouter();
 
     const handleContinue = () => {
-        router.push(`/attendance/${gradeNumber}`);
+        router.push(`/attendance/${gradeNumber}/add`);
     }
 
     const handleGradeChange = (e: string) => {

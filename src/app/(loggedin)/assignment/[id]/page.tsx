@@ -68,12 +68,16 @@ export default async function AssignmentDetailsPage({
     subject: assignmentData.subject,
   };
 
-  const studentProfile = await fetchStudentById(user.id);
-  if(!studentProfile || assignment.subject.gradeName !== studentProfile.gradeName) {
-      redirect('/403');
+  let existingSubmission = false;
+
+  if (user.role === "Student") {
+    const studentProfile = await fetchStudentById(user.id);
+    if(!studentProfile || assignment.subject.gradeName !== studentProfile.gradeName) {
+        redirect('/403');
+    }
+  
+    existingSubmission = await fetchSubmissionByStudentAndAssignment(studentProfile.id, assignment.id) != null;
   }
 
-  const existingSubmission = await fetchSubmissionByStudentAndAssignment(studentProfile.id, assignment.id);
-
-  return <AssignmentDetailsClient assignment={assignment} isStudent={user.role === "Student"} isSubmitted={existingSubmission != null} />;
+  return <AssignmentDetailsClient assignment={assignment} isStudent={user.role === "Student"} isSubmitted={existingSubmission} />;
 }

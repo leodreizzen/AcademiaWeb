@@ -20,7 +20,6 @@ export default function SubmitAssignmentForm({ assignment, }: SubmitAssignmentFo
     
     const handleSubmit = async () => {
         setSending(true);
-        let fileUrl: string | undefined = undefined;
         try {
             setError(null);
             setShowSuccess(false);

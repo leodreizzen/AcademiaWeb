@@ -3,20 +3,30 @@ import {Button} from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { validExtensions } from "@/lib/models/addAssignment";
 import { Assignment } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {getAssignmentSubmissionSignature, submitAssignmentToServer} from "./submitAssignmentActions";
 import {ActionResult} from "@/app/(loggedin)/student/add/types";
 import {uploadFile} from "@/lib/cloudinary/cloudinary_client";
+import { useRouter } from "next/navigation";
 
 export interface SubmitAssignmentFormProps {
     assignment: Assignment;
+    existsSubmission: boolean;
 }
 
-export default function SubmitAssignmentForm({ assignment, }: SubmitAssignmentFormProps) {
+export default function SubmitAssignmentForm({ assignment, existsSubmission }: SubmitAssignmentFormProps) {
     const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [sending, setSending] = useState(false);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (existsSubmission) {
+            alert("Ya existe una entrega");
+            router.push(`/assignment/${assignment.id}`);
+        }
+    }, [])
     
     const handleSubmit = async () => {
         setSending(true);

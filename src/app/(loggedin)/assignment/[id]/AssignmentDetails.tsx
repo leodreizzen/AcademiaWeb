@@ -25,10 +25,11 @@ interface AssignmentType {
 interface AssignmentDetailsClientProps {
   assignment: AssignmentType;
   isStudent: boolean;
+  isSubmitted: boolean;
 }
 
 export default function AssignmentDetailsPage({
-  assignment, isStudent
+  assignment, isStudent, isSubmitted
 }: AssignmentDetailsClientProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -98,7 +99,7 @@ export default function AssignmentDetailsPage({
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">
               {assignment.title}
             </h1>
-            {isStudent ? (
+            {isStudent && !isSubmitted ? (
               <button type="button"
                 onClick={() => router.push(`/assignment/${assignment.id}/submit`)}
                 className="bg-green-600 hover:bg-green-500 text-white h-fit py-2 px-4 rounded-lg transition-colors"

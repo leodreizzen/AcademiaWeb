@@ -64,7 +64,6 @@ test('Crear examen con datos válidos', async ({page}) => {
         studentsMarks.set(studentName, studentMark);
         await student.locator('input').fill(studentMark.toString());
     }
-    await page.getByRole('button', {name: 'Cargar'}).click();
     let dialogShown = false;
     page.on('dialog', dialog => {
             expect(dialog.message()).toBe('Notas cargadas exitosamente');
@@ -72,6 +71,7 @@ test('Crear examen con datos válidos', async ({page}) => {
             dialogShown = true;
         }
     );
+    await page.getByRole('button', {name: 'Cargar'}).click();
 
     await expect.poll(async () => {
         return dialogShown;
@@ -158,7 +158,6 @@ test('Crear examen sin algunas notas (CASO DE EXITO)', async ({page}) => {
             await student.locator('input').fill(studentMark.toString());
         }
     }
-    await page.getByRole('button', {name: 'Cargar'}).click();
     let dialogShown = false;
     page.on('dialog', dialog => {
             expect(dialog.message()).toBe('Notas cargadas exitosamente');
@@ -166,6 +165,7 @@ test('Crear examen sin algunas notas (CASO DE EXITO)', async ({page}) => {
             dialogShown = true;
         }
     );
+    await page.getByRole('button', {name: 'Cargar'}).click();
 
     await expect.poll(async () => {
         return dialogShown;
